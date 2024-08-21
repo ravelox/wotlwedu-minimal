@@ -1,0 +1,89 @@
+<app-modal-loader *ngIf="loader.loading"></app-modal-loader>
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<div class="ww-page-header-title">Register with Wotlwedu</div>
+<div class="ww-flex-column">
+  <div class="ww-flex-column">
+    <div *ngIf="registrationInProgress">
+      <div
+        class="ww-flex-column"
+        style="align-items: center; color: var(--theme-color)"
+      >
+        <p>Please complete all the fields to register</p>
+      </div>
+      <form
+        (ngSubmit)="onSubmit(f)"
+        #f="ngForm"
+        class="ww-flex-column"
+        style="padding: 5px"
+      >
+        <div>
+          <div class="ww-flex-column">
+            <label for="email">Email Address</label>
+            <input type="text" name="email" id="email" ngModel required email />
+          </div>
+          <div class="ww-flex-column">
+            <label for="firstName">First Name</label>
+            <input
+              type="text"
+              name="firstName"
+              id="firstName"
+              ngModel
+              required
+            />
+          </div>
+          <div class="ww-flex-column">
+            <label for="lastName">Last Name</label>
+            <input type="text" name="lastName" id="lastName" ngModel required />
+          </div>
+          <div class="ww-flex-column">
+            <label for="alias">Alias</label>
+            <input type="text" name="alias" id="alias" ngModel required />
+          </div>
+        </div>
+        <div
+          class="ww-flex-row"
+          style="justify-content: center; margin-top: 10px"
+        >
+          <button type="submit" class="ww-button" [disabled]="!f.valid">
+            Register
+          </button>
+        </div>
+      </form>
+    </div>
+    <div *ngIf="userConfirmed">
+      <div
+        class="ww-flex-column"
+        style="align-items: center; color: var(--theme-color)"
+      >
+        <p>Thank you for verifying your email address.</p>
+        <p>
+          Your account is now active. Please go to the login page to access
+          Wotlwedu.
+        </p>
+      </div>
+    </div>
+    <div *ngIf="registrationComplete">
+      <div
+        class="ww-flex-column"
+        style="align-items: center; color: var(--theme-color)"
+      >
+        <p>
+          The first step of your registration is successful. You will receive a
+          verification email to the address you entered.
+        </p>
+        <p>
+          Please click on the link in the email to complete your registration.
+        </p>
+      </div>
+    </div>
+    <div class="ww-flex-row" style="justify-content: center">
+      <button type="button" class="ww-button" (click)="onClickLogin()">
+        Go to Login
+      </button>
+    </div>
+  </div>
+</div>

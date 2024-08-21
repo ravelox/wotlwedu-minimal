@@ -1,0 +1,11 @@
+<div class="ww-modal-backdrop" (click)="onClose()">
+  <div class="ww-modal-alert ww-flex-row ww-modal-loader" style="align-content: center;">
+    <div>
+    <p>{{ message }}</p>
+    <div class="ww-flex-row ww-modal-actions" style="gap: 5px;">
+      <button class="ww-button ww-button-theme" (click)="onYes()">Yes</button>
+      <button class="ww-button ww-button-red" (click)="onNo()">No</button>
+    </div>
+    </div>
+  </div>
+</div>

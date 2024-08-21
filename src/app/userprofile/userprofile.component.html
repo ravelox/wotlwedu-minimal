@@ -1,0 +1,103 @@
+<div>
+  <app-modal-alert
+    *ngIf="alertBox.errorMessage"
+    [message]="alertBox.errorMessage"
+    (close)="alertBox.onCloseAlert()"
+  ></app-modal-alert>
+  <app-modal-dialog
+    *ngIf="confirmDialog.isVisible"
+    [message]="confirmDialog.message"
+    (close)="confirmDialog.onCloseClick()"
+    (yesAction)="confirmDialog.onYesClick()"
+    (noAction)="confirmDialog.onNoClick()"
+  ></app-modal-dialog>
+  <app-modal-loader *ngIf="loader.loading"></app-modal-loader>
+  <app-image-select-mini
+    *ngIf="imageSelectorVisible"
+    style="z-index: 500; position: absolute"
+    (close)="toggleImageSelector()"
+    (imageselected)="onImageSelect($event)"
+  ></app-image-select-mini>
+  <div *ngIf="enable2faVisible">
+    <app-enable2fa (close2FA)="onClose2FA($event)"></app-enable2fa>
+  </div>
+  <div *ngIf="verify2faVisible">
+    <app-2fa-mini (closeverify)="onCloseVerify2FA($event)"></app-2fa-mini>
+  </div>
+</div>
+<div class="ww-page-header-title">User Profile</div>
+<div class="ww-flex-column">
+  <form
+    [formGroup]="userProfileForm"
+    (ngSubmit)="onSubmit(f);"
+    #f="ngForm"
+    class="ww-flex-column"
+    style="gap: 5px"
+  >
+    <input type="hidden" id="userId" formControlName="userId" />
+    <!-- Avatar Image -->
+    <div style="margin: 10px; margin-left: 0px">
+      <div class="ww-detail-image-container" (click)="toggleImageSelector()">
+        <img
+          src="{{ currentImage.url }}"
+          *ngIf="currentImage && currentImage.url"
+          style="height: 70px; width: 70px"
+        />
+        <div
+          *ngIf="!(currentImage && currentImage.url)"
+          class="ww-flex-column ww-detail-image-placeholder"
+        >
+          No Image
+        </div>
+      </div>
+    </div>
+    <div class="ww-form-input">
+      <label for="email">Email</label>
+      <input
+        formControlName="email"
+        type="text"
+        id="email"
+        autocomplete="off"
+        required
+        email
+      />
+    </div>
+    <div class="ww-form-input">
+      <label for="firstName">First Name</label>
+      <input formControlName="firstName" type="text" id="firstName" required />
+    </div>
+    <div class="ww-form-input">
+      <label for="lastName">Last Name</label>
+      <input formControlName="lastName" type="text" id="lastName" required />
+    </div>
+    <div class="ww-form-input">
+      <label for="alias">Alias</label>
+      <input formControlName="alias" type="text" id="alias" required />
+    </div>
+    <div>
+      <div class="ww-label">Request password reset</div>
+      <input
+        formControlName="resetpassword"
+        type="checkbox"
+        id="resetpassword"
+      />
+    </div>
+    <div>
+      <div class="ww-label">Enable 2-factor authentication</div>
+      <input
+        formControlName="enable2fa"
+        type="checkbox"
+        id="resetpassword"
+        (change)="on2FACheckbox($event)"
+      />
+    </div>
+
+    <!-- Button Panel -->
+    <div class="ww-flex-row ww-default-button-panel">
+      <button type="submit" [disabled]="!f.valid || !(f.touched || f.dirty)">
+        Save
+      </button>
+      <button type="button" (click)="onCancel()">Back</button>
+    </div>
+  </form>
+</div>

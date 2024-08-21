@@ -1,0 +1,27 @@
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<div class="ww-flex-column" style="gap: 5px">
+  <div class="ww-page-header-title">2FA Verification</div>
+
+  <form
+    (ngSubmit)="onSubmit(f)"
+    #f="ngForm"
+    class="ww-flex-column"
+    style="gap: 5px"
+  >
+    <div class="ww-flex-column" style="gap: 5px">
+      <label for="authToken">Enter 2FA code from authentication device</label>
+      <input type="text" name="authToken" id="authToken" ngModel required />
+    </div>
+    <br />
+    <div class="ww-flex-row ww-default-button-panel">
+      <button type="submit" class="ww-button" [disabled]="!f.valid">
+        Verify
+      </button>
+      <button type="button" class="ww-button" (click)="onBack()">Back</button>
+    </div>
+  </form>
+</div>

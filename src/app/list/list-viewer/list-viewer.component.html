@@ -1,0 +1,45 @@
+<div class="ww-flex-column ww-general-viewer" *ngIf="list">
+  <div class="ww-flex-row">
+    <div class="ww-page-header-title" style="width: 100%">
+      {{ list ? list.name : "List" }}
+    </div>
+    <div (click)="onClose()" class="ww-window-close-icon"></div>
+  </div>
+  <div class="ww-flex-column" style="padding: 5px">
+    <div class="ww-flex-column" style="justify-content: left">
+      <p>{{ list ? list.description : "No description" }}</p>
+    </div>
+    <div class="ww-flex-column" style="gap: 5px; max-height: 70svh; overflow-y: scroll">
+      <div
+        *ngFor="let item of list.items; let i = index"
+        class="ww-flex-row"
+        style="padding: 5px; border: 1px solid black; border-radius: 5px"
+      >
+        <div class="ww-avatar-container">
+          <img
+            *ngIf="item.image && item.image.url"
+            src="{{ item.image.url }}"
+            style="width: 100%; max-height: 100%; object-fit: contain"
+          />
+          <div *ngIf="!(item.image && item.image.url)" style="color: white">
+            {{ item.name.substr(0, 1) }}
+          </div>
+        </div>
+        <div class="ww-notification-block">
+          <div class="ww-notification-block-title">
+            {{ item.name }}
+          </div>
+          <div style="padding-left: 20px">
+            <p class="ww-notification-block-detail">{{ item.description }}</p>
+            <p *ngIf="item.location" class="ww-notification-block-detail">
+              {{ item.location }}
+            </p>
+            <p *ngIf="item.url" class="ww-notification-block-detail">
+              {{ item.url }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+  <div
+    class="ww-flex-row ww-main-component"
+    style="gap: 5px;"
+    id="rolecomponent"
+    (drop)="dnd.onDrop($event)"
+    (dragover)="dnd.onDragOver($event)"
+  >
+    <app-role-select></app-role-select>
+    <app-role-detail></app-role-detail>
+    <app-cap-select></app-cap-select>
+    <app-user-select></app-user-select>
+  </div>

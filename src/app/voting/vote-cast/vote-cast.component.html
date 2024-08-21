@@ -1,0 +1,58 @@
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<div class="ww-page-header-title">Vote</div>
+
+<div
+  class="ww-flex-column"
+  style="height: 40svh; border: 1px solid black; border-radius: 5px; gap: 5px; border-top-left-radius: 0; border-top-right-radius: 0;"
+>
+  <div *ngIf="currentVote && currentVote.election" class="ww-flex-column" style="padding: 5px;">
+    <div class="ww-info-block-title">Election</div>
+    <div class="ww-flex-row" style="padding: 5px">
+      <img
+        *ngIf="currentVote.election.image && currentVote.election.image.url"
+        src="{{ currentVote.election.image.url }}"
+        style="height: 40px; width: auto"
+      />
+      <div class="ww-info-block ww-flex-grow">
+        <div>{{ currentVote.election.name }}</div>
+        <div>{{ currentVote.election.description }}</div>
+      </div>
+    </div>
+    <div
+      *ngIf="currentVote && currentVote.item"
+      style="margin-top: 20px; padding: 5px; border: 1px solid black;"
+      class="ww-flex-column"
+    >
+      <div class="ww-info-block-title">Your Vote</div>
+      <div class="ww-flex-row">
+        <img
+          *ngIf="currentVote.item.image && currentVote.item.image.url"
+          src="{{ currentVote.item.image.url }}"
+          style="height: 40px; width: auto"
+        />
+        <div class="ww-info-block">
+          <div style="color: var(--theme-color)">{{ currentVote.item.name }}</div>
+          <div>{{ currentVote.item.description }}</div>
+          <div *ngIf="currentVote.item.location">{{ currentVote.item.location }}</div>
+          <div *ngIf="currentVote.item.url"><a href='{{ currentVote.item.url }}'>{{currentVote.item.url}}</a></div>
+        </div>
+      </div>
+
+    <!-- Button Panel -->
+    <div
+      class="ww-flex-row ww-default-button-panel"
+      style="width: 100%; justify-content: center; gap: 5px; margin-top: 10px; border-top: 1px solid black; padding: 5px;"
+      *ngIf="currentVote"
+    >
+      <button class="ww-button" (click)="onVote('yes')">Yes</button>
+      <button class="ww-button" (click)="onVote('no')">No</button>
+      <button class="ww-button" (click)="onVote('maybe')">Maybe</button>
+      <button class="ww-button" (click)="onCancel()">Cancel</button>
+    </div>
+</div>
+  </div>
+</div>

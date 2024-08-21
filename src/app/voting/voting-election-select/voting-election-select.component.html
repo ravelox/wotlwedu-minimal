@@ -1,0 +1,42 @@
+<div>
+  <app-modal-alert
+    *ngIf="alertBox.errorMessage"
+    [message]="alertBox.errorMessage"
+    (close)="alertBox.onCloseAlert()"
+  ></app-modal-alert>
+  <app-modal-loader *ngIf="loader.loading"></app-modal-loader>
+</div>
+<div class="ww-page-header-title ww-flex-grow">Elections to vote on</div>
+<div class="ww-flex-column" style="min-width: 100%; gap: 5px; height: 40svh">
+  <!-- Selection List -->
+  <div class="ww-flex-column ww-select-container" #electionselectlist style="border-top-left-radius: 0; border-top-right-radius: 0;">
+    <div *ngFor="let vote of votes; let i = index" class="ww-flex-row ww-card">
+      <div
+        class="ww-flex-row"
+        style="
+          justify-content: space-between;
+          flex-grow: 1;
+          padding-right: 10px;
+        "
+        (click)="onSelect(i)"
+      >
+        <div class="ww-avatar-container">
+          <img
+            *ngIf="vote.election.image && vote.election.image.url"
+            src="{{ vote.election.image.url }}"
+            style="width: 100%; height: auto"
+          />
+
+          <div *ngIf="!(vote.election.image && vote.election.image.url)">
+            {{ vote.election.name.substr(0, 1) }}
+          </div>
+        </div>
+
+        <div class="ww-info-block">
+          <div class="ww-info-block-title">{{ vote.election.name }}</div>
+          <div class="ww-info-block-text ww-truncate-30">{{ vote.election.description }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

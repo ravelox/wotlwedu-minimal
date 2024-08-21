@@ -1,0 +1,73 @@
+<div class="ww-modal-backdrop">
+  <app-modal-alert
+    *ngIf="alertBox.errorMessage"
+    [message]="alertBox.errorMessage"
+    (close)="alertBox.onCloseAlert()"
+  ></app-modal-alert>
+  <div
+    class="ww-flex-column"
+    style="
+      background-color: white;
+      align-items: center;
+      z-index: 2000;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      border: 2px solid black;
+    "
+  >
+    <div class="ww-flex-row" style="width: 100%;">
+      <div class="ww-page-header-title ww-flex-grow">Enable 2FA</div>
+      <div class="ww-window-close-icon" (click)="onClose()"></div>
+    </div>
+
+    <form (ngSubmit)="onSubmit(f)" #f="ngForm" class="ww-flex-column" style="padding: 5px; gap: 5px;">
+      <div
+        class="ww-flex-column"
+        style="align-items: flex-start; justify-content: flex-start"
+      >
+        <div class="ww-label">Scan QR Code with authentication device</div>
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            width: 110px;
+            height: 110px;
+            border: 2px solid black;
+          "
+        >
+          <img src="{{ qrCodeImage }}" style="width: 100px; height: 100px" />
+        </div>
+
+        <div class="ww-flex-column">
+          <label class="ww-label">Secret</label>
+          <span>{{ secret }}</span>
+        </div>
+        <input
+          type="hidden"
+          name="verificationToken"
+          id="verificationToken"
+          value="{{ verificationToken }}"
+        />
+        <div class="ww-flex-column">
+          <label class="ww-label" for="authToken"
+            >Enter 2FA code from authentication device</label
+          >
+          <input type="text" name="authToken" id="authToken" ngModel required />
+        </div>
+      </div>
+      <br />
+      <div class="ww-flex-row ww-default-button-panel">
+        <button
+          type="button"
+          class="ww-button"
+          [disabled]="!f.valid"
+          (click)="onSubmit(f)"
+        >
+          Verify
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

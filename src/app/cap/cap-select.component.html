@@ -1,0 +1,63 @@
+<div class="ww-flex-column" style="min-width: 100%; gap: 5px">
+  <div class="ww-flex-row">
+    <div class="ww-page-header-title ww-flex-grow">Capabilities</div>
+  </div>
+  <!-- Filter Input Box -->
+  <div class="ww-flex-row" style="min-width: 100%; justify-content: center">
+    <form [formGroup]="filter.form" #f="ngForm">
+      <label for="filterInput">Filter</label>
+      <div class="ww-flex-row">
+        <input
+          type="text"
+          id="filterString"
+          formControlName="filterString"
+          (input)="filter.onChange($event)"
+          style="min-width: 90%"
+        />
+        <button type="button" (click)="filter.onReset()">X</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Page Buttons -->
+  <div class="ww-flex-row" style="justify-content: space-between">
+    <button
+      type="button"
+      [disabled]="!pages.hasPrevPage"
+      (click)="pages.onPrevPage()"
+      class="ww-button ww-button-regular"
+    >
+      &#8592;
+    </button>
+    <span style="text-align: center">{{ pages.currentPage }}</span>
+    <button
+      type="button"
+      [disabled]="!pages.hasNextPage"
+      (click)="pages.onNextPage()"
+      class="ww-button ww-button-regular"
+    >
+      &#8594;
+    </button>
+  </div>
+
+  <!-- Selection List -->
+  <div class="ww-flex-column ww-select-container" #capselectlist>
+    <div
+      *ngFor="let cap of caps; let i = index"
+      (click)="onSelect(i)"
+      [class.ww-selected-item]="cap.isSelected"
+      [class.ww-not-selectable]="!cap.isAvailable"
+      class="ww-flex-row ww-card"
+    >
+      <div class="ww-info-block">
+        <div>{{ cap.name }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Button Panel -->
+  <div class="ww-flex-row ww-default-button-panel" *ngIf="!selectMode">
+    <button *ngIf="selectMode" (click)="onClickSelect()">Select</button>
+    <button type="button" (click)="onCancel()">Back</button>
+  </div>
+</div>

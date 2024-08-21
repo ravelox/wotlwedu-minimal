@@ -1,0 +1,83 @@
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<div
+  class="ww-flex-column"
+  style="
+    justify-items: center;
+    z-index: 2000;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: white;
+    border: 2px solid black;
+    padding: 5px;
+    gap: 5px;
+  "
+  id="imageminiselect"
+>
+  <div class="ww-flex-row">
+    <div class="ww-page-header-title ww-flex-grow">Images</div>
+    <div class="ww-window-close-icon" (click)="onClose()"></div>
+  </div>
+
+  <!-- Filter Input Box -->
+  <div class="ww-flex-row" style="justify-content: center">
+    <form [formGroup]="filter.form" #f="ngForm">
+      <label for="filterInput">Filter</label>
+      <div class="ww-flex-row">
+        <input
+          type="text"
+          id="filterString"
+          formControlName="filterString"
+          (input)="filter.onChange($event)"
+        />
+        <button type="button" (click)="filter.onReset()">X</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Page Buttons -->
+  <div class="ww-flex-row" style="justify-content: space-between">
+    <button
+      type="button"
+      [disabled]="!pages.hasPrevPage"
+      (click)="pages.onPrevPage()"
+    >
+      &#8592;
+    </button>
+    <div style="font-size: 0.6rem">{{ pages.currentPage }}</div>
+    <button
+      type="button"
+      [disabled]="!pages.hasNextPage"
+      (click)="pages.onNextPage()"
+    >
+      &#8594;
+    </button>
+  </div>
+
+  <!-- Selection List -->
+  <div
+    style="
+      height: 150px;
+      min-width: 100%;
+      overflow-y: scroll;
+      display: grid;
+      grid-auto-flow: row;
+      grid-template-columns: 1fr 1fr 1fr;
+      border: 1px solid black;
+      padding: 5px;
+      scroll-snap-type: y mandatory;
+    "
+  >
+    <img
+      *ngFor="let image of images; let i = index"
+      (click)="onSelect(i)"
+      src="{{ image.url ? image.url : 'about:blank' }}"
+      alt="{{ image.name.substr(0, 30) }}"
+      style="max-width: 100px; max-height: 100px; cursor: pointer; border: 2px solid black; border-radius: 5px;"
+    />
+  </div>
+</div>

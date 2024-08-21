@@ -1,0 +1,111 @@
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<div class="ww-flex-column" style="min-width: 100%; gap: 5px">
+  <div class="ww-flex-row">
+    <div class="ww-page-header-title ww-flex-grow">Users</div>
+    <button (click)="onAdd()">Add</button>
+  </div>
+  <!-- Filter Input Box -->
+  <div class="ww-flex-row" style="min-width: 100%; justify-content: center">
+    <form [formGroup]="filter.form" #f="ngForm">
+      <label for="filterInput">Filter</label>
+      <div class="ww-flex-row">
+        <input
+          type="text"
+          id="filterString"
+          formControlName="filterString"
+          (input)="filter.onChange($event)"
+          style="min-width: 90%"
+        />
+        <button type="button" (click)="filter.onReset()">X</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Page Buttons -->
+  <div class="ww-flex-row" style="justify-content: space-between">
+    <button
+      type="button"
+      [disabled]="!pages.hasPrevPage"
+      (click)="pages.onPrevPage()"
+      class="ww-button ww-button-regular"
+    >
+      &#8592;
+    </button>
+    <span style="text-align: center">{{ pages.currentPage }}</span>
+    <button
+      type="button"
+      [disabled]="!pages.hasNextPage"
+      (click)="pages.onNextPage()"
+      class="ww-button ww-button-regular"
+    >
+      &#8594;
+    </button>
+  </div>
+
+  <!-- Selection List -->
+  <div class="ww-flex-column ww-select-container" #userselectlist>
+    <div
+      *ngFor="let user of users; let i = index"
+      [class.ww-selected-item]="user.isSelected"
+      [class.ww-not-selectable]="!user.isAvailable"
+      class="ww-flex-row ww-card"
+    >
+      <div
+        class="ww-flex-row"
+        style="
+          justify-content: space-between;
+          flex-grow: 1;
+          padding-right: 10px;
+        "
+        (click)="onSelect(i)"
+      >
+        <div class="ww-avatar-container">
+          <img
+            *ngIf="user.image && user.image.url"
+            src="{{ user.image.url }}"
+            class="ww-avatar-image"
+          />
+          <div
+            *ngIf="!(user.image && user.image.url)"
+            class="ww-avatar-initial"
+          >
+            {{ user.firstName.substr(0, 1) }}
+          </div>
+        </div>
+
+        <div class="ww-info-block">
+          <div class="ww-info-block-title">{{ user.fullName }}</div>
+          <div class="ww-info-block-text">{{ user.email }}</div>
+        </div>
+      </div>
+      <!-- Commented out for future use -->
+      <!-- <div>
+        <div
+          style="
+            height: 2.5rem;
+            width: 2.5rem;
+            border: 1px solid black;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          "
+        >
+          <div class="ww-context-selector" (click)="onContextMenu($event, i)">
+            <div style="font-size: 2rem">&#x22EE;</div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+
+  <!-- Button Panel -->
+  <div class="ww-flex-row ww-default-button-panel" *ngIf="!selectMode">
+    <button *ngIf="selectMode" (click)="onClickSelect()">Select</button>
+    <button type="button" (click)="onCancel()">Back</button>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<div
+  class="ww-flex-column"
+  style="
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    background-color: white;
+    border: 1px solid black;
+    width: 65svw;
+    padding: 5px;
+  "
+>
+  <div class="ww-flex-row ww-selection-component-title">
+    <div class="ww-page-header-title" style="width: 100%">Add Friend</div>
+  </div>
+  <div>
+    <div style="color: var(--theme-color)">
+      <p>Enter the email address of the friend you want to add</p>
+    </div>
+
+    <form
+      class="ww-flex-column ww-form"
+      style="width: 100%; gap: 5px"
+      #f="ngForm"
+      (ngSubmit)="onSubmit(f)"
+    >
+      <div>
+        <label>Email Address</label>
+        <input #inputEmailAddress id="email" name="email" ngModel required email style="width: 100%;"/>
+      </div>
+      <div class="ww-flex-row" style="gap: 5px;">
+        <button [disabled]="!f.valid" class="ww-button ww-button-theme">
+          Invite
+        </button>
+        <button
+          type="button"
+          class="ww-button ww-button-yellow"
+          (click)="onClose()"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

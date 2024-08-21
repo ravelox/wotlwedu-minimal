@@ -1,0 +1,61 @@
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<app-modal-dialog
+  *ngIf="confirmDialog.isVisible"
+  [message]="confirmDialog.message"
+  (close)="confirmDialog.onCloseClick()"
+  (yesAction)="confirmDialog.onYesClick()"
+  (noAction)="confirmDialog.onNoClick()"
+></app-modal-dialog>
+<app-modal-loader *ngIf="loader.loading"></app-modal-loader>
+<div class="ww-page-header-title">Category Details</div>
+<div class="ww-flex-column">
+  <!-- Form Input panel -->
+  <form
+    [formGroup]="categoryDetailForm"
+    (ngSubmit)="onSubmit()"
+    #f="ngForm"
+    class="ww-flex-column"
+    style="gap: 5px"
+  >
+    <input type="hidden" id="categoryId" formControlName="categoryId" />
+    <div class="ww-form-input">
+      <label for="name">Name</label>
+      <input formControlName="name" type="text" id="name" required />
+    </div>
+    <div class="ww-form-input">
+      <label for="description">Description</label>
+      <input
+        formControlName="description"
+        type="text"
+        id="description"
+        required
+      />
+    </div>
+
+    <!-- Button Panel -->
+    <div class="ww-flex-row ww-default-button-panel">
+      <button
+        *ngIf="!editMode"
+        type="submit"
+        [disabled]="!f.valid || !(f.touched || f.dirty)"
+      >
+        Add
+      </button>
+      <button
+        *ngIf="editMode"
+        type="submit"
+        [disabled]="!f.valid || !(f.touched || f.dirty)"
+      >
+        Save
+      </button>
+      <button type="button" (click)="onCancel()">Back</button>
+      <button *ngIf="editMode" type="button" (click)="onDelete()">
+        Delete
+      </button>
+    </div>
+  </form>
+</div>

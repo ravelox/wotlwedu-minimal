@@ -1,0 +1,512 @@
+:root {
+  --theme-color: #4d6dad;
+  --soft-theme: #8baae8;
+}
+
+* {
+  font-family: "Poppins", sans-serif;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.ww-flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.ww-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.ww-flex-grow {
+  flex-grow: 1;
+}
+
+.ww-default-button-panel {
+  justify-content: center;
+  gap: 5px;
+}
+
+.ww-context-button-panel {
+  padding-top: 10px;
+  justify-content: center;
+  gap: 5px;
+}
+
+button:disabled {
+  color: darkgray;
+  background-color: lightgray;
+}
+
+button {
+  border-radius: 0;
+  border: 0px solid var(--theme-color);
+  background-color: var(--theme-color);
+  color: white;
+}
+
+.ww-button-right {
+  border-left: 0;
+}
+
+.ww-page-header-title {
+  display: flex;
+  background-color: var(--theme-color);
+  color: white;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+  border-right: 0;
+  font-weight: bold;
+}
+
+input {
+  border-radius: 0;
+}
+.ww-form-input {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ww-notif-count-container {
+  position: relative;
+}
+
+.ww-notif-counter {
+  position: absolute;
+  top: 0px;
+  left: 15px;
+  z-index: 101;
+  align-content: center;
+  text-align: center;
+  border: 1px solid black;
+  border-radius: 50%;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 0.75rem;
+  background-color: red;
+  color: white;
+}
+
+.ww-modal-backdrop {
+  background: rgba(0, 0, 0, 0.25);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+}
+
+.ww-modal-alert {
+  background-color: white;
+  position: absolute;
+  border: 1px solid black;
+  padding: 16px;
+  top: 25svh;
+  left: 0;
+  width: 100%;
+  z-index: 1001;
+}
+
+.ww-modal-loader {
+  justify-content: center;
+}
+
+.ww-selected-item {
+  background-color: var(--soft-theme);
+  color: white;
+}
+
+.ww-not-selectable {
+  pointer-events: none;
+  cursor: not-allowed;
+  color: lightgrey;
+}
+
+.ww-not-full-selection {
+  color: lightgrey;
+}
+
+.ww-card {
+  border: 1px solid black;
+  border-radius: 5px;
+  width: 95%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+}
+
+.ww-notification-card {
+  border: 1px solid black;
+  border-radius: 5px;
+  width: 95%;
+  align-items: center;
+  padding: 5px;
+  justify-content: space-between;
+}
+
+.ww-detail-image-container {
+  border: 2px solid black;
+  width: 75px;
+  height: 75px;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ww-detail-image-placeholder {
+  height: 70px;
+  width: 70px;
+  justify-content: center;
+  align-content: center;
+  text-align: center;
+}
+
+.ww-avatar-container {
+  width: 5rem;
+  height: 2.5rem;
+  color: white;
+  align-items: center;
+  justify-content: flex-start;
+  display: flex;
+  margin: 3px;
+  z-index: 1;
+}
+
+.ww-avatar-container .ww-avatar-image {
+  max-width: 4.75rem;
+  height: auto;
+}
+
+.ww-avatar-container .ww-avatar-initial {
+  border-radius: 50%;
+  background-color: var(--theme-color);
+  height: 2rem;
+  width: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ww-context-selector {
+  height: 2.5rem;
+  width: 2.5rem;
+  border: 1px solid black;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ww-select-container {
+  width: 100%;
+  border: 1px solid black;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 60svh;
+  overflow-y: scroll;
+  gap: 5px;
+  align-items: center;
+  padding: 5px;
+}
+
+.ww-mini-select-container {
+  max-height: 30svh;
+  overflow-y: scroll;
+  width: 75svw;
+  gap: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.ww-info-block {
+  display: block;
+}
+
+.ww-info-block div {
+  text-align: right;
+}
+
+.ww-info-block-title {
+  color: var(--theme-color);
+  font-weight: bold;
+}
+.ww-info-block-text {
+  font-size: 2.5vw;
+
+}
+
+.ww-truncate-30 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 30ch;
+}
+
+.ww-notification-block {
+  justify-items: flex-start;
+  align-content: flex-start;
+}
+.ww-notification-block-title {
+  color: var(--theme-color);
+  text-align: left;
+  font-weight: bold;
+}
+.ww-notification-block-detail {
+  font-size: 0.8rem;
+}
+
+.ww-context-menu-container {
+  z-index: 1001;
+  background-color: white;
+  border: 3px solid black;
+  position: absolute;
+  top: 15svh;
+  left: 15svw;
+  border-radius: 5px;
+}
+
+.ww-context-menu {
+  padding: 10px;
+}
+.ww-context-item {
+  width: 100%;
+}
+
+.ww-context-backdrop {
+  background: rgba(0, 0, 0, 0.25);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999;
+}
+
+.ww-indicator {
+  justify-items: center;
+  align-content: center;
+  font-size: 2rem;
+  padding: 2px;
+  margin: 0;
+  box-sizing: border-box;
+  flex-shrink: 1;
+}
+
+.ww-unread,
+.ww-in-progress {
+  color: green;
+}
+.ww-unread::after,
+.ww-in-progress::after {
+  content: "\25CF";
+}
+
+.ww-read,
+.ww-not-started {
+  color: black;
+}
+.ww-read::after,
+.ww-not-started::after {
+  content: "\25CB";
+}
+
+.ww-bad,
+.ww-stopped {
+  color: red;
+}
+
+.ww-expired,
+.ww-ended {
+  color: var(--theme-color);
+}
+
+.ww-bad::after,
+.ww-stopped::after {
+  content: "\25CF";
+}
+
+.ww-image-viewer {
+  z-index: 2000;
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  width: 80svw;
+  max-height: 90svh;
+  background-color: white;
+  border: 5px solid black;
+}
+
+.ww-general-viewer {
+  z-index: 2000;
+  position: absolute;
+  top: 15px;
+  left: 20px;
+  width: 80svw;
+  max-height: 90svh;
+  background-color: white;
+  border: 5px solid black;
+}
+
+.ww-window-close-icon {
+  display: flex;
+  padding: 5px;
+  width: 3rem;
+  justify-content: center;
+  background-color: lightgray;
+}
+.ww-window-close-icon::after {
+  content: "X";
+}
+
+.ww-tooltip-text {
+  position: absolute;
+  z-index: 1000;
+  top: 30px;
+  left: 20px;
+  opacity: 0;
+  background-color: white;
+  border: 2px solid black;
+  padding: 5px;
+  color: var(--theme-color);
+  transition: opacity 0.5s linear;
+}
+
+/* Google Font - Poppins */
+.poppins-thin {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.poppins-extralight {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  font-style: normal;
+}
+
+.poppins-light {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.poppins-regular {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.poppins-medium {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.poppins-semibold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: normal;
+}
+
+.poppins-bold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.poppins-extrabold {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: normal;
+}
+
+.poppins-black {
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.poppins-thin-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.poppins-extralight-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  font-style: italic;
+}
+
+.poppins-light-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.poppins-regular-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.poppins-medium-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.poppins-semibold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.poppins-bold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.poppins-extrabold-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-style: italic;
+}
+
+.poppins-black-italic {
+  font-family: "Poppins", sans-serif;
+  font-weight: 900;
+  font-style: italic;
+}
+
+/* Debugging classes */
+.ww-debug-red {
+  outline: 10px solid red;
+}
+
+.ww-debug-blue {
+  border: 10px solid blue;
+}
+
+.ww-debug-green {
+  border: 10px solid green;
+}
+
+.ww-debug-yellow {
+  border: 10px solid yellow;
+}
+
+.ww-debug-pink {
+  border: 10px solid pink;
+}
+
+.ww-debug-purple {
+  border: 10px solid purple;
+}

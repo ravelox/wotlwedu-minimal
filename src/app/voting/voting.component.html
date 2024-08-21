@@ -1,0 +1,17 @@
+<div
+  style="
+    max-height: 70svh;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  "
+>
+  <app-voting-election-select></app-voting-election-select>
+  <app-vote-cast></app-vote-cast>
+  <div
+    class="ww-flex-row ww-default-button-panel"
+    style="width: 100%; justify-content: center; gap: 5px"
+  >
+    <button type="button" (click)="onCancel()">Back</button>
+  </div>
+</div>

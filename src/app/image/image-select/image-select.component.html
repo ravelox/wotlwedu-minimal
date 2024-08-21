@@ -1,0 +1,80 @@
+<div>
+  <app-context
+    [options]="contextMenu.options"
+    [objectId]="contextMenu.objectId"
+    (clickAway)="contextMenu.hide()"
+    [objectId]="contextMenu.objectId"
+    [show]="contextMenu.showMenu"
+  ></app-context>
+  <app-modal-alert
+    *ngIf="alertBox.errorMessage"
+    [message]="alertBox.errorMessage"
+    (close)="alertBox.onCloseAlert()"
+  ></app-modal-alert>
+  <app-modal-dialog
+    *ngIf="confirmDialog.isVisible"
+    [message]="confirmDialog.message"
+    (close)="confirmDialog.onCloseClick()"
+    (yesAction)="confirmDialog.onYesClick()"
+    (noAction)="confirmDialog.onNoClick()"
+  >
+  </app-modal-dialog>
+  <app-friend-mini
+    *ngIf="friendMiniVisible"
+    (close)="onFriendMiniClose()"
+    (friendselect)="onFriendSelect($event)"
+  ></app-friend-mini>
+  <app-modal-loader *ngIf="loader.loading"></app-modal-loader>
+</div>
+<div class="ww-flex-column" style="min-width: 100%; gap: 5px">
+  <div class="ww-flex-row">
+    <div class="ww-page-header-title ww-flex-grow">Images</div>
+    <button (click)="onClickAdd()">Add</button>
+  </div>
+
+
+  <!-- Selection List -->
+  <div class="ww-flex-column ww-select-container" #imageselectlist>
+    <div
+      *ngFor="let image of images; let i = index"
+      [class.ww-selected-item]="image.isSelected"
+      [class.ww-not-full-selection]="!image.isAvailable"
+      class="ww-flex-row ww-card"
+    >
+      <div
+        class="ww-flex-row"
+        style="
+          justify-content: space-between;
+          flex-grow: 1;
+          padding-right: 10px;
+        "
+        (click)="onSelect(i)"
+      >
+        <div class="ww-avatar-container">
+          <img
+            *ngIf="image.url"
+            src="{{ image.url }}"
+            class="ww-avatar-image"
+          />
+
+          <div *ngIf="!image.url" class="ww-avatar-initial">
+            {{ image.name.substr(0, 1) }}
+          </div>
+        </div>
+
+        <div class="ww-info-block">
+          <div class="ww-info-block-title">{{ image.name }}</div>
+          <div class="ww-info-block-text ww-truncate-30">{{ image.description }}</div>
+        </div>
+      </div>
+      <div class="ww-context-selector" (click)="onContextMenu($event, i)">
+        <div style="font-size: 2rem">&#x22EE;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Button Panel -->
+  <div class="ww-flex-row ww-default-button-panel">
+    <button type="button" (click)="onCancel()">Back</button>
+  </div>
+</div>

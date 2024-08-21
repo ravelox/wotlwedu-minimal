@@ -1,0 +1,88 @@
+<div>
+  <app-modal-alert
+    *ngIf="alertBox.errorMessage"
+    [message]="alertBox.errorMessage"
+    (close)="alertBox.onCloseAlert()"
+  ></app-modal-alert>
+  <app-modal-loader *ngIf="loader.loading"></app-modal-loader>
+</div>
+<div class="ww-flex-column" style="min-width: 100%; gap: 5px">
+  <div class="ww-flex-row">
+    <div class="ww-page-header-title ww-flex-grow">Roles</div>
+    <button (click)="onAdd()">Add</button>
+  </div>
+  <!-- Filter Input Box -->
+  <div class="ww-flex-row" style="min-width: 100%; justify-content: center">
+    <form [formGroup]="filter.form" #f="ngForm">
+      <label for="filterInput">Filter</label>
+      <div class="ww-flex-row">
+        <input
+          type="text"
+          id="filterString"
+          formControlName="filterString"
+          (input)="filter.onChange($event)"
+          style="min-width: 90%"
+        />
+        <button type="button" (click)="filter.onReset()">X</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Page Buttons -->
+  <div class="ww-flex-row" style="justify-content: space-between">
+    <button
+      type="button"
+      [disabled]="!pages.hasPrevPage"
+      (click)="pages.onPrevPage()"
+      class="ww-button ww-button-regular"
+    >
+      &#8592;
+    </button>
+    <span style="text-align: center">{{ pages.currentPage }}</span>
+    <button
+      type="button"
+      [disabled]="!pages.hasNextPage"
+      (click)="pages.onNextPage()"
+      class="ww-button ww-button-regular"
+    >
+      &#8594;
+    </button>
+  </div>
+
+  <!-- Selection List -->
+  <div class="ww-flex-column ww-select-container" #roleselectlist>
+    <div
+      *ngFor="let role of roles; let i = index"
+      [class.ww-selected-item]="role.isSelected"
+      [class.ww-not-full-selection]="!role.isAvailable"
+      class="ww-flex-row ww-card"
+    >
+      <div
+        class="ww-flex-row"
+        style="
+          justify-content: space-between;
+          flex-grow: 1;
+          padding-right: 10px;
+        "
+        (click)="onSelect(i)"
+      >
+        <div class="ww-avatar-container">
+          <div class="ww-avatar-initial">
+            {{ role.name.substr(0, 1) }}
+          </div>
+        </div>
+
+        <div class="ww-info-block">
+          <div class="ww-info-block-title">{{ role.name }}</div>
+          <div *ngIf="role.protected" style="color: red; font-size: 0.5rem">Protected</div>
+          <div class="ww-info-block-text ww-truncate-30">{{ role.description }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Button Panel -->
+  <div class="ww-flex-row ww-default-button-panel">
+    <button type="button" (click)="onCancel()">Back</button>
+  </div>
+</div>

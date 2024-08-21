@@ -1,0 +1,86 @@
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<app-modal-dialog
+  *ngIf="confirmDialog.isVisible"
+  [message]="confirmDialog.message"
+  (close)="confirmDialog.onCloseClick()"
+  (yesAction)="confirmDialog.onYesClick()"
+  (noAction)="confirmDialog.onNoClick()"
+></app-modal-dialog>
+<app-modal-loader *ngIf="loader.loading"></app-modal-loader>
+<div class="ww-flex-column" style="gap: 5px">
+  <!-- Form Input panel -->
+  <form
+    [formGroup]="roleDetailForm"
+    (ngSubmit)="onSubmit()"
+    #f="ngForm"
+    class="ww-flex-column ww-form"
+    style="gap: 5px"
+  >
+    <input type="hidden" id="roleId" formControlName="roleId" />
+    <div class="ww-flex-column">
+      <div class="ww-label">Name</div>
+      <input formControlName="name" type="text" id="name" required />
+    </div>
+    <div class="ww-flex-column">
+      <div class="ww-label">Description</div>
+      <input
+        formControlName="description"
+        type="text"
+        id="description"
+        required
+      />
+    </div>
+    <!-- Button Panel for selection toggles-->
+    <div class="ww-flex-row ww-default-button-panel">
+      <button class="ww-button" type="button" (click)="onCapToggle()">
+        {{capIsVisible ? "Hide " : "Show "}}Capabilities
+      </button>
+      <button class="ww-button" type="button" (click)="onUserToggle()">
+        {{userIsVisible ? "Hide " : "Show "}}Users
+      </button>
+    </div>
+    <!-- Capabilities Selection List -->
+    <app-cap-select *ngIf="capIsVisible" [selectMode]="true"></app-cap-select>
+
+    <!-- Users Selection List -->
+    <app-user-select
+      [selectMode]="true"
+      *ngIf="userIsVisible"
+    ></app-user-select>
+
+    <!-- Button Panel -->
+    <div class="ww-flex-row ww-default-button-panel">
+      <button
+        *ngIf="!editMode"
+        type="submit"
+        [disabled]="!f.valid || !(f.touched || f.dirty)"
+        class="ww-button"
+      >
+        Add
+      </button>
+      <button
+        *ngIf="editMode"
+        type="submit"
+        [disabled]="!f.valid || !(f.touched || f.dirty)"
+        class="ww-button"
+      >
+        Save
+      </button>
+      <button class="ww-button" type="button" (click)="onCancel()">
+        Cancel
+      </button>
+      <button
+        *ngIf="editMode"
+        type="button"
+        class="ww-button"
+        (click)="onDelete()"
+      >
+        Delete
+      </button>
+    </div>
+  </form>
+</div>

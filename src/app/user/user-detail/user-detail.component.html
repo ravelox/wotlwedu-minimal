@@ -1,0 +1,142 @@
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<app-modal-dialog
+  *ngIf="confirmDialog.isVisible"
+  [message]="confirmDialog.message"
+  (close)="confirmDialog.onCloseClick()"
+  (yesAction)="confirmDialog.onYesClick()"
+  (noAction)="confirmDialog.onNoClick()"
+></app-modal-dialog>
+<app-image-select-mini
+  *ngIf="imageSelectorVisible"
+  style="z-index: 5000; position: absolute"
+  (close)="toggleImageSelector()"
+></app-image-select-mini>
+<app-friend-mini
+  *ngIf="currentUser && friendListVisible"
+  style="z-index: 5000; position: absolute"
+  (close)="toggleFriendList()"
+  [userId]="currentUser.id"
+></app-friend-mini>
+<div class="ww-page-header-title">User Details</div>
+<div class="ww-flex-column">
+  <!-- Form Input panel -->
+  <form
+    [formGroup]="userDetailForm"
+    (ngSubmit)="onSubmit()"
+    #f="ngForm"
+    class="ww-flex-column"
+    style="gap: 5px"
+  >
+    <input type="hidden" id="userId" formControlName="userId" />
+    <!-- Avatar Image -->
+    <div style="margin: 10px; margin-left: 0px">
+      <div
+        style="
+          border: 2px solid black;
+          width: 75px;
+          height: 75px;
+          border-radius: 5px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
+        (click)="toggleImageSelector()"
+      >
+        <img
+          src="{{ currentImage.url }}"
+          *ngIf="currentImage && currentImage.url"
+          style="height: 70px; width: 70px"
+        />
+        <div
+          *ngIf="!(currentImage && currentImage.url)"
+          class="ww-flex-column"
+          style="
+            height: 70px;
+            width: 70px;
+            justify-content: center;
+            align-items: center;
+          "
+        >
+          No Image
+        </div>
+      </div>
+    </div>
+    <div class="ww-form-input">
+      <label for="email">Email</label>
+      <input
+        formControlName="email"
+        type="text"
+        id="email"
+        autocomplete="off"
+        required
+        email
+      />
+    </div>
+    <div class="ww-form-input">
+      <label for="firstName">First Name</label>
+      <input formControlName="firstName" type="text" id="firstName" required />
+    </div>
+    <div class="ww-form-input">
+      <label for="lastName">Last Name</label>
+      <input formControlName="lastName" type="text" id="lastName" required />
+    </div>
+    <div class="ww-form-input">
+      <label for="alias">Alias</label>
+      <input formControlName="alias" type="text" id="alias" required />
+    </div>
+    <div>
+      <div>Active</div>
+      <input formControlName="active" type="checkbox" id="active" />
+    </div>
+    <div>
+      <div>Verified</div>
+      <input formControlName="verified" type="checkbox" id="verified" />
+    </div>
+    <div>
+      <div>Admin</div>
+      <input formControlName="admin" type="checkbox" id="admin" />
+    </div>
+    <div>
+      <div>Send password reset</div>
+      <input
+        formControlName="resetpassword"
+        type="checkbox"
+        id="resetpassword"
+      />
+    </div>
+
+    <button
+      type="button"
+      [disabled]="!currentUser"
+      (click)="toggleFriendList()"
+    >
+      Show Friends
+    </button>
+
+    <!-- Button Panel -->
+    <div class="ww-flex-row" style="justify-content: center; gap: 5px">
+      <button
+        *ngIf="!editMode"
+        type="submit"
+        [disabled]="!f.valid || !(f.touched || f.dirty)"
+      >
+        Add
+      </button>
+      <button
+        *ngIf="editMode"
+        type="submit"
+        [disabled]="!f.valid || !(f.touched || f.dirty)"
+      >
+        Save
+      </button>
+      <button type="button" (click)="onCancel()">Back</button>
+      <button *ngIf="editMode" type="button" (click)="onDelete()">
+        Delete
+      </button>
+    </div>
+  </form>
+</div>

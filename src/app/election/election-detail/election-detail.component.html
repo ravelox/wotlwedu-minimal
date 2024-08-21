@@ -1,0 +1,166 @@
+<div>
+  <app-modal-alert
+    *ngIf="alertBox.errorMessage"
+    [message]="alertBox.errorMessage"
+    (close)="alertBox.onCloseAlert()"
+  ></app-modal-alert>
+  <app-modal-dialog
+    *ngIf="confirmDialog.isVisible"
+    [message]="confirmDialog.message"
+    (close)="confirmDialog.onCloseClick()"
+    (yesAction)="confirmDialog.onYesClick()"
+    (noAction)="confirmDialog.onNoClick()"
+  ></app-modal-dialog>
+  <app-modal-loader *ngIf="loader.loading"></app-modal-loader>
+  <app-image-select-mini
+    *ngIf="imageSelectorVisible"
+    style="z-index: 500; position: absolute; top: 100px; left: 30px"
+    (close)="toggleImageSelector()"
+    (imageselected)="onImageSelect($event)"
+  ></app-image-select-mini>
+</div>
+<div class="ww-page-header-title">Election Details</div>
+<div class="ww-flex-column">
+  <!-- Form Input panel -->
+  <form
+    [formGroup]="electionDetailForm"
+    (ngSubmit)="onSubmit()"
+    #f="ngForm"
+    class="ww-flex-column"
+    style="gap: 5px"
+  >
+    <input type="hidden" id="electionId" formControlName="electionId" />
+    <!-- Avatar Image -->
+    <div style="margin: 10px; margin-left: 0px">
+      <div
+        style="
+          border: 2px solid black;
+          width: 75px;
+          height: 75px;
+          border-radius: 5px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
+        (click)="toggleImageSelector()"
+      >
+        <img
+          src="{{ currentImage.url }}"
+          *ngIf="currentImage && currentImage.url"
+          style="height: 70px; width: 70px"
+        />
+        <div
+          *ngIf="!(currentImage && currentImage.url)"
+          class="ww-flex-column"
+          style="
+            height: 70px;
+            width: 70px;
+            justify-content: center;
+            align-items: center;
+          "
+        >
+          No Image
+        </div>
+      </div>
+    </div>
+    <div class="ww-form-input">
+      <label for="name">Name</label>
+      <input
+        formControlName="name"
+        type="text"
+        id="name"
+        autocomplete="off"
+        required
+      />
+    </div>
+    <div class="ww-form-input">
+      <label for="description">Description</label>
+      <input
+        formControlName="description"
+        type="text"
+        id="description"
+        required
+      />
+    </div>
+    <div class="ww-form-input">
+      <label for="status">Status</label>
+      <span *ngIf="currentElection">{{ currentElection.status.name }}</span>
+      <span *ngIf="!currentElection">Not Started</span>
+    </div>
+    <div class="ww-form-input">
+      <label for="listId">List</label>
+      <select formControlName="listId" id="listId">
+        <option
+          *ngFor="let list of currentLists; let i = index"
+          value="{{ list.id }}"
+        >
+          {{ list.name }}
+        </option>
+      </select>
+    </div>
+    <div class="ww-form-input">
+      <label for="groupId">Group</label>
+      <select formControlName="groupId" id="groupId">
+        <option
+          *ngFor="let group of currentGroups; let i = index"
+          value="{{ group.id }}"
+        >
+          {{ group.name }}
+        </option>
+      </select>
+    </div>
+    <div class="ww-form-input">
+      <label for="expiration">Expiration</label>
+      <input
+        type="datetime-local"
+        formControlName="expiration"
+        id="expiration"
+      />
+    </div>
+
+    
+   <!-- Button Panel -->
+   <div class="ww-flex-row" style="justify-content: center; gap: 5px">
+    <button
+      *ngIf="!editMode"
+      type="submit"
+      [disabled]="!f.valid || !(f.touched || f.dirty)"
+    >
+      Add
+    </button>
+    <button
+      *ngIf="editMode"
+      type="submit"
+      [disabled]="!f.valid || !(f.touched || f.dirty)"
+    >
+      Save
+    </button>
+    <button type="button" (click)="onCancel()">Back</button>
+    <button *ngIf="editMode" type="button" (click)="onDelete()">
+      Delete
+    </button>
+        <button
+        *ngIf="
+          editMode &&
+          currentElection &&
+          currentElection.status.name !== 'In Progress'
+        "
+        type="button"
+        (click)="onStartElection()"
+      >
+        Start Election
+      </button>
+      <button
+        *ngIf="
+          editMode &&
+          currentElection &&
+          currentElection.status.name === 'In Progress'
+        "
+        type="button"
+        (click)="onStopElection()"
+      >
+        Stop Election
+      </button>
+    </div>
+  </form>
+</div>

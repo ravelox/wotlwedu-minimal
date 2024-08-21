@@ -1,0 +1,87 @@
+<div>
+  <app-modal-alert
+    *ngIf="alertBox.errorMessage"
+    [message]="alertBox.errorMessage"
+    (close)="alertBox.onCloseAlert()"
+  ></app-modal-alert>
+  <app-modal-dialog
+    *ngIf="confirmDialog.isVisible"
+    [message]="confirmDialog.message"
+    (close)="confirmDialog.onCloseClick()"
+    (yesAction)="confirmDialog.onYesClick()"
+    (noAction)="confirmDialog.onNoClick()"
+  ></app-modal-dialog>
+  <app-context
+    [options]="contextMenu.options"
+    [objectId]="contextMenu.objectId"
+    (clickAway)="contextMenu.hide()"
+    [objectId]="contextMenu.objectId"
+    [show]="contextMenu.showMenu"
+  ></app-context>
+  <app-modal-loader *ngIf="loader.loading"></app-modal-loader>
+</div>
+<div class="ww-flex-column" style="min-width: 100%; gap: 5px">
+  <div class="ww-flex-row">
+    <div class="ww-page-header-title ww-flex-grow">Friends</div>
+    <button *ngIf="allowAdd" (click)="onClickAdd()">Add</button>
+  </div>
+
+  <div *ngIf="addFriend" style="z-index: 1000; position: absolute">
+    <app-friend-add (closeAdd)="onCloseAdd()"></app-friend-add>
+  </div>
+
+  <div class="ww-flex-row" style="justify-content: center">
+    <label for="showBlocked">Show Blocked</label>
+    <input
+      type="checkbox"
+      id="showBlocked"
+      name="showBlocked"
+      (change)="onShowBlocked($event)"
+    />
+  </div>
+  <!-- Selection List -->
+  <div class="ww-flex-column ww-select-container" #friendselectlist>
+    <div
+      *ngFor="let friend of currentFriends; let i = index"
+      [class.ww-selected-item]="friend.isSelected"
+      [class.ww-not-full-selection]="!friend.isAvailable"
+      class="ww-flex-row ww-card"
+    >
+      <div
+        class="ww-flex-row"
+        style="
+          justify-content: space-between;
+          flex-grow: 1;
+          padding-right: 10px;
+        "
+        (click)="onSelect(i)"
+      >
+        <div class="ww-avatar-container">
+          <img
+            *ngIf="friend.user.image && friend.user.image.url"
+            src="{{ friend.user.image.url }}"
+            class="ww-avatar-image"
+          />
+
+          <div *ngIf="!(friend.user.image && friend.user.image.url)" class="ww-avatar-initial">
+            {{ friend.user.firstName.substr(0, 1) }}
+          </div>
+        </div>
+
+        <div class="ww-info-block">
+          <div class="ww-info-block-title">{{ friend.user.fullName }}</div>
+          <div class="ww-info-block-text ww-truncate-30">{{ friend.status.name }}</div>
+        </div>
+      </div>
+      <div class="ww-context-selector" (click)="onContextMenu($event, i)">
+        <div style="font-size: 2rem">&#x22EE;</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Button Panel -->
+  <div class="ww-flex-row ww-default-button-panel" *ngIf="!selectMode">
+    <button *ngIf="selectMode" (click)="onClickSelect()">Select</button>
+    <button type="button" (click)="onCancel()">Back</button>
+  </div>
+</div>

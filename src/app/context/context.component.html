@@ -1,0 +1,20 @@
+<div class="ww-context-backdrop" *ngIf="show">
+  <div class="ww-context-menu-container ww-flex-column" style="gap: 5px">
+    <div class="ww-page-header-title">Options</div>
+    <div class="ww-context-menu">
+      <div
+        *ngFor="let option of options; let i = index"
+        [class.ww-item-disabled]="!option.enabled"
+        [style.pointer-events]="option.enabled ? '' : 'none'"
+        (click)="onSelect(i)"
+        class="ww-context-item"
+      >
+        <div *ngIf="option.name !== '_hr_'">{{ option.name }}</div>
+        <div *ngIf="option.name === '_hr_'"><hr /></div>
+      </div>
+      <div class="ww-flex-row ww-context-button-panel">
+        <button type="button">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

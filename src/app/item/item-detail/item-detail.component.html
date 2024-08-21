@@ -1,0 +1,99 @@
+<div>
+  <app-modal-alert
+    *ngIf="alertBox.errorMessage"
+    [message]="alertBox.errorMessage"
+    (close)="alertBox.onCloseAlert()"
+  ></app-modal-alert>
+  <app-modal-dialog
+    *ngIf="confirmDialog.isVisible"
+    [message]="confirmDialog.message"
+    (close)="confirmDialog.onCloseClick()"
+    (yesAction)="confirmDialog.onYesClick()"
+    (noAction)="confirmDialog.onNoClick()"
+  ></app-modal-dialog>
+  <app-modal-loader *ngIf="loader.loading"></app-modal-loader>
+  <app-image-select-mini
+    *ngIf="imageSelectorVisible"
+    style="z-index: 500; position: absolute; top: 100px; left: 30px"
+    (close)="toggleImageSelector()"
+    (imageselected)="onImageSelect($event)"
+  ></app-image-select-mini>
+</div>
+<div class="ww-page-header-title">Item Details</div>
+<div class="ww-flex-column">
+  <!-- Form Input panel -->
+  <form
+    [formGroup]="itemDetailForm"
+    (ngSubmit)="onSubmit()"
+    #f="ngForm"
+    class="ww-flex-column"
+    style="gap: 5px"
+  >
+    <input type="hidden" id="itemId" formControlName="itemId" />
+    <!-- Avatar Image -->
+    <div style="margin: 10px; margin-left: 0px">
+      <div class="ww-detail-image-container" (click)="toggleImageSelector()">
+        <img
+          src="{{ currentImage.url }}"
+          *ngIf="currentImage && currentImage.url"
+          style="height: 70px; width: 70px"
+        />
+        <div
+          *ngIf="!(currentImage && currentImage.url)"
+          class="ww-flex-column ww-detail-image-placeholder"
+        >
+          No Image
+        </div>
+      </div>
+    </div>
+    <div class="ww-form-input">
+      <label for="name">Name</label>
+      <input
+        formControlName="name"
+        type="text"
+        id="name"
+        autocomplete="off"
+        required
+      />
+    </div>
+    <div class="ww-form-input">
+      <label for="description">Description</label>
+      <input
+        formControlName="description"
+        type="text"
+        id="description"
+        required
+      />
+    </div>
+    <div class="ww-form-input">
+      <label for="location">Location</label>
+      <input formControlName="location" type="text" id="location" />
+    </div>
+    <div class="ww-form-input">
+      <label for="url">URL</label>
+      <input formControlName="url" type="text" id="url" />
+    </div>
+
+    <!-- Button Panel -->
+    <div class="ww-flex-row" style="justify-content: center; gap: 5px">
+      <button
+        *ngIf="!editMode"
+        type="submit"
+        [disabled]="!f.valid || !(f.touched || f.dirty)"
+      >
+        Add
+      </button>
+      <button
+        *ngIf="editMode"
+        type="submit"
+        [disabled]="!f.valid || !(f.touched || f.dirty)"
+      >
+        Save
+      </button>
+      <button type="button" (click)="onCancel()">Back</button>
+      <button *ngIf="editMode" type="button" (click)="onDelete()">
+        Delete
+      </button>
+    </div>
+  </form>
+</div>

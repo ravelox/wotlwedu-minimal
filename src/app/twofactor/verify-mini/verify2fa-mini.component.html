@@ -1,0 +1,55 @@
+<div class="ww-modal-backdrop">
+  <div
+    class="ww-flex-column"
+    style="
+      background-color: white;
+      align-items: center;
+      z-index: 2000;
+      position: absolute;
+      top: 100px;
+      left: 0px;
+      border: 2px solid black;
+      width: 100%;
+    "
+  >
+    <div class="ww-flex-row" style="width: 100%;">
+      <div class="ww-page-header-title ww-flex-grow">Enable 2FA</div>
+      <div class="ww-window-close-icon" (click)="onClose()"></div>
+    </div>
+    <div
+      class="ww-flex-column"
+      style="padding: 5px; min-width: 50%; border-radius: 5px"
+    >
+      <div class="ww-flex-column">
+        <div *ngIf="!verificationError">&nbsp;</div>
+        <div *ngIf="verificationError" style="background-color: rgb(165, 32, 32); color: white">{{verificationMessage}}</div>
+        <form (ngSubmit)="onSubmit(f)" #f="ngForm" class="ww-flex-column">
+          <div class="ww-form-input">
+            <label for="authToken"
+              >Enter 2FA code from authentication device</label
+            >
+            <input
+              type="text"
+              name="authToken"
+              id="authToken"
+              autocomplete="off"
+              #inputAuthToken
+              ngModel
+              required
+            />
+          </div>
+          <br />
+          <div>
+            <button
+              type="submit"
+              class="ww-button ww-button-blue"
+              [disabled]="!f.valid"
+            >
+              Verify
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<div
+  class="ww-flex-column"
+  style="
+    position: absolute;
+    top: 10px;
+    left: 20px;
+    background-color: white;
+    z-index: 1000;
+    border: 2px solid black;
+  "
+>
+  <div class="ww-flex-row" style="width: 100%">
+    <div class="ww-page-header-title ww-flex-grow">Friends</div>
+    <button type="button" (click)="onClose()">X</button>
+  </div>
+
+  <!-- Selection List -->
+  <div class="ww-flex-column ww-mini-select-container">
+    <div
+      *ngFor="let friend of currentFriends; let i = index"
+      (click)="onSelect(i)"
+      class="ww-flex-row ww-card"
+    >
+      <div class="ww-avatar-container">
+        <img
+          *ngIf="friend.user.image && friend.user.image.url"
+          src="{{ friend.user.image.url }}"
+          class="ww-avatar ww-avatar-container-mini ww-avatar-mini"
+        />
+
+        <div
+          *ngIf="!(friend.user.image && friend.user.image.url)"
+          class="ww-avatar-container-mini ww-initial-icon"
+          (contextmenu)="onContextMenu($event, i)"
+        >
+          {{ friend.user.firstName.substr(0, 1) }}
+        </div>
+      </div>
+
+      <div class="ww-info-block">
+        <p>{{ friend.user.fullName }}</p>
+      </div>
+    </div>
+  </div>
+</div>

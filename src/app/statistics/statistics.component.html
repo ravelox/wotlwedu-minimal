@@ -1,0 +1,48 @@
+<app-modal-alert
+*ngIf="alertBox.errorMessage"
+[message]="alertBox.errorMessage"
+(close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<div class="ww-flex-column ww-stats-component" style="min-height: 100%; justify-content: flex-start;">
+  <div class="ww-selection-component-title">Statistics</div>
+  <div *ngIf="currentElection" style="width: 90%">
+    <div class="ww-label">{{ currentElection.name }}</div>
+    <div *ngIf="!statsAvailable">
+      <div class="ww-label">No statistics available</div>
+    </div>
+    <div *ngIf="statsAvailable && sheets">
+      <div *ngFor="let sheet of sheets">
+        <div
+          class="ww-stats-container"
+          style="width: 100%"
+          *ngIf="sheet"
+        >
+          <div class="ww-label">{{ sheet.label }}</div>
+          <table class="ww-table" style="width: 100%">
+            <thead>
+              <th>&nbsp;</th>
+              <th>Yes</th>
+              <th>No</th>
+              <th>Maybe</th>
+              <th>Pending</th>
+            </thead>
+            <tbody>
+              <tr
+                class="ww-no-select"
+                *ngFor="let item of sheet.statistics"
+              >
+                <td style="width: 25%; text-align: right">{{ item.label }}</td>
+                <td
+                  *ngFor="let stat of item.dataPoints"
+                  style="text-align: right; width: 15%"
+                >
+                  {{ stat.value }} {{ stat.unit }} ( {{stat.percentage}}% )
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

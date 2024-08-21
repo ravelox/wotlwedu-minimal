@@ -1,0 +1,79 @@
+<app-context
+  [options]="contextMenu.options"
+  [objectId]="contextMenu.objectId"
+  (clickAway)="contextMenu.hide()"
+  [objectId]="contextMenu.objectId"
+  [show]="contextMenu.showMenu"
+  [divTop]="contextMenu.top"
+  [divLeft]="contextMenu.left"
+></app-context>
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<app-modal-dialog
+  *ngIf="confirmDialog.isVisible"
+  [message]="confirmDialog.message"
+  (close)="confirmDialog.onCloseClick()"
+  (yesAction)="confirmDialog.onYesClick()"
+  (noAction)="confirmDialog.onNoClick()"
+>
+</app-modal-dialog>
+<app-list-viewer
+  *ngIf="listViewer.isVisible"
+  (close)="listViewer.onClose()"
+  [dataId]="listViewer.id"
+  [extra]="listViewer.extra"
+></app-list-viewer>
+<app-item-viewer
+  *ngIf="itemViewer.isVisible"
+  (close)="itemViewer.onClose()"
+  [dataId]="itemViewer.id"
+  [extra]="itemViewer.extra"
+></app-item-viewer>
+<app-image-viewer
+  *ngIf="imageViewer.isVisible"
+  (close)="imageViewer.onClose()"
+  [dataId]="imageViewer.id"
+  [extra]="imageViewer.extra"
+></app-image-viewer>
+<app-modal-loader *ngIf="loader.loading"></app-modal-loader>
+<div class="ww-flex-column" style="min-width: 100%; gap: 5px; justify-items: center;">
+  <div class="ww-page-header-title">Notifications</div>
+
+  <!-- Selection List -->
+  <div
+    class="ww-flex-column ww-select-container"
+    style="min-width: 100%; gap: 5px"
+  >
+    <div
+      class="ww-flex-row ww-notification-card"
+      *ngFor="let notif of notifications; let i = index"
+      (click)="onSelect(i)"
+    >
+      <div class="ww-flex-row" style="gap: 10px;">
+        <div
+          class="ww-indicator"
+          [class.ww-unread]="notif.status.name === 'Unread'"
+          [class.ww-read]="notif.status.name !== 'Unread'"
+        ></div>
+        <div class="ww-notification-block ww-flex-column">
+          <div class="ww-notification-block-title">
+            {{ notif.sender.fullName }}
+          </div>
+          <div class="ww-notification-block-detail">
+            {{ notif.text.substr(0, 50) }}
+          </div>
+        </div>
+      </div>
+      <div class="ww-context-selector" (click)="onContextMenu($event, i)">
+        <div style="font-size: 2rem">&#x22EE;</div>
+      </div>
+    </div>
+  </div>
+    <!-- Button Panel -->
+    <div class="ww-flex-row ww-default-button-panel">
+      <button type="button" (click)="onCancel()">Back</button>
+    </div>
+</div>

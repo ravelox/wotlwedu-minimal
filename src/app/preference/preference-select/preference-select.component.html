@@ -1,0 +1,64 @@
+<app-modal-alert
+  *ngIf="alertBox.errorMessage"
+  [message]="alertBox.errorMessage"
+  (close)="alertBox.onCloseAlert()"
+></app-modal-alert>
+<div class="ww-flex-column" style="min-width: 100%; gap: 5px">
+  <div class="ww-flex-row">
+    <div class="ww-page-header-title ww-flex-grow">Preferences</div>
+    <button (click)="onAdd()">Add</button>
+  </div>
+
+  <!-- Page Buttons -->
+  <div class="ww-flex-row" style="justify-content: space-between">
+    <button
+      type="button"
+      [disabled]="!pages.hasPrevPage"
+      (click)="pages.onPrevPage()"
+      class="ww-button ww-button-regular"
+    >
+      &#8592;
+    </button>
+    <span style="text-align: center">{{ pages.currentPage }}</span>
+    <button
+      type="button"
+      [disabled]="!pages.hasNextPage"
+      (click)="pages.onNextPage()"
+      class="ww-button ww-button-regular"
+    >
+      &#8594;
+    </button>
+  </div>
+
+  <!-- Selection List -->
+  <div class="ww-flex-column ww-select-container">
+    <div
+      *ngFor="let pref of preferences; let i = index"
+      (click)="onSelect(i)"
+      [class.ww-selected-item]="pref.isSelected"
+      [class.ww-not-selectable]="!pref.isAvailable"
+      class="ww-flex-row ww-card"
+    >
+      <div
+        class="ww-flex-row ww-flex-grow"
+        style="justify-content: space-between; padding-right: 10px"
+      >
+        <div class="ww-avatar-container">
+          <div class="ww-avatar-initial">
+            {{ pref.name.substr(0, 1).toUpperCase() }}
+          </div>
+        </div>
+
+        <div class="ww-info-block">
+          <div class="ww-info-block-title">{{ pref.name }}</div>
+          <div class="ww-info-block-text ww-truncate-30">{{ pref.value }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Button Panel -->
+  <div class="ww-flex-row ww-default-button-panel">
+    <button *ngIf="selectMode" (click)="onClickSelect()">Select</button>
+    <button type="button" (click)="onCancel()">Back</button>
+  </div>
+</div>
