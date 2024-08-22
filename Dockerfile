@@ -1,10 +1,20 @@
-FROM httpd:2.4
+FROM ubuntu:latest
 
-COPY dist/frontend/browser/  /usr/local/apache2/htdocs/
-COPY apache-config/default-ssl.conf /usr/local/apache2/conf/extra/httpd-ssl.conf
-COPY apache-config/httpd.conf /usr/local/apache2/conf/httpd.conf
+RUN apt-get update && apt-get -y install apache2 vim procps lsof
+RUN a2enmod ssl rewrite
 
-RUN apt-get update && apt-get install -y procps && rm -rf /var/lib/apt/lists/*
+#
+# Copy the app to the HTML director
+#
+COPY dist/frontend/browser/ /var/www/html/
+COPY apache-config/wotlwedu-ssl.conf /etc/apache2/sites-available/
+
+#
+# Enable the app SSL site
+#
+RUN a2ensite wotlwedu-ssl
 
 EXPOSE 80
 EXPOSE 443
+
+CMD ["apachectl","-D","FOREGROUND"]

@@ -1,3 +1,3 @@
 npm install
-ng build
+ng build --configuration=prod
 docker build -t ravelox/wotlwedu-minimal .
