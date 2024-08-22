@@ -3,7 +3,7 @@
   class="ww-flex-row"
   style="justify-content: space-between; align-items: center"
 >
-  <div class="ww-clickable-image">
+<div class="ww-clickable-image">
     <img
     style="height: 35px; width: auto;"
       src="assets/logo.png"
@@ -12,7 +12,7 @@
     />
     <div class="ww-tooltip-text" #tooltip>Logged in as: {{ userName }}</div>
   </div>
-  <div
+    <div
     *ngIf="!isErrorState && isLoggedIn"
     class="ww-notif-count-container"
     (click)="onClickNotifications()"
@@ -49,7 +49,7 @@
       />
     </svg>
   </div>
-  <a *ngIf="!isErrorState && isLoggedIn" routerLink="/home">
+  <div *ngIf="!isErrorState && isLoggedIn" (click)="onClickMenu()">
     <svg
       clip-rule="evenodd"
       fill-rule="evenodd"
@@ -65,5 +65,33 @@
         fill-rule="nonzero"
       />
     </svg>
-  </a>
+  </div>  
+</div>
+
+<div
+  class="ww-navbar ww-flex-column"
+  *ngIf="isLoggedIn"
+  #navbar
+>
+  <div class="ww-flex-column" style="gap: 10px">
+    <a class="ww-nav-a" (click)="onGoTo('/cast-vote')">Cast Vote</a>
+    <a class="ww-nav-a" (click)="onGoTo('/friend')">Friends</a>
+    <a class="ww-nav-a" (click)="onGoTo('/preference')">Preferences</a>
+    <a class="ww-nav-a" (click)="onGoTo('/group')">Groups</a>
+    <a class="ww-nav-a" (click)="onGoTo('/category')">Categories</a>
+    <a class="ww-nav-a" (click)="onGoTo('/item')">Items</a>
+    <a class="ww-nav-a" (click)="onGoTo('/image')">Images</a>
+    <a class="ww-nav-a" (click)="onGoTo('/list')">Lists</a>
+    <a class="ww-nav-a" (click)="onGoTo('/election')">Elections</a>
+    <div *ngIf="isAdmin" class="ww-flex-column" style="gap: 10px;">
+      <a class="ww-nav-a" (click)="onGoTo('/user')">Users</a>
+      <a class="ww-nav-a" (click)="onGoTo('/role')">Roles</a>
+    </div>
+    <a
+      class="ww-nav-a"
+      style="background-color: #aa0000; color: white"
+      (click)="onGoTo('/auth')"
+      >Logout</a
+    >
+  </div>
 </div>

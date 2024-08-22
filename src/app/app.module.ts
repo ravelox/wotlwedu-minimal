@@ -32,7 +32,7 @@ import { ListSelectComponent } from "./list/list-select/list-select.component";
 import { ModalAlertComponent } from "./modal/modal-alert/modal-alert.component";
 import { ModalDialogComponent } from "./modal/modal-dialog/modal-dialog.component";
 import { ModalLoaderComponent } from "./modal/modal-loader/modal-loader.component";
-import { NavbarComponent } from "./navbar/navbar.component";
+import { HomeComponent } from "./home/home.component";
 import { NotificationSelectComponent } from "./notification/notification-select/notification-select.component";
 import { PasswordRequestComponent } from "./password/password-request/password-request.component";
 import { PasswordResetComponent } from "./password/password-reset/password-reset.component";
@@ -88,7 +88,7 @@ import { ErrorComponent } from './error/error.component';
     ModalAlertComponent,
     ModalDialogComponent,
     ModalLoaderComponent,
-    NavbarComponent,
+    HomeComponent,
     NotificationSelectComponent,
     PasswordRequestComponent,
     PasswordResetComponent,

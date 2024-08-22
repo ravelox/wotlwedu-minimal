@@ -19,7 +19,7 @@ import { RegisterComponent } from "../register/register.component";
 import { PasswordResetComponent } from "../password/password-reset/password-reset.component";
 import { PasswordRequestComponent } from "../password/password-request/password-request.component";
 import { UserProfileComponent } from "../userprofile/userprofile.component";
-import { NavbarComponent } from "../navbar/navbar.component";
+import { HomeComponent} from "../home/home.component";
 import { UserDetailComponent } from "../user/user-detail/user-detail.component";
 import { UserComponent } from "../user/user.component";
 import { NotificationSelectComponent } from "../notification/notification-select/notification-select.component";
@@ -213,7 +213,7 @@ const routes: Routes = [
   { path: "2fa", component: Enable2FAComponent, canActivate: [AuthGuard] },
   { path: "auth", component: AuthComponent },
 
-  { path: "home", component: NavbarComponent, canActivate: [AuthGuard] },
+  { path: "home", component: HomeComponent, canActivate: [AuthGuard] },
   { path: "error", component: ErrorComponent},
   { path: "", redirectTo: "/home", pathMatch: "full" },
   { path: "**", redirectTo: "/home", pathMatch: "full" },

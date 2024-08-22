@@ -28,6 +28,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private _authSub: Subscription;
   private _updateInProgress: boolean = false;
   @ViewChild("tooltip") tooltip: ElementRef;
+  @ViewChild("navbar") navbar: ElementRef;
+  navBarOpen: boolean = false;
 
   constructor(
     private router: Router,
@@ -108,6 +110,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onClickLogo(event) {
+    if( ! this.isLoggedIn ) return;
     event.preventDefault();
     this.tooltip.nativeElement.style.opacity = 1;
     setTimeout(() => {
@@ -120,5 +123,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   dismissTooltip(event) {
     event.preventDefault();
     this.tooltip.nativeElement.style.opacity = 0;
+  }
+
+  onClickMenu() {
+    this.navBarOpen = !this.navBarOpen;
+    this.navbar.nativeElement.style.right=( this.navBarOpen ? "0" : "-100%" );
+  }
+
+  onGoTo(routerLink: string) {
+    this.onClickMenu();
+    this.router.navigate([ routerLink ]);
   }
 }
