@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 #
 # Environment variable replacement for API URL
@@ -9,11 +9,11 @@ then
    exit 1
 fi
 
-cd /var/www/html
-for f in main*.js
-do
-    envsubst < ${f} > tempfile
-    mv tempfile ${f}
-done
+cd /var/opt/wotlwedu-minimal
+
+envsubst < src/app/global.ts > src/app/global.ts.tmp && mv src/app/global.ts.tmp src/app/global.ts
+ng build --configuration=production
+
+cp -Rvp dist/frontend/browser/* /var/www/html/
 
 exec apachectl -DFOREGROUND
