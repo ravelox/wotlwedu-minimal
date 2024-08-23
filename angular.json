@@ -34,12 +34,6 @@
           },
           "configurations": {
             "docker-prod": {
-              "fileReplacements": [
-                {
-                  "replace": "src/app/global.ts",
-                  "with": "src/environments/global.docker-prod.ts"
-                }
-              ],
               "optimization": true,
               "budgets": [
                 {

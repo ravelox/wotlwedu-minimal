@@ -11,8 +11,11 @@ WOTLWEDU_SSL_KEY_FILE
 @EOF
     [ -n "$var_unset" ] && exit 1
 
+#
+# Copy in the parameterized (is that a word?) version of the global.ts file to allow
+# for API URL configuration by environment variable from the docker run command
 cd /var/opt/wotlwedu-minimal
-envsubst < src/app/global.ts > src/app/global.ts.tmp && mv src/app/global.ts.tmp src/app/global.ts
+envsubst < src/environments/global.docker-prod.ts > src/app/global.ts.tmp && mv src/app/global.ts.tmp src/app/global.ts
 ng build --configuration=production
 
 cp -Rvp dist/frontend/browser/* /var/www/html/
