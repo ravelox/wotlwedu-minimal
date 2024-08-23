@@ -22,6 +22,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
   isErrorState: boolean = false;
   userName: string = null;
+  isAdmin: boolean = false;
   private _unreadInterval;
   private _refreshSignal: Subscription;
   private _errorSignal: Subscription;
@@ -58,8 +59,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (loginDetails) {
           this.isLoggedIn = loginDetails.loginState;
           this.userName = loginDetails.userName;
+          this.isAdmin = loginDetails.isAdmin;
         } else {
           this.isLoggedIn = false;
+          this.isAdmin = false;
           this.userName = null;
         }
       },
