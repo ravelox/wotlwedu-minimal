@@ -1,5 +1,7 @@
 FROM ubuntu:latest
 
+WORKDIR /var/opt/wotlwedu-minimal
+
 RUN apt-get update && apt-get -y install apache2 vim procps lsof gettext
 RUN a2enmod ssl rewrite
 
@@ -17,4 +19,4 @@ RUN a2ensite wotlwedu-ssl
 EXPOSE 80
 EXPOSE 443
 
-CMD ["/var/opt/wotlwedu-backend/docker-entrypoint.sh"]
+CMD ["/var/opt/wotlwedu-minimal/docker-entrypoint.sh"]
