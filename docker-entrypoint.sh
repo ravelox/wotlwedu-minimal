@@ -1,13 +1,14 @@
 #!/bin/bash -x
 
-#
-# Environment variable replacement for API URL
-#
-if [ -z "${WOTLWEDU_API_URL}" ]
-then
-   echo "WOTLWEDU_API_URL must be set"
-   exit 1
-fi
+# Check that required env variables are set
+while read var; do
+  [ -z "${!var}" ] && { echo "$var is empty or not set."; exit 1; }
+done << EOF
+WOTLWEDU_API_URL
+WOTLWEDU_SERVER_NAME
+WOTLWEDU_SSL_CERT_FILE
+WOTLWEDU_SSL_KEY_FILE
+EOF
 
 cd /var/opt/wotlwedu-minimal
 
