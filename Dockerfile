@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-RUN apt-get update && apt-get -y install apache2 vim procps lsof
+RUN apt-get update && apt-get -y install apache2 vim procps lsof gettext
 RUN a2enmod ssl rewrite
 
 #
@@ -17,4 +17,4 @@ RUN a2ensite wotlwedu-ssl
 EXPOSE 80
 EXPOSE 443
 
-CMD ["apachectl","-D","FOREGROUND"]
+CMD ["/var/opt/wotlwedu-backend/docker-entrypoint.sh"]
