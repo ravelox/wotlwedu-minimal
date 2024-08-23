@@ -4,7 +4,7 @@ WORKDIR /var/opt/wotlwedu-minimal
 COPY . .
 
 RUN apt-get update && \
-    apt-get -y install apache2 vim procps lsof gettext curl gnugpg && \
+    apt-get -y install apache2 vim procps lsof gettext curl gnupg && \
     rm -rf /var/lib/apt/lists/*
 RUN a2enmod ssl rewrite
 
