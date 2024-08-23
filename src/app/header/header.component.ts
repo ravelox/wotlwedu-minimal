@@ -11,6 +11,8 @@ import { DataSignalService } from "../service/datasignal.service";
 import { Subscription } from "rxjs";
 import { AuthDataService } from "../service/authdata.service";
 import { WotlweduPageStackService } from "../service/pagestack.service";
+import { HealthcheckService } from "../service/healthcheck.service";
+import { GlobalVariable } from "../global";
 
 @Component({
   selector: "app-header",
@@ -23,6 +25,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isErrorState: boolean = false;
   userName: string = null;
   isAdmin: boolean = false;
+  appVersion: string = "";
+  serverVersion: string = "";
   private _unreadInterval;
   private _refreshSignal: Subscription;
   private _errorSignal: Subscription;
@@ -34,17 +38,26 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private route: ActivatedRoute,
     private pageStack: WotlweduPageStackService,
     private notifDataService: NotificationDataService,
     private dataSignalService: DataSignalService,
-    private authDataService: AuthDataService
+    private authDataService: AuthDataService,
+    private healthcheckService: HealthcheckService
   ) {}
 
   ngOnInit(): void {
     this.pageStack.setRouter(this.router);
     this._updateInProgress = false;
     this._unreadInterval = setInterval(this.getUnreadCount.bind(this), 60000);
+    this.healthcheckService.ping().subscribe({
+      next: (response)=>{
+        if( response && response.data && response.data.version ) {
+          this.serverVersion = response.data.version;
+        }
+      }
+    })
+    this.appVersion = GlobalVariable.APP_VERSION;
+
     this._refreshSignal = this.dataSignalService.refreshDataSignal.subscribe({
       next: () => this.getUnreadCount(),
     });

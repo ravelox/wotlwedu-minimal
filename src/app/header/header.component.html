@@ -3,16 +3,20 @@
   class="ww-flex-row"
   style="justify-content: space-between; align-items: center"
 >
-<div class="ww-clickable-image">
+  <div class="ww-clickable-image">
     <img
-    style="height: 35px; width: auto;"
+      style="height: 35px; width: auto"
       src="assets/logo.png"
       draggable="false"
       (click)="onClickLogo($event)"
     />
-    <div class="ww-tooltip-text" #tooltip>Logged in as: {{ userName }}</div>
+    <div class="ww-tooltip-text" #tooltip>
+      <p>Logged in as: {{ userName }}</p>
+      <p>App version: {{ appVersion }}</p>
+      <p>Server version: {{ serverVersion }}</p>
+    </div>
   </div>
-    <div
+  <div
     *ngIf="!isErrorState && isLoggedIn"
     class="ww-notif-count-container"
     (click)="onClickNotifications()"
@@ -33,7 +37,7 @@
         stroke-linejoin="round"
       />
     </svg>
-    <div *ngIf="!isErrorState && (unreadCount > 0)" class="ww-notif-counter">
+    <div *ngIf="!isErrorState && unreadCount > 0" class="ww-notif-counter">
       {{ unreadCount }}
     </div>
   </div>
@@ -65,14 +69,10 @@
         fill-rule="nonzero"
       />
     </svg>
-  </div>  
+  </div>
 </div>
 
-<div
-  class="ww-navbar ww-flex-column"
-  *ngIf="isLoggedIn"
-  #navbar
->
+<div class="ww-navbar ww-flex-column" *ngIf="isLoggedIn" #navbar>
   <div class="ww-flex-column" style="gap: 10px">
     <a class="ww-nav-a" (click)="onGoTo('/cast-vote')">Cast Vote</a>
     <a class="ww-nav-a" (click)="onGoTo('/friend')">Friends</a>
@@ -83,7 +83,7 @@
     <a class="ww-nav-a" (click)="onGoTo('/image')">Images</a>
     <a class="ww-nav-a" (click)="onGoTo('/list')">Lists</a>
     <a class="ww-nav-a" (click)="onGoTo('/election')">Elections</a>
-    <div *ngIf="isAdmin" class="ww-flex-column" style="gap: 10px;">
+    <div *ngIf="isAdmin" class="ww-flex-column" style="gap: 10px">
       <a class="ww-nav-a" (click)="onGoTo('/user')">Users</a>
       <a class="ww-nav-a" (click)="onGoTo('/role')">Roles</a>
     </div>
