@@ -49,13 +49,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.pageStack.setRouter(this.router);
     this._updateInProgress = false;
     this._unreadInterval = setInterval(this.getUnreadCount.bind(this), 60000);
-    this.healthcheckService.ping().subscribe({
-      next: (response)=>{
-        if( response && response.data && response.data.version ) {
-          this.serverVersion = response.data.version;
-        }
-      }
-    })
+
     this.appVersion = GlobalVariable.APP_VERSION;
 
     this._refreshSignal = this.dataSignalService.refreshDataSignal.subscribe({
@@ -73,6 +67,16 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.isLoggedIn = loginDetails.loginState;
           this.userName = loginDetails.userName;
           this.isAdmin = loginDetails.isAdmin;
+
+          if (this.isLoggedIn) {
+            this.healthcheckService.ping().subscribe({
+              next: (response) => {
+                if (response && response.data && response.data.version) {
+                  this.serverVersion = response.data.version;
+                }
+              },
+            });
+          }
         } else {
           this.isLoggedIn = false;
           this.isAdmin = false;
@@ -87,7 +91,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private getUnreadCount() {
     // Only query for unread notifications when logged in
     // and there isn't a problem talking to the server
-    if (!this.isLoggedIn || this.isErrorState ) return;
+    if (!this.isLoggedIn || this.isErrorState) return;
 
     if (!this._updateInProgress) {
       this._updateInProgress = true;
@@ -126,7 +130,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onClickLogo(event) {
-    if( ! this.isLoggedIn ) return;
+    if (!this.isLoggedIn) return;
     event.preventDefault();
     this.tooltip.nativeElement.style.opacity = 1;
     setTimeout(() => {
@@ -143,11 +147,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onClickMenu() {
     this.navBarOpen = !this.navBarOpen;
-    this.navbar.nativeElement.style.right=( this.navBarOpen ? "0" : "-100%" );
+    this.navbar.nativeElement.style.right = this.navBarOpen ? "0" : "-100%";
   }
 
   onGoTo(routerLink: string) {
     this.onClickMenu();
-    this.router.navigate([ routerLink ]);
+    this.router.navigate([routerLink]);
   }
 }
