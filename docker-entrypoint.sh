@@ -16,7 +16,7 @@ WOTLWEDU_SSL_KEY_FILE
 # for API URL configuration by environment variable from the docker run command
 cd /var/opt/wotlwedu-minimal
 envsubst < src/environments/global.docker-prod.ts > src/app/global.ts.tmp && mv src/app/global.ts.tmp src/app/global.ts
-ng build --configuration=production
+ng build --configuration=docker-prod
 
 cp -Rvp dist/frontend/browser/* /var/www/html/
 
