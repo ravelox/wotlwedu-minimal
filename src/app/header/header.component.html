@@ -3,14 +3,13 @@
   class="ww-flex-row"
   style="justify-content: space-between; align-items: center"
 >
-  <div class="ww-clickable-image">
+  <div class="ww-clickable-image" (click)="onClickLogo($event)">
     <img
       style="height: 35px; width: auto"
       src="assets/logo.png"
       draggable="false"
-      (click)="onClickLogo($event)"
     />
-    <div class="ww-tooltip-text" #tooltip>
+    <div class="ww-tooltip-text" *ngIf="tooltipVisible" #tooltip>
       <p>Logged in as: {{ userName }}</p>
       <p>App version: {{ appVersion }}</p>
       <p>Server version: {{ serverVersion }}</p>
@@ -72,7 +71,7 @@
   </div>
 </div>
 
-<div class="ww-navbar ww-flex-column" *ngIf="isLoggedIn" #navbar>
+<div class="ww-navbar ww-flex-column" *ngIf="isLoggedIn && navBarOpen" #navbar>
   <div class="ww-flex-column" style="gap: 10px">
     <a class="ww-nav-a" (click)="onGoTo('/cast-vote')">Cast Vote</a>
     <a class="ww-nav-a" (click)="onGoTo('/friend')">Friends</a>

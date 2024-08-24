@@ -23,6 +23,19 @@
   flex-grow: 1;
 }
 
+.ww-stats-table {
+  border: 1px solid black;
+  width: 100%;
+}
+
+.ww-stats-table thead > th:not(ww-empty)  {
+  background-color: black;
+  color: white;
+}
+
+.ww-stats-table thead > th.ww-empty {
+  background-color: white;
+}
 .ww-nav-a {
   border: 1px solid black;
   text-decoration: none;
@@ -39,7 +52,7 @@
 .ww-navbar {
     position: absolute;
     top: 100px;
-    right: -100%;
+    left: 5px;
     background-color: white;
     z-index: 1000;
     justify-items: space-between;
@@ -47,7 +60,7 @@
     gap: 10px;
     padding: 10px;
     border: 2px solid black;
-    transition: right 0.25s linear;
+    transition: opacity 0.25s linear;
 }
 
 .ww-default-button-panel {
@@ -264,8 +277,7 @@ input {
   font-weight: bold;
 }
 .ww-info-block-text {
-  font-size: 2.5vw;
-
+  font-size: 1rem;
 }
 
 .ww-truncate-30 {
@@ -396,12 +408,10 @@ input {
   z-index: 1000;
   top: 30px;
   left: 20px;
-  opacity: 0;
   background-color: white;
   border: 2px solid black;
   padding: 5px;
   color: var(--theme-color);
-  transition: opacity 0.5s linear;
 }
 
 /* Google Font - Poppins */

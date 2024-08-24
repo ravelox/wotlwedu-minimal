@@ -35,6 +35,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild("tooltip") tooltip: ElementRef;
   @ViewChild("navbar") navbar: ElementRef;
   navBarOpen: boolean = false;
+  tooltipVisible: boolean = false;
 
   constructor(
     private router: Router,
@@ -132,22 +133,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onClickLogo(event) {
     if (!this.isLoggedIn) return;
     event.preventDefault();
-    this.tooltip.nativeElement.style.opacity = 1;
-    setTimeout(() => {
-      document.addEventListener("click", this.dismissTooltip.bind(this), {
-        once: true,
-      });
-    }, 10);
-  }
-
-  dismissTooltip(event) {
-    event.preventDefault();
-    this.tooltip.nativeElement.style.opacity = 0;
+    this.tooltipVisible = !this.tooltipVisible;
   }
 
   onClickMenu() {
     this.navBarOpen = !this.navBarOpen;
-    this.navbar.nativeElement.style.right = this.navBarOpen ? "0" : "-100%";
   }
 
   onGoTo(routerLink: string) {

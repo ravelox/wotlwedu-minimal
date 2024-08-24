@@ -4,6 +4,8 @@ import { ElectionDataService } from '../service/electiondata.service';
 import { WotlweduElection } from '../datamodel/wotlwedu-election.model';
 import { WotlweduAlert } from '../controller/wotlwedu-alert-controller.class';
 import { DataSignalService } from '../service/datasignal.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import { WotlweduPageStackService } from '../service/pagestack.service';
 
 class WotlweduDataPoint {
   label: string;
@@ -38,7 +40,10 @@ export class StatisticsComponent implements OnInit, OnDestroy {
 
   constructor(
     private electionDataService: ElectionDataService,
-    private dataSignalService: DataSignalService
+    private dataSignalService: DataSignalService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private pageStack: WotlweduPageStackService
   ) {}
 
   ngOnInit() {
@@ -59,6 +64,16 @@ export class StatisticsComponent implements OnInit, OnDestroy {
         }
       },
     });
+
+    if( this.route.snapshot.params.electionId ) {
+      this.electionDataService.getData( this.route.snapshot.params.electionId ).subscribe({
+        next: (response)=>{
+          if( response && response.data && response.data.election ) {
+            this.electionDataService.setElectionDetails( response.data.election );
+          }
+        }
+      })
+    }
   }
   ngOnDestroy() {
     if (this.statsDetailsSub) this.statsDetailsSub.unsubscribe();
@@ -142,6 +157,10 @@ export class StatisticsComponent implements OnInit, OnDestroy {
           }
         },
       });
+  }
+
+  onCancel() {
+    this.pageStack.back();
   }
 
 }

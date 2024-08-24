@@ -48,6 +48,13 @@ export class ElectionSelectComponent implements OnInit, OnDestroy {
       cb: this.startElection.bind(this),
     },
   ];
+  private electionStatsOptions: WotlweduContextOption[] = [
+    {
+      name: "Statistics",
+      enabled: true,
+      cb: this.showElectionStats.bind(this),
+    },
+  ];
   private deleteContextOptions: WotlweduContextOption[] = [
     {
       name: "Delete",
@@ -111,6 +118,12 @@ export class ElectionSelectComponent implements OnInit, OnDestroy {
     this.router.navigate(["/","election",this.elections[index].id])
   }
 
+  showElectionStats(object: any) {
+    if( !(object && object.id ) ) return;
+    this.pageStack.savePage();
+    this.router.navigate(["/","statistics",object.id])
+  }
+
   onContextMenu(event, index: number) {
     event.preventDefault();
 
@@ -132,12 +145,16 @@ export class ElectionSelectComponent implements OnInit, OnDestroy {
 
     if (status === "Not Started") {
       menuOptions = menuOptions.concat(this.startContextOptions);
-      menuOptions = menuOptions.concat(this.contextMenu.separatorOption);
     } else if (status === "In Progress") {
       menuOptions = menuOptions.concat(this.stopContextOptions);
-      menuOptions = menuOptions.concat(this.contextMenu.separatorOption);
     }
 
+    if( status !== "Not Started") {
+      menuOptions = menuOptions.concat(this.contextMenu.separatorOption);
+      menuOptions = menuOptions.concat(this.electionStatsOptions);
+    }
+
+    menuOptions = menuOptions.concat(this.contextMenu.separatorOption);
     menuOptions = menuOptions.concat(this.deleteContextOptions);
 
     this.contextMenu.setOptions(menuOptions);
@@ -163,6 +180,8 @@ export class ElectionSelectComponent implements OnInit, OnDestroy {
   startElection(object: any) {
     if (!object || !object.data) return;
     const index = object.data.index;
+
+    console.log( index )
     if (
       !(this.elections && this.elections[index].status.name === "Not Started")
     ) {

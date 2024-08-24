@@ -19,7 +19,7 @@ import { RegisterComponent } from "../register/register.component";
 import { PasswordResetComponent } from "../password/password-reset/password-reset.component";
 import { PasswordRequestComponent } from "../password/password-request/password-request.component";
 import { UserProfileComponent } from "../userprofile/userprofile.component";
-import { HomeComponent} from "../home/home.component";
+import { HomeComponent } from "../home/home.component";
 import { UserDetailComponent } from "../user/user-detail/user-detail.component";
 import { UserComponent } from "../user/user.component";
 import { NotificationSelectComponent } from "../notification/notification-select/notification-select.component";
@@ -42,6 +42,7 @@ import { VotingComponent } from "../voting/voting.component";
 import { RoleDetailComponent } from "../role/role-detail/role-detail.component";
 import { RoleSelectComponent } from "../role/role-select/role-select.component";
 import { ErrorComponent } from "../error/error.component";
+import { StatisticsComponent } from "../statistics/statistics.component";
 
 const routes: Routes = [
   {
@@ -60,7 +61,11 @@ const routes: Routes = [
     component: UserComponent,
     canActivate: [AuthGuard, AdminGuard],
   },
-  { path: "friend", component: FriendSelectComponent, canActivate: [AuthGuard] },
+  {
+    path: "friend",
+    component: FriendSelectComponent,
+    canActivate: [AuthGuard],
+  },
   {
     path: "notification",
     component: NotificationSelectComponent,
@@ -129,7 +134,8 @@ const routes: Routes = [
     resolve: { categories: categoryDataResolver },
     component: CategorySelectComponent,
     canActivate: [AuthGuard],
-  },  {
+  },
+  {
     path: "item/add",
     component: ItemDetailComponent,
     canActivate: [AuthGuard],
@@ -160,7 +166,8 @@ const routes: Routes = [
     resolve: { images: imageDataResolver },
     component: ImageSelectComponent,
     canActivate: [AuthGuard],
-  },  {
+  },
+  {
     path: "list/add",
     component: ListDetailComponent,
     canActivate: [AuthGuard],
@@ -192,6 +199,11 @@ const routes: Routes = [
     component: ElectionSelectComponent,
     canActivate: [AuthGuard],
   },
+  {
+    path: "statistics/:electionId",
+    component: StatisticsComponent,
+    canActivate: [AuthGuard],
+  },
   { path: "pwdreset/:userid/:resettoken", component: PasswordResetComponent },
   { path: "pwdrequest", component: PasswordRequestComponent },
   {
@@ -214,7 +226,7 @@ const routes: Routes = [
   { path: "auth", component: AuthComponent },
 
   { path: "home", component: HomeComponent, canActivate: [AuthGuard] },
-  { path: "error", component: ErrorComponent},
+  { path: "error", component: ErrorComponent },
   { path: "", redirectTo: "/home", pathMatch: "full" },
   { path: "**", redirectTo: "/home", pathMatch: "full" },
 ];
