@@ -3,4 +3,5 @@ export class WotlweduRegistration {
     firstName: string;
     lastName: string;
     alias: string;
+    auth?: string;
 }
