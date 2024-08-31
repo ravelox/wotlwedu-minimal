@@ -7,6 +7,7 @@ services:
       - WOTLWEDU_SERVER_NAME=mobile.wotlwedu.com
     image: ravelox/wotlwedu-minimal
     ports:
+      - 80:80
       - 443:443
     volumes:
         - /secrets/wotlwedu-minimal:/secrets

@@ -18,8 +18,8 @@ RUN node -v
 RUN npm -v
 RUN ng version
 
-COPY apache-config/wotlwedu-ssl.conf /etc/apache2/sites-available/
-RUN a2ensite wotlwedu-ssl
+COPY apache-config/wotlwedu*.conf /etc/apache2/sites-available/
+RUN a2ensite wotlwedu wotlwedu-ssl
 
 EXPOSE 80
 EXPOSE 443
