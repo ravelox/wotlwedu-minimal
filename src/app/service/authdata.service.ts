@@ -19,7 +19,7 @@ export class AuthDataService {
   constructor(
     private http: HttpClient,
     private tokenDataService: TokenDataStorageService,
-    private dataSignalService: DataSignalService
+    private dataSignalService: DataSignalService,
   ) {}
 
   login(email: string, password: string) {

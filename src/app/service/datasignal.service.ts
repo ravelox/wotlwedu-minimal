@@ -1,8 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
-import { GlobalVariable } from '../global';
 import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -10,6 +8,7 @@ export class DataSignalService {
   dialogCloseSignal = new Subject<boolean>();
   refreshDataSignal = new Subject<boolean>();
   isErrorSignal = new Subject<boolean>();
+  hasNotificationSignal = new Subject<boolean>();
 
   constructor() {}
 
@@ -28,5 +27,9 @@ export class DataSignalService {
 
   clearError(){
     this.isErrorSignal.next(false);
+  }
+
+  hasNotification() {
+    this.hasNotificationSignal.next(true);
   }
 }

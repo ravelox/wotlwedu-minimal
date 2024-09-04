@@ -1,26 +1,33 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
 
-import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
-import { GlobalVariable } from '../global';
-import { WotlweduPreference } from '../datamodel/wotlwedu-preference.model';
-import { PreferenceDataService } from './preferencedata.service';
-import { DataSignalService } from './datasignal.service';
-import { firstValueFrom } from 'rxjs';
+import { WotlweduApiResponse } from "../datamodel/wotlwedu-api-response.model";
+import { GlobalVariable } from "../global";
+import { WotlweduPreference } from "../datamodel/wotlwedu-preference.model";
+import { PreferenceDataService } from "./preferencedata.service";
+import { DataSignalService } from "./datasignal.service";
+import { firstValueFrom } from "rxjs";
 
-@Injectable({ providedIn: 'root' })
+import { io, Socket } from "socket.io-client";
+import { AuthDataService } from "./authdata.service";
+
+@Injectable({ providedIn: "root" })
 export class SharedDataService {
-  private ENDPOINT = GlobalVariable.BASE_API_URL + 'helper/';
+  private ENDPOINT = GlobalVariable.BASE_API_URL + "helper/";
   private status: any[] = [];
   private preference: WotlweduPreference[] = [];
-  private _preferenceSub = null;
+  private _ioSocket: Socket = null;
 
   constructor(
     private http: HttpClient,
     private preferenceDataService: PreferenceDataService,
-    private dataSignalService: DataSignalService
+    private dataSignalService: DataSignalService,
+    private authDataService: AuthDataService
   ) {
- 
+    this._ioSocket = io(GlobalVariable.BASE_API_URL);
+    this._ioSocket.on("notification", () => {
+      this.dataSignalService.hasNotification();
+    });
     this.dataSignalService.refreshDataSignal.subscribe({
       next: () => {
         this.loadStatusNames();
@@ -30,20 +37,34 @@ export class SharedDataService {
 
     this.preferenceDataService.dataChanged.subscribe({
       next: (preferenceData) => {
-        if(preferenceData) this.preference = preferenceData;
+        if (preferenceData) this.preference = preferenceData;
       },
     });
 
-
+    this.authDataService.authData.subscribe({
+      next: (authData) => {
+        if (authData && authData.id) {
+          this._ioSocket.emit("register", { id: authData.id });
+          this._ioSocket.on("connected", () => {
+            console.log("Connected");
+          });
+          this._ioSocket.io.on("reconnect", () => {
+            console.log(this._ioSocket.id + ": reconnect");
+            this._ioSocket.emit("register", { id: authData.id });
+          });
+        } else {
+          this._ioSocket.emit("unregister");
+        }
+      },
+    });
   }
 
   refresh() {
     this.dataSignalService.refreshData();
   }
-  
-  private loadStatusNames() {
 
-    const url = this.ENDPOINT + 'status';
+  private loadStatusNames() {
+    const url = this.ENDPOINT + "status";
     return this.http.get<WotlweduApiResponse>(url).subscribe({
       next: (response) => {
         if (response && response.data && response.data.status) {
@@ -54,8 +75,7 @@ export class SharedDataService {
   }
 
   private async loadStatusNamesAsync() {
-   
-    const url = this.ENDPOINT + 'status';
+    const url = this.ENDPOINT + "status";
     const response: any = firstValueFrom(
       this.http.get<WotlweduApiResponse>(url)
     );
@@ -73,7 +93,7 @@ export class SharedDataService {
     const res = this.preferenceDataService.getAllDataAsync();
   }
 
-  getStatusIdAsync( name: string ) {
+  getStatusIdAsync(name: string) {
     this.loadStatusNamesAsync();
     const foundStatus = this.status.find(
       (x) => x.name.toLowerCase() === name.toLowerCase()
@@ -100,8 +120,7 @@ export class SharedDataService {
     }
   }
 
-   getPreference(name: string) {
-
+  getPreference(name: string) {
     if (this.preference) {
       const foundPref = this.preference.find(
         (x) => x.name.toLowerCase() === name.toLowerCase()

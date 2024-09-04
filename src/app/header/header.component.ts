@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isAdmin: boolean = false;
   appVersion: string = "";
   serverVersion: string = "";
-  private _unreadInterval;
+  private _notificationSignal: Subscription;
   private _refreshSignal: Subscription;
   private _errorSignal: Subscription;
   private _authSub: Subscription;
@@ -49,12 +49,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.pageStack.setRouter(this.router);
     this._updateInProgress = false;
-    this._unreadInterval = setInterval(this.getUnreadCount.bind(this), 60000);
+    this._notificationSignal = this.dataSignalService.hasNotificationSignal.subscribe({
+      next: ()=>{
+        this.getUnreadCount.bind(this)();
+      }
+    })
 
     this.appVersion = GlobalVariable.APP_VERSION;
-
     this._refreshSignal = this.dataSignalService.refreshDataSignal.subscribe({
-      next: () => this.getUnreadCount(),
+      next: () => this.getUnreadCount.bind(this)(),
     });
     this._errorSignal = this.dataSignalService.isErrorSignal.subscribe({
       next: (errStatus) => {
@@ -86,9 +89,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
       },
     });
 
-    this.getUnreadCount();
+    this.getUnreadCount.bind(this)();
   }
 
+// Called when socket.io event is received
   private getUnreadCount() {
     // Only query for unread notifications when logged in
     // and there isn't a problem talking to the server
@@ -115,9 +119,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this._unreadInterval) clearInterval(this._unreadInterval);
+    if (this._notificationSignal) this._notificationSignal.unsubscribe();
     if (this._refreshSignal) this._refreshSignal.unsubscribe();
     if (this._errorSignal) this._errorSignal.unsubscribe();
+    if (this._authSub) this._authSub.unsubscribe();
   }
 
   onClickNotifications() {

@@ -33,6 +33,7 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
   itemViewer: WotlweduViewerController = new WotlweduViewerController();
   imageViewer: WotlweduViewerController = new WotlweduViewerController();
   loader: WotlweduLoaderController = new WotlweduLoaderController();
+  private _hasNotificationSub: Subscription;
 
   // Context Menu properties
   private voteContextOptions: WotlweduContextOption[] = [
@@ -151,11 +152,17 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
         this.loader.stop();
       }
     );
+    this._hasNotificationSub = this.dataSignalService.hasNotificationSignal.subscribe({
+      next: ()=>{
+        this.notificationDataService.getAllData();
+      }
+    })
     this.notificationDataService.getAllData();
   }
 
   ngOnDestroy() {
     if (this.notificationSub) this.notificationSub.unsubscribe();
+    if(this._hasNotificationSub) this._hasNotificationSub.unsubscribe();
   }
 
   showDeleteConfirmationDialog(object: any) {
@@ -352,6 +359,7 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
       },
       next: (response) => {
         this.notificationDataService.getAllData();
+        this.dataSignalService.refreshData();
         this.loader.stop();
       },
     });
