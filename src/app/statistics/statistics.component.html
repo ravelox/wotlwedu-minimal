@@ -35,38 +35,40 @@
               <div class="ww-page-header-title">Maybe</div>
               <div class="ww-page-header-title">Pending</div>
             </div>
-            <div
-              *ngFor="let item of sheet.statistics"
-              style="
-                display: grid;
-                grid-auto-flow: column;
-                grid-template-columns: repeat(5, 20%);
-                border: 1px solid black;
-              "
-            >
-              <span style="text-align: right; font-size: 1ch">{{
-                item.label
-              }}</span>
-              <span
-                *ngFor="let stat of item.dataPoints"
+            <div *ngFor="let item of sheet.statistics">
+              <div style="border: 1px solid black; font-size: 0.75rem">
+                {{ item.label }}
+              </div>
+              <div
                 style="
-                  text-align: center;
-                  min-width: 20%;
-                  font-size: 0.6rem;
-                  border-left: 1px solid black;
-                  align-content: center;
+                  display: grid;
+                  grid-auto-flow: column;
+                  grid-template-columns: repeat(5, 20%);
+                  border: 1px solid black;
                 "
               >
-                {{ stat.value }} {{ stat.unit }} ({{ stat.percentage }}%)
-              </span>
+                <div>&nbsp;</div>
+                <span
+                  *ngFor="let stat of item.dataPoints"
+                  style="
+                    text-align: center;
+                    min-width: 20%;
+                    font-size: 0.75rem;
+                    border-left: 1px solid black;
+                    align-content: center;
+                  "
+                >
+                  {{ stat.value }} {{ stat.unit }} ({{ stat.percentage }}%)
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-    <!-- Button Panel -->
-    <div class="ww-flex-row ww-default-button-panel">
-      <button type="button" (click)="onCancel()">Back</button>
-    </div>
+  <!-- Button Panel -->
+  <div class="ww-flex-row ww-default-button-panel">
+    <button type="button" (click)="onCancel()">Back</button>
+  </div>
 </div>
