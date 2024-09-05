@@ -211,6 +211,11 @@ const routes: Routes = [
     component: Verify2FAComponent,
   },
   {
+    path: "cast-vote/:electionId",
+    component: VotingComponent,
+    canActivate: [AuthGuard],
+  },
+  {
     path: "cast-vote",
     component: VotingComponent,
     canActivate: [AuthGuard],

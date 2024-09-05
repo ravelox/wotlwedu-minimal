@@ -50,7 +50,7 @@ export class ElectionSelectComponent implements OnInit, OnDestroy {
   ];
   private electionStatsOptions: WotlweduContextOption[] = [
     {
-      name: "Statistics",
+      name: "View Statistics",
       enabled: true,
       cb: this.showElectionStats.bind(this),
     },
@@ -130,7 +130,7 @@ export class ElectionSelectComponent implements OnInit, OnDestroy {
     this.contextMenu.closeDown();
 
     const status = this.elections[index].status.name;
-    if (!["In Progress", "Not Started", "Stopped"].includes(status)) return;
+    if (!["In Progress", "Not Started", "Stopped", "Ended"].includes(status)) return;
 
     this.contextMenu = new WotlweduContextController();
     this.contextMenu.setService(this.dataSignalService);
@@ -150,7 +150,6 @@ export class ElectionSelectComponent implements OnInit, OnDestroy {
     }
 
     if( status !== "Not Started") {
-      menuOptions = menuOptions.concat(this.contextMenu.separatorOption);
       menuOptions = menuOptions.concat(this.electionStatsOptions);
     }
 
@@ -181,7 +180,6 @@ export class ElectionSelectComponent implements OnInit, OnDestroy {
     if (!object || !object.data) return;
     const index = object.data.index;
 
-    console.log( index )
     if (
       !(this.elections && this.elections[index].status.name === "Not Started")
     ) {

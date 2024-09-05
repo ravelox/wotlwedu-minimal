@@ -43,6 +43,18 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
       cb: this.getVoteFromNotification.bind(this),
     },
   ];
+  private electionContextOptions: WotlweduContextOption[] = [
+    {
+      name: "View Statistics",
+      enabled: true,
+      cb: this.viewElectionStatistics.bind(this),
+    },
+    {
+      name: "View Election Details",
+      enabled: true,
+      cb: this.viewElectionDetails.bind(this),
+    },
+  ];
   private friendContextOptions: WotlweduContextOption[] = [
     {
       name: "Accept Friend Request",
@@ -131,7 +143,6 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
 
   constructor(
     private notificationDataService: NotificationDataService,
-    private voteDataService: VoteDataService,
     private userDataService: UserDataService,
     private imageDataService: ImageDataService,
     private itemDataService: ItemDataService,
@@ -152,17 +163,18 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
         this.loader.stop();
       }
     );
-    this._hasNotificationSub = this.dataSignalService.hasNotificationSignal.subscribe({
-      next: ()=>{
-        this.notificationDataService.getAllData();
-      }
-    })
+    this._hasNotificationSub =
+      this.dataSignalService.hasNotificationSignal.subscribe({
+        next: () => {
+          this.notificationDataService.getAllData();
+        },
+      });
     this.notificationDataService.getAllData();
   }
 
   ngOnDestroy() {
     if (this.notificationSub) this.notificationSub.unsubscribe();
-    if(this._hasNotificationSub) this._hasNotificationSub.unsubscribe();
+    if (this._hasNotificationSub) this._hasNotificationSub.unsubscribe();
   }
 
   showDeleteConfirmationDialog(object: any) {
@@ -171,6 +183,7 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
     this.confirmDialog.setMessage("Are you sure?");
     this.confirmDialog.setObjectData(object);
     this.confirmDialog.show();
+    this.markAsRead(object);
   }
 
   showBlockConfirmationDialog(object: any) {
@@ -179,6 +192,7 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
     this.confirmDialog.setMessage("Are you sure you want to block this user?");
     this.confirmDialog.setObjectData(object);
     this.confirmDialog.show();
+    this.markAsRead(object);
   }
 
   dialogBlockYesClick(object: any) {
@@ -199,6 +213,56 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
     this.confirmDialog.hide();
   }
 
+  viewElectionStatistics(object: any) {
+    this.notificationDataService.getData(object.id).subscribe({
+      error: (err) => {
+        this.loader.stop();
+        this.alertBox.handleError(err);
+      },
+      next: (notifResponse) => {
+        +this.loader.stop();
+        if (
+          notifResponse &&
+          notifResponse.data &&
+          notifResponse.data.notification
+        ) {
+          this.pageStack.savePage();
+          this.router.navigate([
+            "/",
+            "statistics",
+            notifResponse.data.notification.objectId,
+          ]);
+        }
+      },
+    });
+    this.markAsRead(object);
+  }
+
+  viewElectionDetails(object: any) {
+    this.notificationDataService.getData(object.id).subscribe({
+      error: (err) => {
+        this.loader.stop();
+        this.alertBox.handleError(err);
+      },
+      next: (notifResponse) => {
+        +this.loader.stop();
+        if (
+          notifResponse &&
+          notifResponse.data &&
+          notifResponse.data.notification
+        ) {
+          this.pageStack.savePage();
+          this.router.navigate([
+            "/",
+            "election",
+            notifResponse.data.notification.objectId,
+          ]);
+        }
+      },
+    });
+    this.markAsRead(object);
+  }
+
   acceptImageShare(object: any) {
     if (!object || !object.id) return;
     this.loader.start();
@@ -212,6 +276,7 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
         this.loader.stop();
       },
     });
+    this.markAsRead(object);
   }
 
   acceptItemShare(object: any) {
@@ -227,6 +292,7 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
         this.loader.stop();
       },
     });
+    this.markAsRead(object);
   }
 
   acceptListShare(object: any) {
@@ -242,6 +308,7 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
         this.loader.stop();
       },
     });
+    this.markAsRead(object);
   }
 
   acceptFriendRequest(object: any) {
@@ -275,6 +342,7 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
         }
       },
     });
+    this.markAsRead(object);
   }
 
   blockUser(object: any) {
@@ -307,6 +375,7 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
         }
       },
     });
+    this.markAsRead(object);
   }
 
   getVoteFromNotification(object: any) {
@@ -318,35 +387,22 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
         this.alertBox.handleError(err);
       },
       next: (notifResponse) => {
+        +this.loader.stop();
         if (
           notifResponse &&
           notifResponse.data &&
           notifResponse.data.notification
         ) {
-          this.voteDataService
-            .getNextVote(notifResponse.data.notification.objectId)
-            .subscribe({
-              error: (err) => {
-                this.loader.stop();
-                this.alertBox.handleError(err);
-              },
-              next: (voteResponse) => {
-                if (
-                  voteResponse &&
-                  voteResponse.data &&
-                  voteResponse.data.count > 0
-                ) {
-                  this.voteDataService.setData(voteResponse.data.rows[0]);
-                  this.markAsRead({ id: object.id });
-                }
-                this.loader.stop();
-              },
-            });
-        } else {
-          this.loader.stop();
+          this.pageStack.savePage();
+          this.router.navigate([
+            "/",
+            "cast-vote",
+            notifResponse.data.notification.objectId,
+          ]);
         }
       },
     });
+    this.markAsRead(object);
   }
 
   deleteNotification(object: any) {
@@ -363,6 +419,7 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
         this.loader.stop();
       },
     });
+    
   }
 
   markAsRead(object: any) {
@@ -426,6 +483,10 @@ export class NotificationSelectComponent implements OnInit, OnDestroy {
         break;
       case this.sharedDataService.getStatusId("Share List"):
         menuOptions = this.listShareContextOptions;
+        break;
+      case this.sharedDataService.getStatusId("Election End"):
+      case this.sharedDataService.getStatusId("Election Expired"):
+        menuOptions = this.electionContextOptions;
         break;
     }
 

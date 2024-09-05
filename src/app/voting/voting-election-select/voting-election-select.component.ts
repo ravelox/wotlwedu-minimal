@@ -4,6 +4,7 @@ import { WotlweduVote } from "../../datamodel/wotlwedu-vote.model";
 import { VoteDataService } from "../../service/votedata.service";
 import { WotlweduAlert } from "../../controller/wotlwedu-alert-controller.class";
 import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-controller.class";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-voting-election-select",
@@ -18,7 +19,10 @@ export class VotingElectionSelectComponent implements OnInit, OnDestroy {
   alertBox: WotlweduAlert = new WotlweduAlert();
   loader: WotlweduLoaderController = new WotlweduLoaderController();
 
-  constructor(private voteDataService: VoteDataService) {}
+  constructor(
+    private voteDataService: VoteDataService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     this.loader.start();
@@ -51,6 +55,16 @@ export class VotingElectionSelectComponent implements OnInit, OnDestroy {
       next: (response) => {
         if (response && response.data) {
           this.votes = response.data.rows;
+
+          if (this.route.snapshot.params.electionId) {
+            const selectedElection = this.votes.find((e) => {
+              return e.election.id === this.route.snapshot.params.electionId;
+            });
+            if (selectedElection) {
+              console.log(selectedElection);
+              selectedElection.isSelected = true;
+            }
+          }
         }
         this.loader.stop();
       },
@@ -78,9 +92,11 @@ export class VotingElectionSelectComponent implements OnInit, OnDestroy {
     /* Listen for a cancelation */
     this.cancelSub = this.voteDataService.cancel.subscribe({
       next: (response) => {
-        /* Only work on canceled items within the range of the votes array */
-        if (this.selectedIndex < this.votes.length) {
-          this.votes[this.selectedIndex].isSelected = false;
+        if (response === true) {
+          /* Only work on canceled items within the range of the votes array */
+          if (this.selectedIndex < this.votes.length) {
+            this.votes[this.selectedIndex].isSelected = false;
+          }
         }
         if (this.cancelSub) this.cancelSub.unsubscribe();
       },

@@ -1,14 +1,21 @@
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { Subscription } from 'rxjs';
-import { WotlweduVote } from '../../datamodel/wotlwedu-vote.model';
-import { VoteDataService } from '../../service/votedata.service';
-import { WotlweduItem } from '../../datamodel/wotlwedu-item.model';
-import { WotlweduAlert } from '../../controller/wotlwedu-alert-controller.class';
+import {
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+} from "@angular/core";
+import { Subscription } from "rxjs";
+import { WotlweduVote } from "../../datamodel/wotlwedu-vote.model";
+import { VoteDataService } from "../../service/votedata.service";
+import { WotlweduItem } from "../../datamodel/wotlwedu-item.model";
+import { WotlweduAlert } from "../../controller/wotlwedu-alert-controller.class";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
-  selector: 'app-vote-cast',
-  templateUrl: './vote-cast.component.html',
-  styleUrl: './vote-cast.component.css',
+  selector: "app-vote-cast",
+  templateUrl: "./vote-cast.component.html",
+  styleUrl: "./vote-cast.component.css",
 })
 export class VoteCastComponent implements OnInit, OnDestroy {
   isVisible: boolean = false;
@@ -18,7 +25,10 @@ export class VoteCastComponent implements OnInit, OnDestroy {
   alertBox: WotlweduAlert = new WotlweduAlert();
   private currentElectionId: string = null;
 
-  constructor(private voteDataService: VoteDataService) {}
+  constructor(
+    private voteDataService: VoteDataService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
     this.voteDataService.reset();
@@ -31,6 +41,11 @@ export class VoteCastComponent implements OnInit, OnDestroy {
         }
       },
     });
+
+    if( this.route.snapshot.params.electionId ) {
+      this.currentElectionId = this.route.snapshot.params.electionId;
+      this.getNextVote();
+    }
   }
 
   ngOnDestroy() {
@@ -38,6 +53,7 @@ export class VoteCastComponent implements OnInit, OnDestroy {
   }
 
   onCancel() {
+    this.voteDataService.setCancel();
     this.voteDataService.reset();
   }
 

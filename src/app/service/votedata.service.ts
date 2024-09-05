@@ -1,19 +1,19 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
-import { of, Subject } from 'rxjs';
-import { PreferenceDataService } from './preferencedata.service';
-import { WotlweduPagination } from '../datamodel/wotlwedu-pagination.model';
-import { GlobalVariable } from '../global';
-import { WotlweduVote } from '../datamodel/wotlwedu-vote.model';
-import { SharedDataService } from './shareddata.service';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { WotlweduApiResponse } from "../datamodel/wotlwedu-api-response.model";
+import { of, Subject } from "rxjs";
+import { PreferenceDataService } from "./preferencedata.service";
+import { WotlweduPagination } from "../datamodel/wotlwedu-pagination.model";
+import { GlobalVariable } from "../global";
+import { WotlweduVote } from "../datamodel/wotlwedu-vote.model";
+import { SharedDataService } from "./shareddata.service";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class VoteDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduVote[]>();
   details = new Subject<WotlweduVote>();
   refreshVotes = new Subject<boolean>();
-  private ENDPOINT = GlobalVariable.BASE_API_URL + 'vote/';
+  private ENDPOINT = GlobalVariable.BASE_API_URL + "vote/";
 
   constructor(
     private http: HttpClient,
@@ -24,25 +24,25 @@ export class VoteDataService extends WotlweduPagination {
   }
 
   getData(voteId: string) {
-    if (!voteId || voteId === '') return null;
+    if (!voteId || voteId === "") return null;
     const url = this.ENDPOINT + voteId;
     return this.http.get<WotlweduApiResponse>(url);
   }
 
   getAllData(filter?: string) {
     this.filterUpdate(filter);
-    this.itemsPerPage = +this.sharedDataService.getPreference('itemsperpage');
+    this.itemsPerPage = +this.sharedDataService.getPreference("itemsperpage");
     const url =
       this.ENDPOINT +
-      '?' +
-      'detail=user,item,election,image' +
-      '&page=' +
+      "?" +
+      "detail=user,item,election,image" +
+      "&page=" +
       this.page +
-      '&items=' +
+      "&items=" +
       this.itemsPerPage +
       (this.currentFilter.length > 0
-        ? '&filter=' + encodeURIComponent(this.currentFilter)
-        : '');
+        ? "&filter=" + encodeURIComponent(this.currentFilter)
+        : "");
     return this.http.get<WotlweduApiResponse>(url).subscribe((response) => {
       if (response) {
         const objects: WotlweduVote[] = response.data.votes;
@@ -54,7 +54,7 @@ export class VoteDataService extends WotlweduPagination {
   }
 
   getNextVote(electionId: string) {
-    const url = this.ENDPOINT + electionId + '/next';
+    const url = this.ENDPOINT + electionId + "/next";
     return this.http.get<WotlweduApiResponse>(url);
   }
 
@@ -91,7 +91,7 @@ export class VoteDataService extends WotlweduPagination {
   }
 
   getMyVotes() {
-    let url = this.ENDPOINT + 'next/all';
+    let url = this.ENDPOINT + "next/all";
     return this.http.get<WotlweduApiResponse>(url);
   }
 
@@ -103,13 +103,17 @@ export class VoteDataService extends WotlweduPagination {
     this.details.next(null);
   }
 
+  setCancel() {
+    this.cancel.next(true);
+  }
+
   refresh() {
     this.refreshVotes.next(true);
   }
 
   cast(voteId: string, decision: string) {
     if (!voteId || !decision) return of(null);
-    let url = GlobalVariable.BASE_API_URL + 'cast/' + voteId + '/' + decision;
+    let url = GlobalVariable.BASE_API_URL + "cast/" + voteId + "/" + decision;
     return this.http.get<WotlweduApiResponse>(url);
   }
 }

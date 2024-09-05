@@ -39,7 +39,7 @@
     <div
     class="ww-indicator"
     [class.ww-in-progress]="election.status.name === 'In Progress'"
-    [class.ww-stopped]="election.status.name === 'Stopped'"
+    [class.ww-stopped]="['Stopped','Ended'].includes(election.status.name)"
     [class.ww-not-started]="election.status.name === 'Not Started'"
 
   ></div> 

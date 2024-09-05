@@ -10,7 +10,7 @@
 <div class="ww-flex-column" style="min-width: 100%; gap: 5px; height: 40svh">
   <!-- Selection List -->
   <div class="ww-flex-column ww-select-container" #electionselectlist style="border-top-left-radius: 0; border-top-right-radius: 0;">
-    <div *ngFor="let vote of votes; let i = index" class="ww-flex-row ww-card">
+    <div *ngFor="let vote of votes; let i = index" class="ww-flex-row ww-card" [class.ww-selected-item]="vote.isSelected">
       <div
         class="ww-flex-row"
         style="

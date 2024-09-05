@@ -1,4 +1,4 @@
-import { BehaviorSubject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 export class WotlweduPagination {
   itemsPerPage: number;
@@ -6,7 +6,7 @@ export class WotlweduPagination {
   page: number;
   cb: VoidFunction;
   currentFilter: string = '';
-  cancel = new BehaviorSubject<boolean>(false);
+  cancel = new Subject<boolean>();
 
   /*
 To be used between detail and selection components to reset selected item indication
