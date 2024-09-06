@@ -53,17 +53,20 @@
         (click)="onSelect(i)"
       >
      
-        <div class="ww-avatar-container">
-          <img
-            *ngIf="election.image && election.image.url"
-            src="{{ election.image.url }}"
-            class="ww-avatar-image"
-          />
+      <div class="ww-avatar-container">
+        <img
+          *ngIf="election.image && election.image.url"
+          src="{{ election.image.url }}"
+          class="ww-avatar-image"
+        />
 
-          <div *ngIf="!(election.image && election.image.url)" class="ww-avatar-initial">
-            {{ election.name.substr(0, 1) }}
-          </div>
+        <div
+          *ngIf="!(election.image && election.image.url)"
+          class="ww-avatar-initial"
+        >
+          {{ election.name.substr(0, 1) }}
         </div>
+      </div>
 
         <div class="ww-info-block">
           <div class="ww-info-block-title">{{ election.name }}</div>

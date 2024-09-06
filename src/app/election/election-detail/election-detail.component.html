@@ -143,7 +143,7 @@
         *ngIf="
           editMode &&
           currentElection &&
-          currentElection.status.name !== 'In Progress'
+          currentElection.status.name === 'Not Started'
         "
         type="button"
         (click)="onStartElection()"

@@ -224,7 +224,7 @@ input {
 
 .ww-avatar-container .ww-avatar-image {
   max-width: 4.75rem;
-  height: auto;
+  max-height: 100%;
 }
 
 .ww-avatar-container .ww-avatar-initial {
