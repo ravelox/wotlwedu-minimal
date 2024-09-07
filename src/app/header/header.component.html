@@ -52,7 +52,7 @@
       />
     </svg>
   </div>
-  <div *ngIf="!isErrorState && isLoggedIn" (click)="onClickMenu()">
+  <div *ngIf="!isErrorState && isLoggedIn" (click)="onClickMenu($event)">
     <svg
       clip-rule="evenodd"
       fill-rule="evenodd"

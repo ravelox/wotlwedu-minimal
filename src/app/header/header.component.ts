@@ -49,11 +49,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.pageStack.setRouter(this.router);
     this._updateInProgress = false;
-    this._notificationSignal = this.dataSignalService.hasNotificationSignal.subscribe({
-      next: ()=>{
-        this.getUnreadCount.bind(this)();
-      }
-    })
+    this._notificationSignal =
+      this.dataSignalService.hasNotificationSignal.subscribe({
+        next: () => {
+          this.getUnreadCount.bind(this)();
+        },
+      });
 
     this.appVersion = GlobalVariable.APP_VERSION;
     this._refreshSignal = this.dataSignalService.refreshDataSignal.subscribe({
@@ -92,7 +93,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.getUnreadCount.bind(this)();
   }
 
-// Called when socket.io event is received
+  // Called when socket.io event is received
   private getUnreadCount() {
     // Only query for unread notifications when logged in
     // and there isn't a problem talking to the server
@@ -138,15 +139,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
   onClickLogo(event) {
     if (!this.isLoggedIn) return;
     event.preventDefault();
+    this.navBarOpen = false;
     this.tooltipVisible = !this.tooltipVisible;
   }
 
-  onClickMenu() {
+  onClickMenu(event) {
+    event.preventDefault();
+    this.tooltipVisible = false;
     this.navBarOpen = !this.navBarOpen;
   }
 
   onGoTo(routerLink: string) {
-    this.onClickMenu();
+    this.navBarOpen = false;
     this.router.navigate([routerLink]);
   }
 }
