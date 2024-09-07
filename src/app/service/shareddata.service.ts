@@ -28,6 +28,9 @@ export class SharedDataService {
     this._ioSocket.on("notification", () => {
       this.dataSignalService.hasNotification();
     });
+    this._ioSocket.on("refresh", ()=>{
+      this.dataSignalService.refreshData();
+    })
     this.dataSignalService.refreshDataSignal.subscribe({
       next: () => {
         this.loadStatusNames();

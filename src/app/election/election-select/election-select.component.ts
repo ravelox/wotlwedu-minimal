@@ -89,10 +89,17 @@ export class ElectionSelectComponent implements OnInit, OnDestroy {
         this.loader.stop();
       },
     });
+
+    this.dataRefreshSub = this.dataSignalService.refreshDataSignal.subscribe({
+      next: ()=>{
+        this.electionDataService.getAllData();
+      }
+    })
   }
 
   ngOnDestroy() {
-    this.electionsSub.unsubscribe();
+    if( this.electionsSub ) this.electionsSub.unsubscribe();
+    if( this.dataRefreshSub ) this.dataRefreshSub.unsubscribe();
   }
 
   showDeleteConfirmationDialog(object: any) {
