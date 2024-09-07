@@ -3,7 +3,7 @@ export interface Environment {
   }
   
 export const GlobalVariable = {
-    APP_VERSION: '0.0.2-prod',
+    APP_VERSION: '0.0.3-prod',
     BASE_API_URL: 'https://api.wotlwedu.com:9876/',
     DEFAULT_START_PAGE: '/home',
     ERROR_COUNTDOWN: 30

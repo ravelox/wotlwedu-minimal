@@ -3,7 +3,7 @@ export interface Environment {
   }
   
 export const GlobalVariable = {
-    APP_VERSION: '0.0.2',
+    APP_VERSION: '0.0.3-docker',
     BASE_API_URL: '${WOTLWEDU_API_URL}',
     DEFAULT_START_PAGE: '/home',
     ERROR_COUNTDOWN: 30
