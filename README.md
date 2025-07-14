@@ -65,7 +65,7 @@ RewriteRule ^(.*)$ /index.html?path=$1 [NC,L,QSA]
 ```
 
 ### Docker build ###
-A **Dockerfile** is provided in the repository. Additionally, the files **docker-entrypoint.sh** and **apache-config/wotlwedu-ssl.conf** are required for the build. These files should be reviewed. Both port **80** and **443** are exposed. The docker container is created to use SSL. It is not advisable to run this without SSL enabled.
+A **Dockerfile** is provided in the repository.  The container will be built from the *built* Angular app. That is, you *must* have run  `npm build` to generate the *dist/* directory. Additionally, the files **docker-entrypoint.sh** and **nginx-config/*.template** are required for the build. These files should be reviewed. Both port **80** and **443** are exposed. The docker container is created to use SSL. It is not advisable to run this without SSL enabled.
 To build the Docker image, run the following command in the wotlwedu-minimal repository directory:
   `docker build --no-cache -t ravelox/wotlwedu-minimal .`
 
