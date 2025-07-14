@@ -1,0 +1,31 @@
+server {
+    listen              443 ssl;
+    server_name  ${WOTLWEDU_SERVER_NAME};
+
+#
+# SSL configuration
+#
+    ssl_certificate     ${WOTLWEDU_SSL_CERT_FILE};
+    ssl_certificate_key ${WOTLWEDU_SSL_KEY_FILE};
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+
+	#
+	# Added for routed Angular app
+	#
+	try_files $uri $uri/ /index.html =404;
+    }
+
+    #error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+}

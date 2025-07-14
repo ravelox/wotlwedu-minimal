@@ -1,13 +1,14 @@
 services:
   wotlwedu-minimal:
+    container_name: wotlwedu-minimal
     environment:
-      - WOTLWEDU_SSL_KEY_FILE=/secrets/server.key
-      - WOTLWEDU_SSL_CERT_FILE=/secrets/server.crt
+      - WOTLWEDU_SSL_KEY_FILE=/secrets/localhost.key
+      - WOTLWEDU_SSL_CERT_FILE=/secrets/localhost.crt
       - WOTLWEDU_API_URL=https://api.wotlwedu.com:9876/
-      - WOTLWEDU_SERVER_NAME=mobile.wotlwedu.com
-    image: ravelox/wotlwedu-minimal
+      - WOTLWEDU_SERVER_NAME=localhost
+    image: ravelox/wotlwedu-minimal:nginx
     ports:
-      - 80:80
-      - 443:443
+      - 9080:80
+      - 9081:443
     volumes:
-        - /secrets/wotlwedu-minimal:/secrets
+        - /Users/dkelly/Projects/Wotlwedu/wotlwedu-minimal/secrets:/secrets
