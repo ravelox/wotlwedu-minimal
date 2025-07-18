@@ -1,4 +1,4 @@
-FROM nginx:latest
+FROM nginx:alpine-slim
 
 COPY dist/frontend/browser/ /usr/share/nginx/html/
 COPY nginx-config/ /etc/nginx/templates/
