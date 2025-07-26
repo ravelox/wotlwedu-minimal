@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRoute, Router, UrlSegment } from "@angular/router";
+import { Router } from "@angular/router";
 import { GlobalVariable } from "../global";
 
 @Injectable({ providedIn: "root" })

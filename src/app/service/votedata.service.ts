@@ -2,7 +2,6 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { WotlweduApiResponse } from "../datamodel/wotlwedu-api-response.model";
 import { of, Subject } from "rxjs";
-import { PreferenceDataService } from "./preferencedata.service";
 import { WotlweduPagination } from "../datamodel/wotlwedu-pagination.model";
 import { GlobalVariable } from "../global";
 import { WotlweduVote } from "../datamodel/wotlwedu-vote.model";

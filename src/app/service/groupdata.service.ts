@@ -3,7 +3,6 @@ import { Injectable } from "@angular/core";
 import { WotlweduApiResponse } from "../datamodel/wotlwedu-api-response.model";
 import { Subject, of } from "rxjs";
 import { WotlweduGroup } from "../datamodel/wotlwedu-group.model";
-import { PreferenceDataService } from "./preferencedata.service";
 import { WotlweduPagination } from "../datamodel/wotlwedu-pagination.model";
 import { GlobalVariable } from "../global";
 import { SharedDataService } from "./shareddata.service";
