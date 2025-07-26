@@ -1,0 +1,3 @@
+{
+    configAPIUrl: "${WOTLWEDU_API_URL}"
+}
