@@ -3,8 +3,8 @@ import { NgForm } from '@angular/forms';
 import { AuthDataService } from '../service/authdata.service';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
-import { GlobalVariable } from '../global';
 import { WotlweduAlert } from '../controller/wotlwedu-alert-controller.class';
+import { ConfigService } from '../service/config.service';
 
 @Component({
   selector: 'app-auth',
@@ -19,6 +19,7 @@ export class AuthComponent implements OnInit {
   constructor(
     private authService: AuthDataService,
     private router: Router,
+    private configService: ConfigService
   ) {}
 
   onSubmit(authForm: NgForm) {
@@ -27,7 +28,7 @@ export class AuthComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.authService.setLoggedIn(true);
-          return this.router.navigate([GlobalVariable.DEFAULT_START_PAGE]);
+          return this.router.navigate([this.configService.config.defaultStartPage]);
         },
         error: (err) => {
           this.alertBox.handleError(err);

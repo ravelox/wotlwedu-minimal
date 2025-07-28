@@ -12,7 +12,7 @@ import { Subscription } from "rxjs";
 import { AuthDataService } from "../service/authdata.service";
 import { WotlweduPageStackService } from "../service/pagestack.service";
 import { HealthcheckService } from "../service/healthcheck.service";
-import { GlobalVariable } from "../global";
+import { ConfigService } from "../service/config.service";
 
 @Component({
   selector: "app-header",
@@ -43,7 +43,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private notifDataService: NotificationDataService,
     private dataSignalService: DataSignalService,
     private authDataService: AuthDataService,
-    private healthcheckService: HealthcheckService
+    private healthcheckService: HealthcheckService,
+    private configService: ConfigService
   ) {}
 
   ngOnInit(): void {
@@ -56,7 +57,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         },
       });
 
-    this.appVersion = GlobalVariable.APP_VERSION;
+    this.appVersion = this.configService.config.appVersion;
     this._refreshSignal = this.dataSignalService.refreshDataSignal.subscribe({
       next: () => this.getUnreadCount.bind(this)(),
     });

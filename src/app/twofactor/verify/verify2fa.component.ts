@@ -3,8 +3,8 @@ import { NgForm } from '@angular/forms';
 import { AuthDataService } from '../../service/authdata.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of } from 'rxjs';
-import { GlobalVariable } from '../../global';
 import { WotlweduAlert } from '../../controller/wotlwedu-alert-controller.class';
+import { ConfigService } from '../../service/config.service';
 
 @Component({
   selector: 'app-2fa',
@@ -19,7 +19,8 @@ export class Verify2FAComponent implements OnInit {
   constructor(
     private authService: AuthDataService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private configService: ConfigService
   ) {}
 
   onSubmit(twoFactorForm: NgForm) {
@@ -36,7 +37,7 @@ export class Verify2FAComponent implements OnInit {
         },
         next: (response) => {
           this.authService.setLoggedIn(true);
-          return this.router.navigate([GlobalVariable.DEFAULT_START_PAGE]);
+          return this.router.navigate([this.configService.config.defaultStartPage]);
         },
       });
   }

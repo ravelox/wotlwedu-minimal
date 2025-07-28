@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, OnDestroy, OnInit } from "@angular/core";
 import { HealthcheckService } from "../service/healthcheck.service";
 import { Router } from "@angular/router";
-import { GlobalVariable } from "../global";
 import { AuthDataService } from "../service/authdata.service";
 import { DataSignalService } from "../service/datasignal.service";
+import { ConfigService } from "../service/config.service";
 
 @Component({
   selector: "app-error",
@@ -11,14 +11,14 @@ import { DataSignalService } from "../service/datasignal.service";
   styleUrl: "./error.component.css",
 })
 export class ErrorComponent implements OnInit,OnDestroy, AfterViewInit {
-  countdown: number = GlobalVariable.ERROR_COUNTDOWN;
+  countdown: number = 30;
   private _counter;
 
 
-  constructor(private healthcheck: HealthcheckService, private router: Router, private authDataService: AuthDataService, dataSignalService: DataSignalService) {  }
+  constructor(private healthcheck: HealthcheckService, private router: Router, private authDataService: AuthDataService, dataSignalService: DataSignalService, private configService: ConfigService) {  }
 
   ngOnInit(): void {
-    this.countdown = GlobalVariable.ERROR_COUNTDOWN;
+    this.countdown = this.configService.config.errorCountdown;
     this.authDataService.setErrorState();
   }
 
@@ -38,13 +38,13 @@ export class ErrorComponent implements OnInit,OnDestroy, AfterViewInit {
     if (this.countdown === 0) {
       this.healthcheck.ping().subscribe({
         error: (err) => {
-          this.countdown = GlobalVariable.ERROR_COUNTDOWN;
+          this.countdown = this.configService.config.errorCountdown;
         },
         next: (response) => {
           if (response) {
             clearInterval(this._counter);
             this.authDataService.clearErrorState();
-            this.router.navigate([GlobalVariable.DEFAULT_START_PAGE]);
+            this.router.navigate([this.configService.config.defaultStartPage]);
           }
         },
       });
