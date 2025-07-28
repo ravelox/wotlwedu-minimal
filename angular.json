@@ -50,12 +50,6 @@
               "outputHashing": "all"
             },
             "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/app/global.ts",
-                  "with": "src/environments/global.production.ts"
-                }
-              ],
               "optimization": true,
               "budgets": [
                 {
@@ -72,12 +66,6 @@
               "outputHashing": "all"
             },
             "development": {
-              "fileReplacements": [
-                {
-                  "replace": "src/app/global.ts",
-                  "with": "src/environments/global.development.ts"
-                }
-              ],
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
@@ -115,5 +103,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
