@@ -1,3 +1,16 @@
+<div
+  style="min-width: 100%"
+  class="ww-flex-row"
+  style="justify-content: space-between; align-items: center"
+>
+  <div>
+    <img
+      style="height: 35px; width: auto"
+      src="assets/logo.png"
+      draggable="false"
+    />
+  </div>
+</div>
 <app-modal-alert
   *ngIf="alertBox.errorMessage"
   [message]="alertBox.errorMessage"
@@ -34,7 +47,17 @@
             required
             #passwordinput
           />
-          <div id="passwordtoggle" (click)="onTogglePassword()" style="display: flex; align-items: center; justify-items: center; border: 2px solid black; border-left: 0;">
+          <div
+            id="passwordtoggle"
+            (click)="onTogglePassword()"
+            style="
+              display: flex;
+              align-items: center;
+              justify-items: center;
+              border: 2px solid black;
+              border-left: 0;
+            "
+          >
             <svg
               *ngIf="!showPassword"
               width="24"

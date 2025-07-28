@@ -1,3 +1,4 @@
+<app-header></app-header>
 <app-modal-alert
   *ngIf="alertBox.errorMessage"
   [message]="alertBox.errorMessage"
@@ -44,11 +45,12 @@
       </button>
     </div>
     <!-- Capabilities Selection List -->
-    <app-cap-select *ngIf="capIsVisible" [selectMode]="true"></app-cap-select>
+    <app-cap-select *ngIf="capIsVisible" [isEmbedded]="true" [selectMode]="true"></app-cap-select>
 
     <!-- Users Selection List -->
     <app-user-select
       [selectMode]="true"
+      [isEmbedded]="true"
       *ngIf="userIsVisible"
     ></app-user-select>
 

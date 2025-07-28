@@ -1,5 +1,5 @@
-<app-modal-alert
-  *ngIf="alertBox.errorMessage"
+<app-header></app-header>
+<app-modal-alert *ngIf="alertBox.errorMessage"
   [message]="alertBox.errorMessage"
   (close)="alertBox.onCloseAlert()"
 ></app-modal-alert>

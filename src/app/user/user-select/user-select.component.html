@@ -1,3 +1,4 @@
+<app-header *ngIf="!isEmbedded"></app-header>
 <app-modal-alert
   *ngIf="alertBox.errorMessage"
   [message]="alertBox.errorMessage"

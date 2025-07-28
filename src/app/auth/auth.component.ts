@@ -2,7 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthDataService } from '../service/authdata.service';
 import { Router } from '@angular/router';
-import { TokenDataStorageService } from '../service/tokendata.service';
 import { of } from 'rxjs';
 import { GlobalVariable } from '../global';
 import { WotlweduAlert } from '../controller/wotlwedu-alert-controller.class';
@@ -20,7 +19,6 @@ export class AuthComponent implements OnInit {
   constructor(
     private authService: AuthDataService,
     private router: Router,
-    private tokenDataService: TokenDataStorageService
   ) {}
 
   onSubmit(authForm: NgForm) {
@@ -38,7 +36,7 @@ export class AuthComponent implements OnInit {
       });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.authService.reset();
   }
 

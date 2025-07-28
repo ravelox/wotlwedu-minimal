@@ -19,6 +19,7 @@ export class CapSelectComponent implements OnInit, OnDestroy, AfterViewInit {
   pages: WotlweduPages = new WotlweduPages();
   filter: WotlweduFilterController = new WotlweduFilterController();
   @Input() selectMode: boolean = false;
+  @Input() isEmbedded: boolean = false;
   @ViewChild("capselectlist") capSelectList: ElementRef;
 
   constructor(
