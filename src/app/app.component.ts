@@ -10,19 +10,19 @@ import { SharedDataService } from "./service/shareddata.service";
 export class AppComponent implements OnInit {
   constructor(
     private authDataService: AuthDataService,
-    private sharedDataService: SharedDataService
   ) {}
 
   ngOnInit() {
+
     this.authDataService.autoLogin();
 
-    this.authDataService.isLoggedIn.subscribe({
-      next: (details) => {
+    // this.authDataService.isLoggedIn.subscribe({
+    //   next: (details) => {
 
-        if (details && details.loginState === true) {
-          this.sharedDataService.refresh();
-        }
-      },
-    });
+    //     // if (details && details.loginState === true) {
+    //     //   this.sharedDataService.refresh();
+    //     // }
+    //   },
+    // });
   }
 }
