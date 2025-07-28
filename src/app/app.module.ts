@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { APP_INITIALIZER, NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 
 import { AppComponent } from "./app.component";
@@ -21,7 +21,7 @@ import { FriendMiniComponent } from "./friend/friend-mini/friend-mini.component"
 import { FriendSelectComponent } from "./friend/friend-select/friend-select.component";
 import { GroupDetailComponent } from "./group/group-detail/group-detail.component";
 import { GroupSelectComponent } from "./group/group-select/group-select.component";
-import { HttpClientModule } from "@angular/common/http";
+import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { ImageDetailComponent } from "./image/image-detail/image-detail.component";
 import { ImageSelectComponent } from "./image/image-select/image-select.component";
 import { ImageSelectMiniComponent } from "./image/image-select-mini/image-select-mini.component";
@@ -57,7 +57,25 @@ import { ListViewerComponent } from "./list/list-viewer/list-viewer.component";
 import { ItemViewerComponent } from "./item/item-viewer/item-viewer.component";
 import { ImageViewerComponent } from "./image/image-viewer/image-viewer.component";
 import { HeaderComponent } from "./header/header.component";
-import { ErrorComponent } from './error/error.component';
+import { ErrorComponent } from "./error/error.component";
+import { ConfigService } from "./service/config.service";
+import { tap } from "rxjs";
+
+function initializeAppFactory(
+  httpClient: HttpClient,
+  configService: ConfigService
+) {
+  const url = 'assets/wotlwedu-config.json';
+  return () =>
+    httpClient.get(url).pipe(
+      tap((config) => {
+        if( config ) {
+          configService.config = config;
+        }
+        console.log( config )
+      })
+    );
+}
 
 @NgModule({
   declarations: [
@@ -124,7 +142,16 @@ import { ErrorComponent } from './error/error.component';
     TokenDataStorageService,
     AuthInterceptorProvider,
     RegisterService,
+    ConfigService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeAppFactory,
+      multi: true,
+      deps: [HttpClient, ConfigService],
+    },
   ],
   bootstrap: [AppComponent],
 })
+
+
 export class AppModule {}
