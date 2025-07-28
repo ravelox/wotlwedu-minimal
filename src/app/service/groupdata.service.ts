@@ -4,18 +4,18 @@ import { WotlweduApiResponse } from "../datamodel/wotlwedu-api-response.model";
 import { Subject, of } from "rxjs";
 import { WotlweduGroup } from "../datamodel/wotlwedu-group.model";
 import { WotlweduPagination } from "../datamodel/wotlwedu-pagination.model";
-import { GlobalVariable } from "../global";
 import { SharedDataService } from "./shareddata.service";
+import { ConfigService } from "./config.service";
 
 @Injectable({ providedIn: "root" })
 export class GroupDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduGroup[]>();
   details = new Subject<WotlweduGroup>();
-  private ENDPOINT = GlobalVariable.BASE_API_URL + "group/";
 
   constructor(
     private http: HttpClient,
-    private sharedDataService: SharedDataService
+    private sharedDataService: SharedDataService,
+    private configService: ConfigService
   ) {
     super();
     this.setCallbackFunction(this.getAllData);
@@ -23,7 +23,7 @@ export class GroupDataService extends WotlweduPagination {
 
   getData(groupId: string) {
     if (!groupId || groupId === "") return null;
-    const url = this.ENDPOINT + groupId + "?" + "detail=user,category";
+    const url = this.configService.config.apiUrl + 'group/' + groupId + "?" + "detail=user,category";
     return this.http.get<WotlweduApiResponse>(url);
   }
 
@@ -31,7 +31,7 @@ export class GroupDataService extends WotlweduPagination {
     this.filterUpdate(filter);
     this.itemsPerPage = +this.sharedDataService.getPreference("itemsperpage");
     const url =
-      this.ENDPOINT +
+      this.configService.config.apiUrl + 'group/' +
       "?" +
       "detail=user,category" +
       "&page=" +
@@ -58,7 +58,7 @@ export class GroupDataService extends WotlweduPagination {
       name: name,
       description: description,
     };
-    let url = this.ENDPOINT;
+    let url = this.configService.config.apiUrl + 'group/';
 
     if (groupId) {
       url = url + groupId;
@@ -69,20 +69,20 @@ export class GroupDataService extends WotlweduPagination {
 
   addUsers(groupId: string, users: string[]) {
     if (!groupId || !users || users.length === 0) return of({});
-    let url = this.ENDPOINT + groupId + "/bulkuseradd";
+    let url = this.configService.config.apiUrl + 'group/' + groupId + "/bulkuseradd";
     const payload = { userList: users };
     return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   deleteUsers(groupId: string, users: string[]) {
     if (!groupId || !users || users.length === 0) return of({});
-    let url = this.ENDPOINT + groupId + "/bulkuserdel";
+    let url = this.configService.config.apiUrl + 'group/' + groupId + "/bulkuserdel";
     const payload = { userList: users };
     return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   deleteGroup(groupId: string) {
-    let url = this.ENDPOINT + groupId;
+    let url = this.configService.config.apiUrl + 'group/' + groupId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 

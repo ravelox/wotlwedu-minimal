@@ -5,15 +5,14 @@ import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
 import { Subject } from 'rxjs';
 import { WotlweduCap } from '../datamodel/wotlwedu-cap.model';
 import { WotlweduPagination } from '../datamodel/wotlwedu-pagination.model';
-import { GlobalVariable } from '../global';
+import { ConfigService } from './config.service';
 
 @Injectable({ providedIn: 'root' })
 export class CapDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduCap[]>();
   details = new Subject<WotlweduCap>();
-  private ENDPOINT: string = GlobalVariable.BASE_API_URL + 'capability/';
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private configService: ConfigService) {
     super();
     this.setCallbackFunction(this.getAllData);
 
@@ -24,14 +23,14 @@ export class CapDataService extends WotlweduPagination {
 
   getData(capId: string) {
     if (!capId || capId === '') return null;
-    const url = this.ENDPOINT + capId;
+    const url = this.configService.config.apiUrl + 'capability/' + capId;
     return this.http.get<WotlweduApiResponse>(url);
   }
 
   getAllData(filter?: string) {
     this.filterUpdate(filter);
     const url =
-      this.ENDPOINT +
+      this.configService.config.apiUrl + 'capability/' +
       '?page=' +
       this.page +
       '&items=' +

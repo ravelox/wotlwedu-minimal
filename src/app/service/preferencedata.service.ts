@@ -5,30 +5,29 @@ import { WotlweduApiResponse } from "../datamodel/wotlwedu-api-response.model";
 import { firstValueFrom, Subject } from "rxjs";
 import { WotlweduPreference } from "../datamodel/wotlwedu-preference.model";
 import { WotlweduPagination } from "../datamodel/wotlwedu-pagination.model";
-import { GlobalVariable } from "../global";
+import { ConfigService } from "./config.service";
 
 @Injectable({ providedIn: "root" })
 export class PreferenceDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduPreference[]>();
   details = new Subject<WotlweduPreference>();
-  private ENDPOINT = GlobalVariable.BASE_API_URL + "preference/";
 
   // For preferences, we will not be restricting to itemsperpage
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private configService: ConfigService) {
     super();
     this.setCallbackFunction(this.getAllData);
   }
 
   getData(preferenceName: string) {
     if (!preferenceName || preferenceName === "") return null;
-    const url = this.ENDPOINT + preferenceName;
+    const url = this.configService.config.apiUrl + 'preference/' + preferenceName;
     return this.http.get<WotlweduApiResponse>(url);
   }
 
   getAllData(filter?: string) {
     this.filterUpdate(filter);
     const url =
-      this.ENDPOINT +
+      this.configService.config.apiUrl + 'preference/' +
       (this.currentFilter.length > 0
         ? "&filter=" + encodeURIComponent(this.currentFilter)
         : "");
@@ -47,7 +46,7 @@ export class PreferenceDataService extends WotlweduPagination {
   async getAllDataAsync(filter?: string) {
     this.filterUpdate(filter);
     const url =
-      this.ENDPOINT +
+      this.configService.config.apiUrl + 'preference/' +
       (this.currentFilter.length > 0
         ? "&filter=" + encodeURIComponent(this.currentFilter)
         : "");
@@ -68,7 +67,7 @@ export class PreferenceDataService extends WotlweduPagination {
       name: name,
       value: value,
     };
-    let url = this.ENDPOINT;
+    let url = this.configService.config.apiUrl + 'preference/';
 
     if (preferenceId) {
       url = url + preferenceId;
@@ -78,7 +77,7 @@ export class PreferenceDataService extends WotlweduPagination {
   }
 
   deletePreference(preferenceId: string) {
-    let url = this.ENDPOINT + preferenceId;
+    let url = this.configService.config.apiUrl + 'preference/' + preferenceId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 

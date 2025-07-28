@@ -5,19 +5,19 @@ import { WotlweduUser } from '../datamodel/wotlwedu-user.model';
 import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
 import { of, Subject } from 'rxjs';
 import { WotlweduPagination } from '../datamodel/wotlwedu-pagination.model';
-import { GlobalVariable } from '../global';
 import { SharedDataService } from './shareddata.service';
+import { ConfigService } from './config.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduUser[]>();
   details = new Subject<WotlweduUser>();
   refreshFriends = new Subject<boolean>();
-  private ENDPOINT: string = GlobalVariable.BASE_API_URL + 'user/';
 
   constructor(
     private http: HttpClient,
-    private sharedDataService: SharedDataService
+    private sharedDataService: SharedDataService,
+    private configService: ConfigService
   ) {
     super();
     this.setCallbackFunction(this.getAllData);
@@ -25,7 +25,7 @@ export class UserDataService extends WotlweduPagination {
 
   getData(userId: string) {
     if (!userId || userId === '') return null;
-    const url = this.ENDPOINT + userId + '?detail=image';
+    const url = this.configService.config.apiUrl + 'user/' + userId + '?detail=image';
     return this.http.get<WotlweduApiResponse>(url);
   }
 
@@ -33,7 +33,7 @@ export class UserDataService extends WotlweduPagination {
     this.filterUpdate(filter);
     this.itemsPerPage = +this.sharedDataService.getPreference('itemsperpage');
     const url =
-      this.ENDPOINT +
+      this.configService.config.apiUrl + 'user/' +
       '?detail=image&page=' +
       this.page +
       '&items=' +
@@ -55,7 +55,7 @@ export class UserDataService extends WotlweduPagination {
 
   getFriends(userId: string, showBlocked?: boolean) {
     const url =
-      this.ENDPOINT + userId + '/friend' + (showBlocked ? '?blocked=1' : '');
+      this.configService.config.apiUrl + 'user/' + userId + '/friend' + (showBlocked ? '?blocked=1' : '');
     return this.http.get<WotlweduApiResponse>(url);
   }
 
@@ -74,7 +74,7 @@ export class UserDataService extends WotlweduPagination {
       admin: userObject.admin
     };
    
-    let url = this.ENDPOINT;
+    let url = this.configService.config.apiUrl + 'user/';
 
     if (userObject.id) {
       url = url + userObject.id;
@@ -84,7 +84,7 @@ export class UserDataService extends WotlweduPagination {
   }
 
   deleteUser(userId: string) {
-    let url = this.ENDPOINT + userId;
+    let url = this.configService.config.apiUrl + 'user/' + userId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 
@@ -95,7 +95,7 @@ export class UserDataService extends WotlweduPagination {
   addFriendByEmail(email: string) {
     if (!email) return of(null);
 
-    let url = this.ENDPOINT + 'request';
+    let url = this.configService.config.apiUrl + 'user/' + 'request';
     let payload = { email: email };
     return this.http.post<WotlweduApiResponse>(url, payload);
   }
@@ -103,26 +103,26 @@ export class UserDataService extends WotlweduPagination {
   addFriendById(friendId: string) {
     if (!friendId) return of(null);
 
-    let url = this.ENDPOINT + 'request/' + friendId;
+    let url = this.configService.config.apiUrl + 'user/' + 'request/' + friendId;
     let payload = {};
     return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deleteRelationship(relationshipId: string) {
     if (!relationshipId) return of(null);
-    let url = this.ENDPOINT + 'relationship/' + relationshipId;
+    let url = this.configService.config.apiUrl + 'user/' + 'relationship/' + relationshipId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 
   confirmFriend(tokenId) {
     if (!tokenId) return of(null);
-    const url = this.ENDPOINT + 'accept/' + tokenId;
+    const url = this.configService.config.apiUrl + 'user/' + 'accept/' + tokenId;
     return this.http.get<WotlweduApiResponse>(url);
   }
 
   blockFriend(userId) {
     if (!userId) return of(null);
-    const url = this.ENDPOINT + 'block/' + userId;
+    const url = this.configService.config.apiUrl + 'user/' + 'block/' + userId;
     return this.http.put<WotlweduApiResponse>(url, {});
   }
 }

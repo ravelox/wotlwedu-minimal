@@ -4,20 +4,19 @@ import { Injectable } from '@angular/core';
 import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
 import { of, Subject } from 'rxjs';
 import { WotlweduItem } from '../datamodel/wotlwedu-item.model';
-import { PreferenceDataService } from './preferencedata.service';
 import { WotlweduPagination } from '../datamodel/wotlwedu-pagination.model';
-import { GlobalVariable } from '../global';
 import { SharedDataService } from './shareddata.service';
+import { ConfigService } from './config.service';
 
 @Injectable({ providedIn: 'root' })
 export class ItemDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduItem[]>();
   details = new Subject<WotlweduItem>();
-  private ENDPOINT = GlobalVariable.BASE_API_URL + 'item/';
 
   constructor(
     private http: HttpClient,
-    private sharedDataService: SharedDataService
+    private sharedDataService: SharedDataService,
+    private configService: ConfigService
   ) {
     super();
     this.setCallbackFunction(this.getAllData);
@@ -25,7 +24,7 @@ export class ItemDataService extends WotlweduPagination {
 
   getData(itemId: string, notificationId?: string) {
     if (!itemId || itemId === '') return null;
-    let url = this.ENDPOINT + itemId;
+    let url = this.configService.config.apiUrl + 'item/' + itemId;
 
     if( notificationId ) {
       url = url + '/notif/' + notificationId;
@@ -39,7 +38,7 @@ export class ItemDataService extends WotlweduPagination {
     this.filterUpdate(filter);
     this.itemsPerPage = +this.sharedDataService.getPreference('itemsperpage');
     const url =
-      this.ENDPOINT +
+      this.configService.config.apiUrl + 'item/' +
       '?detail=image&page=' +
       this.page +
       '&items=' +
@@ -70,7 +69,7 @@ export class ItemDataService extends WotlweduPagination {
       categoryId: null,
     };
 
-    let url = this.ENDPOINT;
+    let url = this.configService.config.apiUrl + 'item/';
 
     if (itemObject.id) {
       url = url + itemObject.id;
@@ -80,19 +79,19 @@ export class ItemDataService extends WotlweduPagination {
   }
 
   deleteItem(itemId: string) {
-    let url = this.ENDPOINT + itemId;
+    let url = this.configService.config.apiUrl + 'item/' + itemId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 
   shareItem(itemId: string, recipientId: string) {
     if( ! itemId || ! recipientId ) return of(null);
-    let url = this.ENDPOINT + 'share/' + itemId + "/recipient/" + recipientId;
+    let url = this.configService.config.apiUrl + 'item/' + 'share/' + itemId + "/recipient/" + recipientId;
     return this.http.get<WotlweduApiResponse>(url);
   }
 
   acceptItem(notificationId: string) {
     if( ! notificationId ) return of(null);
-    let url = this.ENDPOINT + 'accept/' + notificationId;
+    let url = this.configService.config.apiUrl + 'item/' + 'accept/' + notificationId;
     return this.http.get<WotlweduApiResponse>(url);
   }
 

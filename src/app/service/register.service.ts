@@ -1,22 +1,21 @@
-import { Injectable } from '@angular/core';
-import { GlobalVariable } from '../global';
-import { HttpClient } from '@angular/common/http';
-import { WotlweduRegistration } from '../datamodel/wotlwedu-registration.model';
-import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
+import { Injectable } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { WotlweduRegistration } from "../datamodel/wotlwedu-registration.model";
+import { WotlweduApiResponse } from "../datamodel/wotlwedu-api-response.model";
+import { ConfigService } from "./config.service";
 
 @Injectable()
 export class RegisterService {
-  private ENDPOINT: string = GlobalVariable.BASE_API_URL + 'register';
-
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private configService: ConfigService) {}
 
   register(registration: WotlweduRegistration) {
-    const url = this.ENDPOINT;
+    const url = this.configService.config.apiUrl + "register";
     return this.http.post<WotlweduApiResponse>(url, registration);
   }
 
   confirm(token: string) {
-    const url = this.ENDPOINT + "/confirm/" + token;
+    const url =
+      this.configService.config.apiUrl + "register" + "/confirm/" + token;
     return this.http.get<WotlweduApiResponse>(url);
   }
 }

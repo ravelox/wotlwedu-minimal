@@ -3,21 +3,20 @@ import { Injectable } from '@angular/core';
 
 import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
 import { Subject } from 'rxjs';
-import { PreferenceDataService } from './preferencedata.service';
 import { WotlweduElection } from '../datamodel/wotlwedu-election.model';
 import { WotlweduPagination } from '../datamodel/wotlwedu-pagination.model';
-import { GlobalVariable } from '../global';
 import { SharedDataService } from './shareddata.service';
+import { ConfigService } from './config.service';
 
 @Injectable({ providedIn: 'root' })
 export class ElectionDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduElection[]>();
   details = new Subject<WotlweduElection>();
-  private ENDPOINT: string = GlobalVariable.BASE_API_URL + 'election/';
 
   constructor(
     private http: HttpClient,
-    private sharedDataService: SharedDataService
+    private sharedDataService: SharedDataService,
+    private configService: ConfigService
   ) {
     super();
     this.setCallbackFunction(this.getAllData);
@@ -26,7 +25,7 @@ export class ElectionDataService extends WotlweduPagination {
   getData(electionId: string) {
     if (!electionId || electionId === '') return null;
     const url =
-      this.ENDPOINT + electionId + '?detail=group,list,category,image';
+      this.configService.config.apiUrl + 'election/' + electionId + '?detail=group,list,category,image';
     return this.http.get<WotlweduApiResponse>(url);
   }
 
@@ -35,7 +34,7 @@ export class ElectionDataService extends WotlweduPagination {
     this.itemsPerPage = +this.sharedDataService.getPreference('itemsperpage');
 
     const url =
-      this.ENDPOINT +
+      this.configService.config.apiUrl + 'election/' +
       '?detail=group,list,category,image' +
       '&page=' +
       this.page +
@@ -58,7 +57,7 @@ export class ElectionDataService extends WotlweduPagination {
 
   getElectionStats(electionId: string) {
     if (!electionId || electionId === '') return null;
-    const url = this.ENDPOINT + electionId + '/stats';
+    const url = this.configService.config.apiUrl + 'election/' + electionId + '/stats';
     return this.http.get<WotlweduApiResponse>(url);
   }
 
@@ -91,7 +90,7 @@ export class ElectionDataService extends WotlweduPagination {
       payload.expiration = election.expiration.toISOString();
     }
 
-    let url = this.ENDPOINT;
+    let url = this.configService.config.apiUrl + 'election/';
 
     if (election.id) {
       url = url + election.id;
@@ -101,7 +100,7 @@ export class ElectionDataService extends WotlweduPagination {
   }
 
   deleteElection(electionId: string) {
-    let url = this.ENDPOINT + electionId;
+    let url = this.configService.config.apiUrl + 'election/' + electionId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 
@@ -110,12 +109,12 @@ export class ElectionDataService extends WotlweduPagination {
   }
 
   startElection(electionId: string) {
-    let url = this.ENDPOINT + electionId + '/start';
+    let url = this.configService.config.apiUrl + 'election/' + electionId + '/start';
     return this.http.put<WotlweduApiResponse>(url, null);
   }
 
   stopElection(electionId: string) {
-    let url = this.ENDPOINT + electionId + '/stop';
+    let url = this.configService.config.apiUrl + 'election/' + electionId + '/stop';
     return this.http.put<WotlweduApiResponse>(url, null);
   }
 }

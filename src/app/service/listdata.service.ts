@@ -1,53 +1,54 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
 
-import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
-import { NotificationKind, of, Subject } from 'rxjs';
-import { WotlweduList } from '../datamodel/wotlwedu-list.model';
-import { WotlweduPagination } from '../datamodel/wotlwedu-pagination.model';
-import { GlobalVariable } from '../global';
-import { SharedDataService } from './shareddata.service';
+import { WotlweduApiResponse } from "../datamodel/wotlwedu-api-response.model";
+import { of, Subject } from "rxjs";
+import { WotlweduList } from "../datamodel/wotlwedu-list.model";
+import { WotlweduPagination } from "../datamodel/wotlwedu-pagination.model";
+import { SharedDataService } from "./shareddata.service";
+import { ConfigService } from "./config.service";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class ListDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduList[]>();
   details = new Subject<WotlweduList>();
-  private ENDPOINT = GlobalVariable.BASE_API_URL + 'list/';
 
   constructor(
     private http: HttpClient,
-    private sharedDataService: SharedDataService
+    private sharedDataService: SharedDataService,
+    private configService: ConfigService
   ) {
     super();
     this.setCallbackFunction(this.getAllData);
   }
 
   getData(listId: string, notificationId?: string) {
-    if (!listId || listId === '') return null;
-    let url = this.ENDPOINT + listId;
+    if (!listId || listId === "") return null;
+    let url = this.configService.config.apiUrl + "list/" + listId;
 
-    if( notificationId ) {
+    if (notificationId) {
       url = url + "/notif/" + notificationId;
     }
 
     url = url + "?detail=category,item,image";
-    
+
     return this.http.get<WotlweduApiResponse>(url);
   }
 
   getAllData(filter?: string) {
     this.filterUpdate(filter);
-    this.itemsPerPage = +this.sharedDataService.getPreference('itemsperpage');
+    this.itemsPerPage = +this.sharedDataService.getPreference("itemsperpage");
     const url =
-      this.ENDPOINT +
-      '?detail=category,item,image' +
-      '&page=' +
+      this.configService.config.apiUrl +
+      "list/" +
+      "?detail=category,item,image" +
+      "&page=" +
       this.page +
-      '&items=' +
+      "&items=" +
       this.itemsPerPage +
       (this.currentFilter.length > 0
-        ? '&filter=' + encodeURIComponent(this.currentFilter)
-        : '');
+        ? "&filter=" + encodeURIComponent(this.currentFilter)
+        : "");
 
     return this.http.get<WotlweduApiResponse>(url).subscribe({
       next: (response) => {
@@ -65,7 +66,7 @@ export class ListDataService extends WotlweduPagination {
       name: name,
       description: description,
     };
-    let url = this.ENDPOINT;
+    let url = this.configService.config.apiUrl + "list/";
 
     if (listId) {
       url = url + listId;
@@ -76,32 +77,50 @@ export class ListDataService extends WotlweduPagination {
 
   addItems(listId: string, items: string[]) {
     if (!listId || !items || items.length === 0) return of({});
-    let url = this.ENDPOINT + listId + '/bulkitemadd';
+    let url =
+      this.configService.config.apiUrl +
+      "list/" +
+      listId +
+      "/bulkitemadd";
     const payload = { itemList: items };
     return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   deleteItems(listId: string, items: string[]) {
     if (!listId || !items || items.length === 0) return of({});
-    let url = this.ENDPOINT + listId + '/bulkitemdel';
+    let url =
+      this.configService.config.apiUrl +
+      "list/" +
+      listId +
+      "/bulkitemdel";
     const payload = { itemList: items };
     return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   deleteList(listId: string) {
-    let url = this.ENDPOINT + listId;
+    let url = this.configService.config.apiUrl + "list/" + listId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 
   shareList(listId: string, recipientId: string) {
-    if( ! listId || ! recipientId ) return of(null);
-    let url = this.ENDPOINT + 'share/' + listId + "/recipient/" + recipientId;
+    if (!listId || !recipientId) return of(null);
+    let url =
+      this.configService.config.apiUrl +
+      "list/" +
+      "share/" +
+      listId +
+      "/recipient/" +
+      recipientId;
     return this.http.get<WotlweduApiResponse>(url);
   }
 
   acceptList(notificationId: string) {
-    if( ! notificationId ) return of(null);
-    let url = this.ENDPOINT + 'accept/' + notificationId;
+    if (!notificationId) return of(null);
+    let url =
+      this.configService.config.apiUrl +
+      "list/" +
+      "accept/" +
+      notificationId;
     return this.http.get<WotlweduApiResponse>(url);
   }
 

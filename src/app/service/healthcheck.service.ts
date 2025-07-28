@@ -1,16 +1,15 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
 
-import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
-import { GlobalVariable } from '../global';
+import { WotlweduApiResponse } from "../datamodel/wotlwedu-api-response.model";
+import { ConfigService } from "./config.service";
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class HealthcheckService {
-  private ENDPOINT = GlobalVariable.BASE_API_URL + 'ping';
-
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private configService: ConfigService) {}
 
   ping() {
-    return this.http.get<WotlweduApiResponse>(this.ENDPOINT);
+    let url = this.configService.config.apiUrl + "ping";
+    return this.http.get<WotlweduApiResponse>(url);
   }
 }

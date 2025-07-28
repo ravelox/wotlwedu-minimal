@@ -3,33 +3,34 @@ import { Injectable } from '@angular/core';
 
 import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
 import { of, Subject } from 'rxjs';
-import { GlobalVariable } from '../global';
 import { WotlweduNotification } from '../datamodel/wotlwedu-notification.model';
 import { WotlweduPagination } from '../datamodel/wotlwedu-pagination.model';
 import { SharedDataService } from './shareddata.service';
+import { ConfigService } from './config.service';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduNotification[]>();
   details = new Subject<WotlweduNotification>();
-  private ENDPOINT: string = GlobalVariable.BASE_API_URL + 'notification/';
 
   constructor(
     private http: HttpClient,
-    private sharedDataService: SharedDataService
+    private sharedDataService: SharedDataService,
+    private configService: ConfigService
   ) {
     super();
+    console.trace("In NotificationService constructor")
     this.setCallbackFunction(this.getAllData);
   }
 
   getData(notificationId: string) {
     if (!notificationId || notificationId === '') return null;
-    const url = this.ENDPOINT + notificationId;
+    const url = this.configService.config.apiUrl + 'notification/' + notificationId;
     return this.http.get<WotlweduApiResponse>(url);
   }
 
   getAllData() {
-    const url = this.ENDPOINT;
+    const url = this.configService.config.apiUrl + 'notification/';
     return this.http.get<WotlweduApiResponse>(url).subscribe({
       next: (response) => {
         const objects: WotlweduNotification[] = response.data.notifications;
@@ -42,7 +43,7 @@ export class NotificationDataService extends WotlweduPagination {
   }
 
   getUnreadCount() {
-    const url = this.ENDPOINT + "unreadcount";
+    const url = this.configService.config.apiUrl + 'notification/' + "unreadcount";
     return this.http.get<WotlweduApiResponse>(url);
   }
 
@@ -54,7 +55,7 @@ export class NotificationDataService extends WotlweduPagination {
       type: notifObject.type,
       statusId: notifObject.status.id,
     };
-    let url = this.ENDPOINT;
+    let url = this.configService.config.apiUrl + 'notification/';
 
     if (notifObject.id) {
       url = url + notifObject.id;
@@ -64,7 +65,7 @@ export class NotificationDataService extends WotlweduPagination {
   }
 
   deleteNotification(notificationId: string) {
-    let url = this.ENDPOINT + notificationId;
+    let url = this.configService.config.apiUrl + 'notification/' + notificationId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 
@@ -78,7 +79,7 @@ export class NotificationDataService extends WotlweduPagination {
     const foundStatus = this.sharedDataService.getStatusId(statusName);
     if (foundStatus) {
       const notifUrl =
-        this.ENDPOINT +
+        this.configService.config.apiUrl + 'notification/' +
         'status/' +
         notificationId +
         '/' +

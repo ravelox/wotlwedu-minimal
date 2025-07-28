@@ -5,18 +5,18 @@ import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
 import { of, Subject } from 'rxjs';
 import { WotlweduImage } from '../datamodel/wotlwedu-image.model';
 import { WotlweduPagination } from '../datamodel/wotlwedu-pagination.model';
-import { GlobalVariable } from '../global';
 import { SharedDataService } from './shareddata.service';
+import { ConfigService } from './config.service';
 
 @Injectable({ providedIn: 'root' })
 export class ImageDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduImage[]>();
   details = new Subject<WotlweduImage>();
-  private ENDPOINT: string = GlobalVariable.BASE_API_URL + 'image/';
 
   constructor(
     private http: HttpClient,
-    private sharedDataService: SharedDataService
+    private sharedDataService: SharedDataService,
+    private configService: ConfigService
   ) {
     super();
     this.setCallbackFunction(this.getAllData);
@@ -24,7 +24,7 @@ export class ImageDataService extends WotlweduPagination {
 
   getData(imageId: string, notificationId?: string) {
     if (!imageId || imageId === '') return null;
-    let url = this.ENDPOINT + imageId;
+    let url = this.configService.config.apiUrl + 'image/' + imageId;
 
     if( notificationId ) {
       url = url + "/notif/" + notificationId;
@@ -36,7 +36,7 @@ export class ImageDataService extends WotlweduPagination {
     this.filterUpdate(filter);
     this.itemsPerPage = +this.sharedDataService.getPreference('itemsperpage');
     const url =
-      this.ENDPOINT +
+      this.configService.config.apiUrl + 'image/' +
       '?detail=category' +
       '&page=' +
       this.page +
@@ -63,7 +63,7 @@ export class ImageDataService extends WotlweduPagination {
       description: description,
     };
 
-    let url = this.ENDPOINT;
+    let url = this.configService.config.apiUrl + 'image/';
 
     if (imageId) {
       url = url + imageId;
@@ -73,12 +73,12 @@ export class ImageDataService extends WotlweduPagination {
   }
 
   deleteImage(imageId: string) {
-    let url = this.ENDPOINT + imageId;
+    let url = this.configService.config.apiUrl + 'image/' + imageId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 
   saveImageFile(imageId: string, imageFile: File) {
-    let url = this.ENDPOINT + 'file/' + imageId;
+    let url = this.configService.config.apiUrl + 'image/' + 'file/' + imageId;
     const formData = new FormData();
     let fileExtension = 'jpg';
     if (imageFile.type && imageFile.type.includes('/')) {
@@ -90,19 +90,19 @@ export class ImageDataService extends WotlweduPagination {
   }
 
   deleteImageFile(imageId: string) {
-    let url = this.ENDPOINT + 'file/' + imageId;
+    let url = this.configService.config.apiUrl + 'image/' + 'file/' + imageId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 
   shareImage(imageId: string, recipientId: string) {
     if( ! imageId || ! recipientId ) return of(null);
-    let url = this.ENDPOINT + 'share/' + imageId + "/recipient/" + recipientId;
+    let url = this.configService.config.apiUrl + 'image/' + 'share/' + imageId + "/recipient/" + recipientId;
     return this.http.get<WotlweduApiResponse>(url);
   }
 
   acceptImage(notificationId: string) {
     if( ! notificationId ) return of(null);
-    let url = this.ENDPOINT + 'accept/' + notificationId;
+    let url = this.configService.config.apiUrl + 'image/' + 'accept/' + notificationId;
     return this.http.get<WotlweduApiResponse>(url);
   }
 

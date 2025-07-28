@@ -5,18 +5,18 @@ import { WotlweduApiResponse } from "../datamodel/wotlwedu-api-response.model";
 import { Subject } from "rxjs";
 import { WotlweduCategory } from "../datamodel/wotlwedu-category.model";
 import { WotlweduPagination } from "../datamodel/wotlwedu-pagination.model";
-import { GlobalVariable } from "../global";
 import { SharedDataService } from "./shareddata.service";
+import { ConfigService } from "./config.service";
 
 @Injectable({ providedIn: "root" })
 export class CategoryDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduCategory[]>();
   details = new Subject<WotlweduCategory>();
-  private ENDPOINT: string = GlobalVariable.BASE_API_URL + "category/";
 
   constructor(
     private http: HttpClient,
-    private sharedDataService: SharedDataService
+    private sharedDataService: SharedDataService,
+    private configService: ConfigService
   ) {
     super();
     this.setCallbackFunction(this.getAllData);
@@ -24,7 +24,8 @@ export class CategoryDataService extends WotlweduPagination {
 
   getData(categoryId: string) {
     if (!categoryId || categoryId === "") return null;
-    const url = this.ENDPOINT + categoryId;
+    const url =
+      this.configService.config.apiUrl + "category/" + categoryId;
     return this.http.get<WotlweduApiResponse>(url);
   }
 
@@ -33,7 +34,8 @@ export class CategoryDataService extends WotlweduPagination {
     this.itemsPerPage = +this.sharedDataService.getPreference("itemsperpage");
 
     const url =
-      this.ENDPOINT +
+      this.configService.config.apiUrl +
+      "category/" +
       "?page=" +
       this.page +
       "&items=" +
@@ -58,7 +60,7 @@ export class CategoryDataService extends WotlweduPagination {
       name: name,
       description: description,
     };
-    let url = this.ENDPOINT;
+    let url = this.configService.config.apiUrl + "category/";
 
     if (categoryId) {
       url = url + categoryId;
@@ -68,7 +70,7 @@ export class CategoryDataService extends WotlweduPagination {
   }
 
   deleteCategory(categoryId: string) {
-    let url = this.ENDPOINT + categoryId;
+    let url = this.configService.config.apiUrl + "category/" + categoryId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 

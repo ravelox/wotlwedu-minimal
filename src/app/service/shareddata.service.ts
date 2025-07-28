@@ -2,7 +2,6 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 
 import { WotlweduApiResponse } from "../datamodel/wotlwedu-api-response.model";
-import { GlobalVariable } from "../global";
 import { WotlweduPreference } from "../datamodel/wotlwedu-preference.model";
 import { PreferenceDataService } from "./preferencedata.service";
 import { DataSignalService } from "./datasignal.service";
@@ -10,10 +9,10 @@ import { firstValueFrom } from "rxjs";
 
 import { io, Socket } from "socket.io-client";
 import { AuthDataService } from "./authdata.service";
+import { ConfigService } from "./config.service";
 
 @Injectable({ providedIn: "root" })
 export class SharedDataService {
-  private ENDPOINT = GlobalVariable.BASE_API_URL + "helper/";
   private status: any[] = [];
   private preference: WotlweduPreference[] = [];
   private _ioSocket: Socket = null;
@@ -22,15 +21,17 @@ export class SharedDataService {
     private http: HttpClient,
     private preferenceDataService: PreferenceDataService,
     private dataSignalService: DataSignalService,
-    private authDataService: AuthDataService
+    private authDataService: AuthDataService,
+    private configService: ConfigService
   ) {
-    this._ioSocket = io(GlobalVariable.BASE_API_URL);
+    console.trace("In SharedDataService constructor")
+    this._ioSocket = io(this.configService.config.apiUrl);
     this._ioSocket.on("notification", () => {
       this.dataSignalService.hasNotification();
     });
-    this._ioSocket.on("refresh", ()=>{
+    this._ioSocket.on("refresh", () => {
       this.dataSignalService.refreshData();
-    })
+    });
     this.dataSignalService.refreshDataSignal.subscribe({
       next: () => {
         this.loadStatusNames();
@@ -67,7 +68,7 @@ export class SharedDataService {
   }
 
   private loadStatusNames() {
-    const url = this.ENDPOINT + "status";
+    const url = this.configService.config.apiUrl + "helper/" + "status";
     return this.http.get<WotlweduApiResponse>(url).subscribe({
       next: (response) => {
         if (response && response.data && response.data.status) {
@@ -78,7 +79,7 @@ export class SharedDataService {
   }
 
   private async loadStatusNamesAsync() {
-    const url = this.ENDPOINT + "status";
+    const url = this.configService.config.apiUrl + "helper/" + "status";
     const response: any = firstValueFrom(
       this.http.get<WotlweduApiResponse>(url)
     );

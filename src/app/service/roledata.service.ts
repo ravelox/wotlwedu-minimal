@@ -5,18 +5,18 @@ import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
 import { Subject, of } from 'rxjs';
 import { WotlweduRole } from '../datamodel/wotlwedu-role.model';
 import { WotlweduPagination } from '../datamodel/wotlwedu-pagination.model';
-import { GlobalVariable } from '../global';
 import { SharedDataService } from './shareddata.service';
+import { ConfigService } from './config.service';
 
 @Injectable({ providedIn: 'root' })
 export class RoleDataService extends WotlweduPagination {
   dataChanged = new Subject<WotlweduRole[]>();
   details = new Subject<WotlweduRole>();
-  private ENDPOINT: string = GlobalVariable.BASE_API_URL + 'role/';
 
   constructor(
     private http: HttpClient,
-    private sharedDataService: SharedDataService
+    private sharedDataService: SharedDataService,
+    private configService: ConfigService
   ) {
     super();
     this.setCallbackFunction(this.getAllData);
@@ -24,7 +24,7 @@ export class RoleDataService extends WotlweduPagination {
 
   getData(roleId: string) {
     if (!roleId || roleId === '') return null;
-    const url = this.ENDPOINT + roleId + "?detail=capability,user";
+    const url = this.configService.config.apiUrl + 'role/' + roleId + "?detail=capability,user";
     return this.http.get<WotlweduApiResponse>(url);
   }
 
@@ -32,7 +32,7 @@ export class RoleDataService extends WotlweduPagination {
     this.filterUpdate(filter);
     this.itemsPerPage = +this.sharedDataService.getPreference('itemsperpage');
     const url =
-      this.ENDPOINT +
+      this.configService.config.apiUrl + 'role/' +
       '?detail=capability,user' +
       '&page=' +
       this.page +
@@ -58,7 +58,7 @@ export class RoleDataService extends WotlweduPagination {
       name: name,
       description: description,
     };
-    let url = this.ENDPOINT;
+    let url = this.configService.config.apiUrl + 'role/';
 
     if (roleId) {
       url = url + roleId;
@@ -69,34 +69,34 @@ export class RoleDataService extends WotlweduPagination {
 
   addCapabilities(roleId: string, capabilities: string[]) {
     if (!roleId || !capabilities || capabilities.length === 0) return of({});
-    let url = this.ENDPOINT + roleId + '/bulkcapadd';
+    let url = this.configService.config.apiUrl + 'role/' + roleId + '/bulkcapadd';
     const payload = { capabilityList: capabilities };
     return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   deleteCapabilities(roleId: string, capabilities: string[]) {
     if (!roleId || !capabilities || capabilities.length === 0) return of({});
-    let url = this.ENDPOINT + roleId + '/bulkcapdel';
+    let url = this.configService.config.apiUrl + 'role/' + roleId + '/bulkcapdel';
     const payload = { capabilityList: capabilities };
     return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   addUsers(roleId: string, users: string[]) {
     if (!roleId || !users || users.length === 0) return of({});
-    let url = this.ENDPOINT + roleId + '/bulkuseradd';
+    let url = this.configService.config.apiUrl + 'role/' + roleId + '/bulkuseradd';
     const payload = { userList: users };
     return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   deleteUsers(roleId: string, users: string[]) {
     if (!roleId || !users || users.length === 0) return of({});
-    let url = this.ENDPOINT + roleId + '/bulkuserdel';
+    let url = this.configService.config.apiUrl + 'role/' + roleId + '/bulkuserdel';
     const payload = { userList: users };
     return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   deleteRole(roleId: string) {
-    let url = this.ENDPOINT + roleId;
+    let url = this.configService.config.apiUrl + 'role/' + roleId;
     return this.http.delete<WotlweduApiResponse>(url);
   }
 
