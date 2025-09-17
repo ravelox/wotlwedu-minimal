@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wotlwedu-minimal
+  labels:
+    app: wotlwedu-minimal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: wotlwedu-minimal
+  template:
+    metadata:
+      labels:
+        app: wotlwedu-minimal
+    spec:
+      containers:
+        - name: wotlwedu-minimal
+          image: ravelox/wotlwedu-minimal:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: http
+            - containerPort: 443
+              name: https
+          env:
+            - name: WOTLWEDU_API_URL
+              value: https://api.wotlwedu.com:9876/
+            - name: WOTLWEDU_SERVER_NAME
+              value: mobile.wotlwedu.com
+            - name: WOTLWEDU_SSL_CERT_FILE
+              value: /etc/wotlwedu/tls/tls.crt
+            - name: WOTLWEDU_SSL_KEY_FILE
+              value: /etc/wotlwedu/tls/tls.key
+          volumeMounts:
+            - name: tls-certificates
+              mountPath: /etc/wotlwedu/tls
+              readOnly: true
+      volumes:
+        - name: tls-certificates
+          secret:
+            secretName: wotlwedu-minimal-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wotlwedu-minimal
+  labels:
+    app: wotlwedu-minimal
+spec:
+  type: ClusterIP
+  selector:
+    app: wotlwedu-minimal
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP
+    - name: https
+      port: 443
+      targetPort: https
+      protocol: TCP
