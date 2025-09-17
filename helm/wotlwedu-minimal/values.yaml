@@ -1,0 +1,63 @@
+replicaCount: 2
+
+image:
+  repository: ravelox/wotlwedu-minimal
+  tag: latest
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  httpPort: 80
+  httpsPort: 443
+
+env:
+  WOTLWEDU_API_URL: https://api.wotlwedu.com:9876/
+  WOTLWEDU_SERVER_NAME: mobile.wotlwedu.com
+  WOTLWEDU_SSL_CERT_FILE: /etc/wotlwedu/tls/tls.crt
+  WOTLWEDU_SSL_KEY_FILE: /etc/wotlwedu/tls/tls.key
+
+resources: {}
+
+affinity: {}
+nodeSelector: {}
+tolerations: []
+
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  hosts:
+    - host: mobile.wotlwedu.com
+      paths:
+        - path: /
+          pathType: Prefix
+          servicePort: http
+  tls:
+    - secretName: wotlwedu-minimal-tls
+      hosts:
+        - mobile.wotlwedu.com
+
+tlsSecret:
+  create: false
+  name: wotlwedu-minimal-tls
+  annotations: {}
+  labels: {}
+  certificate: ""
+  privateKey: ""
+  mountPath: /etc/wotlwedu/tls
