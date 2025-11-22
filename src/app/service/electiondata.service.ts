@@ -94,9 +94,9 @@ export class ElectionDataService extends WotlweduPagination {
 
     if (election.id) {
       url = url + election.id;
-      return this.http.post<WotlweduApiResponse>(url, payload);
+      return this.http.put<WotlweduApiResponse>(url, payload);
     }
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deleteElection(electionId: string) {
@@ -110,11 +110,11 @@ export class ElectionDataService extends WotlweduPagination {
 
   startElection(electionId: string) {
     let url = this.configService.config.apiUrl + 'election/' + electionId + '/start';
-    return this.http.put<WotlweduApiResponse>(url, null);
+    return this.http.post<WotlweduApiResponse>(url, null);
   }
 
   stopElection(electionId: string) {
     let url = this.configService.config.apiUrl + 'election/' + electionId + '/stop';
-    return this.http.put<WotlweduApiResponse>(url, null);
+    return this.http.post<WotlweduApiResponse>(url, null);
   }
 }

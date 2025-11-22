@@ -70,9 +70,9 @@ export class ListDataService extends WotlweduPagination {
 
     if (listId) {
       url = url + listId;
-      return this.http.post<WotlweduApiResponse>(url, payload);
+      return this.http.put<WotlweduApiResponse>(url, payload);
     }
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   addItems(listId: string, items: string[]) {
@@ -83,7 +83,7 @@ export class ListDataService extends WotlweduPagination {
       listId +
       "/bulkitemadd";
     const payload = { itemList: items };
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deleteItems(listId: string, items: string[]) {
@@ -94,7 +94,7 @@ export class ListDataService extends WotlweduPagination {
       listId +
       "/bulkitemdel";
     const payload = { itemList: items };
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deleteList(listId: string) {
@@ -111,7 +111,7 @@ export class ListDataService extends WotlweduPagination {
       listId +
       "/recipient/" +
       recipientId;
-    return this.http.get<WotlweduApiResponse>(url);
+    return this.http.post<WotlweduApiResponse>(url, {});
   }
 
   acceptList(notificationId: string) {
@@ -121,7 +121,7 @@ export class ListDataService extends WotlweduPagination {
       "list/" +
       "accept/" +
       notificationId;
-    return this.http.get<WotlweduApiResponse>(url);
+    return this.http.post<WotlweduApiResponse>(url, {});
   }
 
   setData(details: WotlweduList) {

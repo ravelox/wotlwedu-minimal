@@ -79,9 +79,9 @@ export class VoteDataService extends WotlweduPagination {
 
     if (voteObject.id) {
       url = url + voteObject.id;
-      return this.http.post<WotlweduApiResponse>(url, payload);
+      return this.http.put<WotlweduApiResponse>(url, payload);
     }
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deleteVote(voteId: string) {
@@ -112,7 +112,7 @@ export class VoteDataService extends WotlweduPagination {
 
   cast(voteId: string, decision: string) {
     if (!voteId || !decision) return of(null);
-    let url = this.configService.config.apiUrl + "cast/" + voteId + "/" + decision;
-    return this.http.get<WotlweduApiResponse>(url);
+    let url = this.configService.config.apiUrl + "cast/" + voteId + "/decision";
+    return this.http.post<WotlweduApiResponse>(url, { decision: decision });
   }
 }

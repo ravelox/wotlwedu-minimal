@@ -73,9 +73,9 @@ export class ItemDataService extends WotlweduPagination {
 
     if (itemObject.id) {
       url = url + itemObject.id;
-      return this.http.post<WotlweduApiResponse>(url, payload);
+      return this.http.put<WotlweduApiResponse>(url, payload);
     }
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deleteItem(itemId: string) {
@@ -86,13 +86,13 @@ export class ItemDataService extends WotlweduPagination {
   shareItem(itemId: string, recipientId: string) {
     if( ! itemId || ! recipientId ) return of(null);
     let url = this.configService.config.apiUrl + 'item/' + 'share/' + itemId + "/recipient/" + recipientId;
-    return this.http.get<WotlweduApiResponse>(url);
+    return this.http.post<WotlweduApiResponse>(url, {});
   }
 
   acceptItem(notificationId: string) {
     if( ! notificationId ) return of(null);
     let url = this.configService.config.apiUrl + 'item/' + 'accept/' + notificationId;
-    return this.http.get<WotlweduApiResponse>(url);
+    return this.http.post<WotlweduApiResponse>(url, {});
   }
 
   setData(details: WotlweduItem) {

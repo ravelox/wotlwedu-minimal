@@ -16,6 +16,6 @@ export class RegisterService {
   confirm(token: string) {
     const url =
       this.configService.config.apiUrl + "register" + "/confirm/" + token;
-    return this.http.get<WotlweduApiResponse>(url);
+    return this.http.post<WotlweduApiResponse>(url, {});
   }
 }

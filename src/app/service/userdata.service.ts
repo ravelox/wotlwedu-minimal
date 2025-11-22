@@ -78,9 +78,9 @@ export class UserDataService extends WotlweduPagination {
 
     if (userObject.id) {
       url = url + userObject.id;
-      return this.http.post<WotlweduApiResponse>(url, payload);
+      return this.http.put<WotlweduApiResponse>(url, payload);
     }
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deleteUser(userId: string) {
@@ -117,7 +117,7 @@ export class UserDataService extends WotlweduPagination {
   confirmFriend(tokenId) {
     if (!tokenId) return of(null);
     const url = this.configService.config.apiUrl + 'user/' + 'accept/' + tokenId;
-    return this.http.get<WotlweduApiResponse>(url);
+    return this.http.post<WotlweduApiResponse>(url, {});
   }
 
   blockFriend(userId) {

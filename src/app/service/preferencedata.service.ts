@@ -71,9 +71,9 @@ export class PreferenceDataService extends WotlweduPagination {
 
     if (preferenceId) {
       url = url + preferenceId;
-      return this.http.post<WotlweduApiResponse>(url, payload);
+      return this.http.put<WotlweduApiResponse>(url, payload);
     }
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deletePreference(preferenceId: string) {

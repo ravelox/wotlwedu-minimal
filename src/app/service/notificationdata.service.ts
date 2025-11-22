@@ -59,9 +59,9 @@ export class NotificationDataService extends WotlweduPagination {
 
     if (notifObject.id) {
       url = url + notifObject.id;
-      return this.http.post<WotlweduApiResponse>(url, payload);
+      return this.http.put<WotlweduApiResponse>(url, payload);
     }
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deleteNotification(notificationId: string) {

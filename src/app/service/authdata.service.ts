@@ -86,7 +86,7 @@ export class AuthDataService {
 
   gen2FAVerificationToken() {
     let url = this.configService.config.apiUrl + "login/gentoken";
-    return this.http.get<WotlweduApiResponse>(url);
+    return this.http.post<WotlweduApiResponse>(url, {});
   }
 
   verify2FA(verificationDetails: any) {
@@ -111,7 +111,7 @@ export class AuthDataService {
 
   enable2FA() {
     let url = this.configService.config.apiUrl + "login/2fa";
-    return this.http.get<WotlweduApiResponse>(url);
+    return this.http.post<WotlweduApiResponse>(url, {});
   }
 
   setLoggedIn(state: boolean) {

@@ -62,23 +62,23 @@ export class GroupDataService extends WotlweduPagination {
 
     if (groupId) {
       url = url + groupId;
-      return this.http.post<WotlweduApiResponse>(url, payload);
+      return this.http.put<WotlweduApiResponse>(url, payload);
     }
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   addUsers(groupId: string, users: string[]) {
     if (!groupId || !users || users.length === 0) return of({});
     let url = this.configService.config.apiUrl + 'group/' + groupId + "/bulkuseradd";
     const payload = { userList: users };
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deleteUsers(groupId: string, users: string[]) {
     if (!groupId || !users || users.length === 0) return of({});
     let url = this.configService.config.apiUrl + 'group/' + groupId + "/bulkuserdel";
     const payload = { userList: users };
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deleteGroup(groupId: string) {

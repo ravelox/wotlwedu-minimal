@@ -67,9 +67,9 @@ export class ImageDataService extends WotlweduPagination {
 
     if (imageId) {
       url = url + imageId;
-      return this.http.post<WotlweduApiResponse>(url, payload);
+      return this.http.put<WotlweduApiResponse>(url, payload);
     }
-    return this.http.put<WotlweduApiResponse>(url, payload);
+    return this.http.post<WotlweduApiResponse>(url, payload);
   }
 
   deleteImage(imageId: string) {
@@ -97,13 +97,13 @@ export class ImageDataService extends WotlweduPagination {
   shareImage(imageId: string, recipientId: string) {
     if( ! imageId || ! recipientId ) return of(null);
     let url = this.configService.config.apiUrl + 'image/' + 'share/' + imageId + "/recipient/" + recipientId;
-    return this.http.get<WotlweduApiResponse>(url);
+    return this.http.post<WotlweduApiResponse>(url, {});
   }
 
   acceptImage(notificationId: string) {
     if( ! notificationId ) return of(null);
     let url = this.configService.config.apiUrl + 'image/' + 'accept/' + notificationId;
-    return this.http.get<WotlweduApiResponse>(url);
+    return this.http.post<WotlweduApiResponse>(url, {});
   }
 
   setData(details: WotlweduImage) {
