@@ -119,6 +119,74 @@
       />
     </div>
 
+    <div class="ww-ai-section ww-flex-column">
+      <div class="ww-ai-title">AI Venue Generator</div>
+      <div class="ww-ai-subtitle">
+        Generate suggested places from a prompt and instantly build an election.
+      </div>
+
+      <div class="ww-form-input">
+        <label for="aiPrompt">Prompt</label>
+        <input
+          id="aiPrompt"
+          type="text"
+          [(ngModel)]="aiPrompt"
+          [ngModelOptions]="{standalone: true}"
+          placeholder="Find the nearest 5 restaurants"
+        />
+      </div>
+
+      <div class="ww-form-input">
+        <label for="aiLocation">Location (optional)</label>
+        <input
+          id="aiLocation"
+          type="text"
+          [(ngModel)]="aiLocation"
+          [ngModelOptions]="{standalone: true}"
+          placeholder="Austin, TX"
+        />
+      </div>
+
+      <div class="ww-form-input">
+        <label for="aiResultCount">Result Count</label>
+        <input
+          id="aiResultCount"
+          type="number"
+          min="1"
+          max="10"
+          [(ngModel)]="aiResultCount"
+          [ngModelOptions]="{standalone: true}"
+        />
+      </div>
+
+      <div class="ww-flex-row" style="gap: 8px; justify-content: flex-start;">
+        <button type="button" (click)="generateAiResults()" [disabled]="generatingResults">
+          {{ generatingResults ? 'Generating...' : 'Generate Results' }}
+        </button>
+        <button
+          type="button"
+          (click)="createElectionFromAiResults()"
+          [disabled]="creatingElectionFromResults || !(aiResults && aiResults.length > 0)"
+        >
+          {{ creatingElectionFromResults ? 'Creating Election...' : 'Create Election from Results' }}
+        </button>
+      </div>
+
+      <div class="ww-ai-results" *ngIf="aiResults && aiResults.length > 0">
+        <div class="ww-ai-result-card" *ngFor="let result of aiResults">
+          <img [src]="result.imageUrl" [alt]="result.name" class="ww-ai-result-image" />
+          <div class="ww-flex-column" style="gap: 4px;">
+            <div class="ww-info-block-title">{{ result.name }}</div>
+            <div class="ww-info-block-text">{{ result.description }}</div>
+            <div class="ww-flex-row" style="gap: 12px; justify-content: flex-start;">
+              <a [href]="result.mapsUrl" target="_blank" rel="noopener noreferrer">Google Maps</a>
+              <a [href]="result.websiteUrl" target="_blank" rel="noopener noreferrer">Website</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     
    <!-- Button Panel -->
    <div class="ww-flex-row" style="justify-content: center; gap: 5px">

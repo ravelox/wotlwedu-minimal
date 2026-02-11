@@ -16,6 +16,19 @@ import { DataSignalService } from "../../service/datasignal.service";
 import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-controller.class";
 import { ActivatedRoute, Router } from "@angular/router";
 import { WotlweduPageStackService } from "../../service/pagestack.service";
+import { HttpClient } from "@angular/common/http";
+import { WotlweduItem } from "../../datamodel/wotlwedu-item.model";
+import { ItemDataService } from "../../service/itemdata.service";
+import { catchError, forkJoin, map, of, switchMap } from "rxjs";
+
+interface GeneratedVenue {
+  name: string;
+  description: string;
+  websiteUrl: string;
+  mapsUrl: string;
+  imageUrl: string;
+  location: string;
+}
 
 @Component({
   selector: "app-election-detail",
@@ -45,10 +58,19 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
     private imageDataService: ImageDataService,
     private dataSignalService: DataSignalService,
     private sharedDataService: SharedDataService,
+    private itemDataService: ItemDataService,
+    private http: HttpClient,
     private router: Router,
     private route: ActivatedRoute,
     private pageStack: WotlweduPageStackService
   ) {}
+
+  aiPrompt: string = "";
+  aiResultCount: number = 5;
+  aiLocation: string = "";
+  aiResults: GeneratedVenue[] = [];
+  generatingResults: boolean = false;
+  creatingElectionFromResults: boolean = false;
 
   ngOnInit() {
     this.loader.start();
@@ -339,5 +361,176 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
         this.electionDataService.getAllData();
       },
     });
+  }
+
+  private normalizePrompt(prompt: string) {
+    if (!prompt) {
+      return { count: 5, cleanedPrompt: "restaurants" };
+    }
+
+    const requestedCount = prompt.match(/(?:top|nearest|find|give\s+me)?\s*(\d{1,2})/i);
+    const extractedCount = requestedCount ? +requestedCount[1] : this.aiResultCount;
+    const count = Math.max(1, Math.min(10, extractedCount || 5));
+
+    let cleanedPrompt = prompt
+      .replace(/\b(top|nearest|find|give\s+me|for\s+\d+\+?\s*people)\b/gi, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (!cleanedPrompt) {
+      cleanedPrompt = "restaurants";
+    }
+
+    return { count, cleanedPrompt };
+  }
+
+  private buildFallbackResults(searchTerm: string, count: number, location: string): GeneratedVenue[] {
+    return Array.from({ length: count }, (_, i) => {
+      const placeName = `${searchTerm} Option ${i + 1}`;
+      const mapsQuery = `${placeName} ${location}`.trim();
+      return {
+        name: placeName,
+        description: `Suggested result for ${searchTerm}.`,
+        websiteUrl: `https://www.google.com/search?q=${encodeURIComponent(placeName + " official website")}`,
+        mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsQuery)}`,
+        imageUrl: `https://source.unsplash.com/featured/?${encodeURIComponent(searchTerm + ",venue")}`,
+        location: location || "Not provided",
+      };
+    });
+  }
+
+  generateAiResults() {
+    this.alertBox.onCloseAlert();
+    this.generatingResults = true;
+    this.aiResults = [];
+
+    const normalized = this.normalizePrompt(this.aiPrompt);
+    const location = this.aiLocation?.trim();
+    this.aiResultCount = normalized.count;
+
+    const query = `${normalized.cleanedPrompt} ${location ? "in " + location : ""}`.trim();
+    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=${normalized.count}&q=${encodeURIComponent(query)}`;
+
+    this.http
+      .get<any[]>(url)
+      .pipe(
+        map((response) => {
+          if (!(response && response.length > 0)) {
+            return this.buildFallbackResults(normalized.cleanedPrompt, normalized.count, location);
+          }
+
+          return response.slice(0, normalized.count).map((place) => {
+            const placeName = (place.display_name || "Venue").split(",")[0].trim();
+            const placeLocation = place.display_name || location || "Unknown location";
+            const mapsQuery = `${placeName} ${placeLocation}`;
+
+            return {
+              name: placeName,
+              description: place.display_name || `Suggested result for ${normalized.cleanedPrompt}.`,
+              websiteUrl: `https://www.google.com/search?q=${encodeURIComponent(placeName + " official website")}`,
+              mapsUrl: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsQuery)}`,
+              imageUrl: `https://source.unsplash.com/featured/?${encodeURIComponent(placeName + ",venue")}`,
+              location: placeLocation,
+            };
+          });
+        }),
+        catchError(() => of(this.buildFallbackResults(normalized.cleanedPrompt, normalized.count, location)))
+      )
+      .subscribe({
+        next: (results) => {
+          this.aiResults = results;
+          this.generatingResults = false;
+        },
+        error: (err) => {
+          this.generatingResults = false;
+          this.alertBox.handleError(err);
+        },
+      });
+  }
+
+  createElectionFromAiResults() {
+    if (!(this.aiResults && this.aiResults.length > 0)) {
+      this.alertBox.setErrorMessage("Generate results before creating an election.");
+      return;
+    }
+
+    const listName = this.electionDetailForm.value.name || `AI Venue List ${new Date().toLocaleDateString()}`;
+    const listDescription = this.electionDetailForm.value.description || `Auto-generated from prompt: ${this.aiPrompt}`;
+
+    this.loader.start();
+    this.creatingElectionFromResults = true;
+
+    const itemRequests = this.aiResults.map((venue) => {
+      const item = new WotlweduItem();
+      item.name = venue.name;
+      item.description = venue.description;
+      item.url = venue.websiteUrl;
+      item.location = venue.mapsUrl;
+      item.image = new WotlweduImage();
+      item.image.id = null;
+      return this.itemDataService.saveItem(item);
+    });
+
+    forkJoin(itemRequests)
+      .pipe(
+        map((itemResponses) =>
+          itemResponses
+            .map((response) => response?.data?.item?.id)
+            .filter((id) => !!id)
+        ),
+        switchMap((itemIds: string[]) => {
+          if (itemIds.length === 0) {
+            throw new Error("No items could be generated from prompt results.");
+          }
+          return this.listDataService.saveList(null, listName, listDescription).pipe(
+            switchMap((listResponse) => {
+              const listId = listResponse?.data?.list?.id;
+              if (!listId) {
+                throw new Error("Unable to create list for AI generated venues.");
+              }
+              return this.listDataService.addItems(listId, itemIds).pipe(
+                map(() => listId)
+              );
+            })
+          );
+        }),
+        switchMap((listId: string) => {
+          const election = new WotlweduElection();
+          election.name = this.electionDetailForm.value.name || `AI Vote - ${listName}`;
+          election.description =
+            this.electionDetailForm.value.description || `Vote on AI generated results from prompt: ${this.aiPrompt}`;
+          election.group = new WotlweduGroup();
+          election.group.id = this.electionDetailForm.value.groupId || null;
+          election.list = new WotlweduList();
+          election.list.id = listId;
+          election.image = this.currentImage ? this.currentImage : null;
+
+          let expiration: Date;
+          if (this.electionDetailForm.value.expiration) {
+            expiration = new Date(this.electionDetailForm.value.expiration);
+          } else {
+            expiration = new Date();
+            expiration.setDate(expiration.getDate() + 7);
+          }
+          election.expiration = expiration;
+
+          return this.electionDataService.saveElection(election);
+        })
+      )
+      .subscribe({
+        next: () => {
+          this.creatingElectionFromResults = false;
+          this.loader.stop();
+          this.electionDataService.getAllData();
+          this.listDataService.getAllData();
+          this.itemDataService.getAllData();
+          this.onCancel();
+        },
+        error: (err) => {
+          this.creatingElectionFromResults = false;
+          this.loader.stop();
+          this.alertBox.setErrorMessage(err?.message || "Failed to create election from AI results.");
+        },
+      });
   }
 }
