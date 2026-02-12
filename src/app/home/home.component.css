@@ -1,0 +1,54 @@
+.ww-home {
+  padding: 1rem;
+}
+
+.ww-home h2 {
+  margin-bottom: 0.25rem;
+}
+
+.ww-subtext {
+  margin: 0 0 1rem 0;
+  color: #555;
+}
+
+.ww-error {
+  margin-bottom: 1rem;
+  color: #a70000;
+}
+
+.ww-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.ww-panel {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: #fafafa;
+}
+
+.ww-panel h3 {
+  margin-top: 0;
+}
+
+.ww-panel textarea,
+.ww-panel select {
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.ww-panel pre {
+  margin-top: 0.5rem;
+  max-height: 200px;
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+}
+
+.ww-actions {
+  display: flex;
+  gap: 0.5rem;
+}

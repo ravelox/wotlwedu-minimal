@@ -1,2 +1,86 @@
 <app-header></app-header>
-<div class="ww-flex-column" style="height: 80svh; flex-grow: 1; justify-content: center;align-items: center;"><p>Welcome to wotlwedu</p></div>
+<div class="ww-home">
+  <h2>AI-assisted features</h2>
+  <p class="ww-subtext">
+    These tools call the new authenticated <code>/ai/*</code> endpoints.
+  </p>
+
+  <div *ngIf="errorMessage" class="ww-error">{{ errorMessage }}</div>
+
+  <div class="ww-grid">
+    <section class="ww-panel">
+      <h3>Notification digest</h3>
+      <button type="button" (click)="loadDigest()">Refresh digest</button>
+      <pre *ngIf="notificationDigest">{{ notificationDigest | json }}</pre>
+    </section>
+
+    <section class="ww-panel">
+      <h3>Smart defaults</h3>
+      <button type="button" (click)="loadDefaults()">Refresh defaults</button>
+      <pre *ngIf="smartDefaults">{{ smartDefaults | json }}</pre>
+    </section>
+
+    <section class="ww-panel">
+      <h3>List suggestions</h3>
+      <textarea [(ngModel)]="aiPrompt" rows="3"></textarea>
+      <button type="button" (click)="runSuggestItems()">Suggest items</button>
+      <pre *ngIf="listSuggestions">{{ listSuggestions | json }}</pre>
+    </section>
+
+    <section class="ww-panel">
+      <h3>Categorize text</h3>
+      <textarea [(ngModel)]="aiCategorizeText" rows="3"></textarea>
+      <button type="button" (click)="runCategorizeText()">Categorize</button>
+      <pre *ngIf="categoryResult">{{ categoryResult | json }}</pre>
+    </section>
+
+    <section class="ww-panel">
+      <h3>Moderate text</h3>
+      <textarea [(ngModel)]="aiModerateText" rows="3"></textarea>
+      <button type="button" (click)="runModeration()">Moderate</button>
+      <pre *ngIf="moderationResult">{{ moderationResult | json }}</pre>
+    </section>
+
+    <section class="ww-panel">
+      <h3>Assistant query</h3>
+      <textarea [(ngModel)]="aiAssistantQuery" rows="3"></textarea>
+      <button type="button" (click)="runAssistantQuery()">Ask assistant</button>
+      <pre *ngIf="assistantResult">{{ assistantResult | json }}</pre>
+    </section>
+
+    <section class="ww-panel">
+      <h3>Election AI</h3>
+      <select [(ngModel)]="selectedElectionId">
+        <option value="" disabled>Select election</option>
+        <option *ngFor="let election of elections" [value]="election.id">
+          {{ election.name }}
+        </option>
+      </select>
+      <div class="ww-actions">
+        <button type="button" (click)="loadElectionSummary()">Summary</button>
+        <button type="button" (click)="loadElectionRecommendations()">
+          Recommendations
+        </button>
+        <button type="button" (click)="loadParticipantSuggestions()">
+          Participants
+        </button>
+      </div>
+      <pre *ngIf="electionSummary">{{ electionSummary | json }}</pre>
+      <pre *ngIf="electionRecommendations">{{
+        electionRecommendations | json
+      }}</pre>
+      <pre *ngIf="participantSuggestions">{{
+        participantSuggestions | json
+      }}</pre>
+    </section>
+
+    <section class="ww-panel">
+      <h3>Image description</h3>
+      <input type="text" [(ngModel)]="aiImageId" placeholder="Image ID" />
+      <button type="button" (click)="loadImageDescription()">
+        Describe image
+      </button>
+      <pre *ngIf="imageDescription">{{ imageDescription | json }}</pre>
+    </section>
+  </div>
+</div>

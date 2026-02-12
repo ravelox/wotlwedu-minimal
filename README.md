@@ -86,3 +86,13 @@ There are environment variables in the compose file that need to be set to your 
 **WOTLWEDU_SSL_KEY_FILE** and **WOTLWEDU_SSL_CERT_FILE** should point to your SSL files. Do **NOT** use softlinked files as Docker will try to resolve the links and not find the files inside the container environment.
 **WOTLWEDU_API_URL** should be the URL used to talk with the **wotlwedu-backend** API server.
 **WOTLWEDU_SERVER_NAME** configures how the container's Apache server identifies itself. This is not required but nice to have.
+
+## AI-assisted features
+The Home screen now includes an AI panel that calls the backend `/ai/*` endpoints:
+- election recommendations and summaries
+- participant suggestions
+- list suggestions from prompt text
+- text categorization and moderation
+- notification digest and smart defaults
+- assistant query
+- image description by image ID
