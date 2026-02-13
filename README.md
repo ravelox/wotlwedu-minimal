@@ -19,6 +19,18 @@ You can attach images to items/elections, and share images/items/lists with frie
 - Node.js + npm
 - Runtime API config loaded from `src/assets/wotlwedu-config.json`
 - Optional Docker deployment with NGINX (HTTP + HTTPS)
+- Current app config template version: `0.1.1`
+
+## Tenant/admin concepts
+
+The backend now supports tenancy and scoped administration:
+- `organization` (tenant boundary)
+- `workgroup` (organization sub-unit)
+- `systemAdmin` (global admin across organizations/workgroups)
+- `organizationAdmin` (admin across workgroups in one organization)
+- `workgroupAdmin` (admin for a single workgroup)
+
+If your UI consumes user/auth payloads, ensure it tolerates these additional fields.
 
 ## Local development
 
