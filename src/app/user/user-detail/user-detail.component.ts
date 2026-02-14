@@ -10,6 +10,11 @@ import { WotlweduAlert } from '../../controller/wotlwedu-alert-controller.class'
 import { WotlweduDialogController } from '../../controller/wotlwedu-dialog-controller.class';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WotlweduPageStackService } from '../../service/pagestack.service';
+import { TokenDataStorageService } from '../../service/tokendata.service';
+import { OrganizationDataService } from '../../service/organizationdata.service';
+import { WorkgroupDataService } from '../../service/workgroupdata.service';
+import { WotlweduOrganization } from '../../datamodel/wotlwedu-organization.model';
+import { WotlweduWorkgroup } from '../../datamodel/wotlwedu-workgroup.model';
 
 @Component({
   selector: 'app-user-detail',
@@ -18,6 +23,8 @@ import { WotlweduPageStackService } from '../../service/pagestack.service';
 })
 export class UserDetailComponent implements OnInit, OnDestroy {
   userSub: Subscription;
+  orgsSub: Subscription;
+  workgroupsSub: Subscription;
   currentUser: WotlweduUser = null;
   userDetailForm: FormGroup;
   editMode: boolean = false;
@@ -26,17 +33,26 @@ export class UserDetailComponent implements OnInit, OnDestroy {
   friendListVisible: boolean = false;
   alertBox: WotlweduAlert = new WotlweduAlert();
   confirmDialog: WotlweduDialogController = new WotlweduDialogController();
+  organizations: WotlweduOrganization[] = [];
+  workgroups: WotlweduWorkgroup[] = [];
+  isSystemAdmin: boolean = false;
+  isOrganizationAdmin: boolean = false;
 
   constructor(
     private authDataService: AuthDataService,
+    private tokenDataService: TokenDataStorageService,
     private userDataService: UserDataService,
     private imageDataService: ImageDataService,
+    private organizationDataService: OrganizationDataService,
+    private workgroupDataService: WorkgroupDataService,
     private router: Router,
     private route: ActivatedRoute,
     private pageStack: WotlweduPageStackService
   ) {}
 
   ngOnInit() {
+    this.isSystemAdmin = this.tokenDataService.getSystemAdmin() === true;
+    this.isOrganizationAdmin = this.tokenDataService.getOrganizationAdmin() === true;
     this.userSub = this.userDataService.details.subscribe({
       error: (err) => {
         this.alertBox.handleError(err);
@@ -66,10 +82,13 @@ export class UserDetailComponent implements OnInit, OnDestroy {
         this.pageStack.setRouter( this.router )
       }
     this.initForm();
+    this.loadLookups();
   }
 
   ngOnDestroy() {
     if (this.userSub) this.userSub.unsubscribe();
+    if (this.orgsSub) this.orgsSub.unsubscribe();
+    if (this.workgroupsSub) this.workgroupsSub.unsubscribe();
   }
 
   showConfirmationDialog(object: any) {
@@ -103,7 +122,12 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     userObject.verified = this.userDetailForm.value.verified;
     userObject.image = new WotlweduImage();
     userObject.image.id = this.currentImage ? this.currentImage.id : null;
-    userObject.admin = this.userDetailForm.value.admin;
+    userObject.systemAdmin = this.userDetailForm.value.systemAdmin === true;
+    userObject.admin = userObject.systemAdmin; // backward compat
+    userObject.organizationId = this.userDetailForm.value.organizationId || null;
+    userObject.organizationAdmin = this.userDetailForm.value.organizationAdmin === true;
+    userObject.workgroupAdmin = this.userDetailForm.value.workgroupAdmin === true;
+    userObject.adminWorkgroupId = this.userDetailForm.value.adminWorkgroupId || null;
 
     if (this.userDetailForm.value.resetpassword) {
       this.authDataService.requestPasswordReset(userObject.email).subscribe({
@@ -133,7 +157,11 @@ export class UserDetailComponent implements OnInit, OnDestroy {
     let alias: string = '';
     let active: boolean = false;
     let verified: boolean = false;
-    let admin: boolean = false;
+    let systemAdmin: boolean = false;
+    let organizationId: string = '';
+    let organizationAdmin: boolean = false;
+    let workgroupAdmin: boolean = false;
+    let adminWorkgroupId: string = '';
 
     if (this.currentUser) {
       userId = this.currentUser.id;
@@ -146,7 +174,13 @@ export class UserDetailComponent implements OnInit, OnDestroy {
       this.currentImage = this.currentUser.image
         ? this.currentUser.image
         : null;
-        if( this.currentUser.admin ) admin = this.currentUser.admin;
+      if (this.currentUser.systemAdmin || this.currentUser.admin) {
+        systemAdmin = this.currentUser.systemAdmin || this.currentUser.admin;
+      }
+      if (this.currentUser.organizationId) organizationId = this.currentUser.organizationId;
+      if (this.currentUser.organizationAdmin) organizationAdmin = this.currentUser.organizationAdmin;
+      if (this.currentUser.workgroupAdmin) workgroupAdmin = this.currentUser.workgroupAdmin;
+      if (this.currentUser.adminWorkgroupId) adminWorkgroupId = this.currentUser.adminWorkgroupId;
     }
     this.userDetailForm = new FormGroup({
       userId: new FormControl(userId),
@@ -156,11 +190,42 @@ export class UserDetailComponent implements OnInit, OnDestroy {
       alias: new FormControl(alias),
       active: new FormControl(active),
       verified: new FormControl(verified),
-      admin: new FormControl(admin),
+      systemAdmin: new FormControl(systemAdmin),
+      organizationId: new FormControl(organizationId),
+      organizationAdmin: new FormControl(organizationAdmin),
+      workgroupAdmin: new FormControl(workgroupAdmin),
+      adminWorkgroupId: new FormControl(adminWorkgroupId),
       resetpassword: new FormControl(false),
     });
 
+    // Permissions: only system admins can set systemAdmin or move org.
+    if (!this.isSystemAdmin) {
+      this.userDetailForm.get('systemAdmin')?.disable();
+      this.userDetailForm.get('organizationId')?.disable();
+    }
+    if (!this.isSystemAdmin && !this.isOrganizationAdmin) {
+      this.userDetailForm.get('organizationAdmin')?.disable();
+      this.userDetailForm.get('workgroupAdmin')?.disable();
+      this.userDetailForm.get('adminWorkgroupId')?.disable();
+    }
+
     if (this.currentUser) this.userDetailForm.markAsDirty();
+  }
+
+  private loadLookups() {
+    // Organizations list is only meaningful for system admins (others get 1 org).
+    if (this.isSystemAdmin) {
+      this.organizationDataService.getAllData();
+      this.orgsSub = this.organizationDataService.dataChanged.subscribe({
+        next: (orgs) => (this.organizations = orgs || []),
+      });
+    }
+
+    // Workgroups are org-scoped on the backend; org admins/workgroup admins will see their org.
+    this.workgroupDataService.getAllData();
+    this.workgroupsSub = this.workgroupDataService.dataChanged.subscribe({
+      next: (wgs) => (this.workgroups = wgs || []),
+    });
   }
 
   onCancel() {

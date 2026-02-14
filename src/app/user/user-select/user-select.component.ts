@@ -26,6 +26,7 @@ import { DataSignalService } from "../../service/datasignal.service";
 export class UserSelectComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() selectMode: boolean = false;
   @Input() isEmbedded: boolean = false;
+  @Input() allowAdd: boolean = true;
   users: WotlweduUser[];
   usersSub: Subscription;
   userData = new BehaviorSubject<any>(null);

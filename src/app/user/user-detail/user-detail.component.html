@@ -98,8 +98,42 @@
       <input formControlName="verified" type="checkbox" id="verified" />
     </div>
     <div>
-      <div>Admin</div>
-      <input formControlName="admin" type="checkbox" id="admin" />
+      <div>System admin</div>
+      <input formControlName="systemAdmin" type="checkbox" id="systemAdmin" />
+    </div>
+    <div class="ww-form-input">
+      <label for="organizationId">Organization</label>
+      <select id="organizationId" formControlName="organizationId">
+        <option value="">(default)</option>
+        <option *ngFor="let org of organizations" [value]="org.id">
+          {{ org.name }} ({{ org.id }})
+        </option>
+      </select>
+    </div>
+    <div>
+      <div>Organization admin</div>
+      <input
+        formControlName="organizationAdmin"
+        type="checkbox"
+        id="organizationAdmin"
+      />
+    </div>
+    <div>
+      <div>Workgroup admin</div>
+      <input
+        formControlName="workgroupAdmin"
+        type="checkbox"
+        id="workgroupAdmin"
+      />
+    </div>
+    <div class="ww-form-input">
+      <label for="adminWorkgroupId">Admin workgroup</label>
+      <select id="adminWorkgroupId" formControlName="adminWorkgroupId">
+        <option value="">(none)</option>
+        <option *ngFor="let wg of workgroups" [value]="wg.id">
+          {{ wg.name }} ({{ wg.id }})
+        </option>
+      </select>
     </div>
     <div>
       <div>Send password reset</div>

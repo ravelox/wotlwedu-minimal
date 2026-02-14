@@ -12,5 +12,11 @@ export class WotlweduUser extends WotlweduMenuItem {
     active?: boolean;
     verified?: boolean;
     enable2fa?: boolean;
+    // Legacy field, maps to system-admin behavior.
     admin?: boolean;
+    systemAdmin?: boolean;
+    organizationId?: string;
+    organizationAdmin?: boolean;
+    workgroupAdmin?: boolean;
+    adminWorkgroupId?: string;
 }

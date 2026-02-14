@@ -62,7 +62,7 @@ export class UserDataService extends WotlweduPagination {
   saveUser(userObject: WotlweduUser) {
     if( ! userObject ) return of(null);
 
-    const payload = {
+    const payload: any = {
       email: userObject.email,
       firstName: userObject.firstName,
       lastName: userObject.lastName,
@@ -71,7 +71,12 @@ export class UserDataService extends WotlweduPagination {
       verified: userObject.verified,
       enable2fa: userObject.enable2fa,
       imageId: userObject.image.id,
-      admin: userObject.admin
+      admin: userObject.admin,
+      systemAdmin: userObject.systemAdmin,
+      organizationId: userObject.organizationId,
+      organizationAdmin: userObject.organizationAdmin,
+      workgroupAdmin: userObject.workgroupAdmin,
+      adminWorkgroupId: userObject.adminWorkgroupId,
     };
    
     let url = this.configService.config.apiUrl + 'user/';

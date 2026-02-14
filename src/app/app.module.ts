@@ -21,6 +21,8 @@ import { FriendMiniComponent } from "./friend/friend-mini/friend-mini.component"
 import { FriendSelectComponent } from "./friend/friend-select/friend-select.component";
 import { GroupDetailComponent } from "./group/group-detail/group-detail.component";
 import { GroupSelectComponent } from "./group/group-select/group-select.component";
+import { WorkgroupDetailComponent } from "./workgroup/workgroup-detail/workgroup-detail.component";
+import { WorkgroupSelectComponent } from "./workgroup/workgroup-select/workgroup-select.component";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { ImageDetailComponent } from "./image/image-detail/image-detail.component";
 import { ImageSelectComponent } from "./image/image-select/image-select.component";
@@ -59,6 +61,8 @@ import { ImageViewerComponent } from "./image/image-viewer/image-viewer.componen
 import { HeaderComponent } from "./header/header.component";
 import { ErrorComponent } from "./error/error.component";
 import { ConfigService } from "./service/config.service";
+import { OrganizationSelectComponent } from "./organization/organization-select/organization-select.component";
+import { OrganizationDetailComponent } from "./organization/organization-detail/organization-detail.component";
 import { tap } from "rxjs";
 
 function initializeAppFactory(
@@ -96,6 +100,10 @@ function initializeAppFactory(
     FriendSelectComponent,
     GroupDetailComponent,
     GroupSelectComponent,
+    WorkgroupDetailComponent,
+    WorkgroupSelectComponent,
+    OrganizationDetailComponent,
+    OrganizationSelectComponent,
     ImageDetailComponent,
     ImageSelectComponent,
     ImageSelectMiniComponent,

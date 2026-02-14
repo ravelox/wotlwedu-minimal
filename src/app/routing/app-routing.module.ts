@@ -26,12 +26,16 @@ import { NotificationSelectComponent } from "../notification/notification-select
 import { PreferenceSelectComponent } from "../preference/preference-select/preference-select.component";
 import { PreferenceDetailComponent } from "../preference/preference-detail/preference-detail.component";
 import { GroupDetailComponent } from "../group/group-detail/group-detail.component";
+import { WorkgroupDetailComponent } from "../workgroup/workgroup-detail/workgroup-detail.component";
 import { FriendSelectComponent } from "../friend/friend-select/friend-select.component";
 import { CategoryDetailComponent } from "../category/category-detail/category-detail.component";
 import { CategorySelectComponent } from "../category/category-select/category-select.component";
 import { ItemDetailComponent } from "../item/item-detail/item-detail.component";
 import { ItemSelectComponent } from "../item/item-select/item-select.component";
 import { GroupSelectComponent } from "../group/group-select/group-select.component";
+import { WorkgroupSelectComponent } from "../workgroup/workgroup-select/workgroup-select.component";
+import { OrganizationSelectComponent } from "../organization/organization-select/organization-select.component";
+import { OrganizationDetailComponent } from "../organization/organization-detail/organization-detail.component";
 import { ImageDetailComponent } from "../image/image-detail/image-detail.component";
 import { ImageSelectComponent } from "../image/image-select/image-select.component";
 import { ListDetailComponent } from "../list/list-detail/list-detail.component";
@@ -117,6 +121,36 @@ const routes: Routes = [
     path: "group",
     resolve: { groups: groupsDataResolver },
     component: GroupSelectComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "workgroup/add",
+    component: WorkgroupDetailComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "workgroup/:workgroupId",
+    component: WorkgroupDetailComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "workgroup",
+    component: WorkgroupSelectComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "organization/add",
+    component: OrganizationDetailComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "organization/:organizationId",
+    component: OrganizationDetailComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "organization",
+    component: OrganizationSelectComponent,
     canActivate: [AuthGuard],
   },
   {
