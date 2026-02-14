@@ -13,6 +13,9 @@ import { AuthDataService } from "../service/authdata.service";
 import { WotlweduPageStackService } from "../service/pagestack.service";
 import { HealthcheckService } from "../service/healthcheck.service";
 import { ConfigService } from "../service/config.service";
+import { WorkgroupDataService } from "../service/workgroupdata.service";
+import { WorkgroupScopeService } from "../service/workgroupscope.service";
+import { WotlweduWorkgroup } from "../datamodel/wotlwedu-workgroup.model";
 
 @Component({
   selector: "app-header",
@@ -24,7 +27,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
   isErrorState: boolean = false;
   userName: string = null;
-  isAdmin: boolean = false;
+  isSystemAdmin: boolean = false;
+  isOrganizationAdmin: boolean = false;
+  isWorkgroupAdmin: boolean = false;
   appVersion: string = "";
   serverVersion: string = "";
   private _notificationSignal: Subscription;
@@ -36,6 +41,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild("navbar") navbar: ElementRef;
   navBarOpen: boolean = false;
   tooltipVisible: boolean = false;
+  workgroups: WotlweduWorkgroup[] = [];
+  activeWorkgroupId: string = "";
 
   constructor(
     private router: Router,
@@ -44,7 +51,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private dataSignalService: DataSignalService,
     private authDataService: AuthDataService,
     private healthcheckService: HealthcheckService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private workgroupDataService: WorkgroupDataService,
+    private workgroupScope: WorkgroupScopeService
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +81,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (loginDetails) {
           this.isLoggedIn = loginDetails.loginState;
           this.userName = loginDetails.userName;
-          this.isAdmin = loginDetails.isAdmin;
+          this.isSystemAdmin = loginDetails.isSystemAdmin === true;
+          this.isOrganizationAdmin = loginDetails.isOrganizationAdmin === true;
+          this.isWorkgroupAdmin = loginDetails.isWorkgroupAdmin === true;
+          this.activeWorkgroupId = this.workgroupScope.getActiveWorkgroupId() || "";
 
           if (this.isLoggedIn) {
             this.healthcheckService.ping().subscribe({
@@ -82,11 +94,37 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 }
               },
             });
+
+            // Load workgroups for scoping Items/Images/Lists/Elections.
+            this.workgroupDataService.listWorkgroups(1, 200).subscribe({
+              next: (response) => {
+                const list = response?.data?.workgroups || [];
+                this.workgroups = Array.isArray(list) ? list : [];
+
+                // Default the active workgroup for workgroup admins.
+                const current = this.workgroupScope.getActiveWorkgroupId();
+                const adminWg = loginDetails.adminWorkgroupId || null;
+                if (!current && this.isWorkgroupAdmin && adminWg) {
+                  this.workgroupScope.setActiveWorkgroupId(adminWg);
+                  this.activeWorkgroupId = adminWg;
+                } else if (!current && this.workgroups.length === 1 && this.workgroups[0]?.id) {
+                  this.workgroupScope.setActiveWorkgroupId(this.workgroups[0].id);
+                  this.activeWorkgroupId = this.workgroups[0].id;
+                } else {
+                  this.activeWorkgroupId = current || "";
+                }
+              },
+            });
           }
         } else {
           this.isLoggedIn = false;
-          this.isAdmin = false;
+          this.isSystemAdmin = false;
+          this.isOrganizationAdmin = false;
+          this.isWorkgroupAdmin = false;
           this.userName = null;
+          this.workgroups = [];
+          this.workgroupScope.setActiveWorkgroupId(null);
+          this.activeWorkgroupId = "";
         }
       },
     });
@@ -148,6 +186,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
     event.preventDefault();
     this.tooltipVisible = false;
     this.navBarOpen = !this.navBarOpen;
+  }
+
+  onChangeActiveWorkgroup(event: any) {
+    const value = event?.target?.value || "";
+    this.activeWorkgroupId = value;
+    this.workgroupScope.setActiveWorkgroupId(value === "" ? null : value);
+    this.dataSignalService.refreshData();
   }
 
   onGoTo(routerLink: string) {

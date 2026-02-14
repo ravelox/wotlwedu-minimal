@@ -7,6 +7,7 @@ import { WotlweduStatus } from "./wotlwedu-status.model";
 
 export class WotlweduElection extends WotlweduMenuItem {
     id: string;
+    workgroupId?: string;
     name: string;
     description: string;
     text: string;

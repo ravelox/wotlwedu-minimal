@@ -7,6 +7,7 @@ import { WotlweduItem } from '../datamodel/wotlwedu-item.model';
 import { WotlweduPagination } from '../datamodel/wotlwedu-pagination.model';
 import { SharedDataService } from './shareddata.service';
 import { ConfigService } from './config.service';
+import { WorkgroupScopeService } from './workgroupscope.service';
 
 @Injectable({ providedIn: 'root' })
 export class ItemDataService extends WotlweduPagination {
@@ -16,7 +17,8 @@ export class ItemDataService extends WotlweduPagination {
   constructor(
     private http: HttpClient,
     private sharedDataService: SharedDataService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private workgroupScope: WorkgroupScopeService
   ) {
     super();
     this.setCallbackFunction(this.getAllData);
@@ -37,12 +39,15 @@ export class ItemDataService extends WotlweduPagination {
   getAllData(filter?: string) {
     this.filterUpdate(filter);
     this.itemsPerPage = +this.sharedDataService.getPreference('itemsperpage');
+
+    const activeWorkgroupId = this.workgroupScope.getActiveWorkgroupId();
     const url =
       this.configService.config.apiUrl + 'item/' +
       '?detail=image&page=' +
       this.page +
       '&items=' +
       this.itemsPerPage +
+      (activeWorkgroupId ? '&workgroupId=' + encodeURIComponent(activeWorkgroupId) : '') +
       (this.currentFilter.length > 0
         ? '&filter=' + encodeURIComponent(this.currentFilter)
         : '');
@@ -59,6 +64,7 @@ export class ItemDataService extends WotlweduPagination {
   }
 
   saveItem(itemObject: WotlweduItem) {
+    const activeWorkgroupId = this.workgroupScope.getActiveWorkgroupId();
     const payload = {
       id: itemObject.id,
       name: itemObject.name,
@@ -67,6 +73,7 @@ export class ItemDataService extends WotlweduPagination {
       location: itemObject.location,
       imageId: itemObject.image.id,
       categoryId: null,
+      workgroupId: itemObject.workgroupId || activeWorkgroupId || null,
     };
 
     let url = this.configService.config.apiUrl + 'item/';

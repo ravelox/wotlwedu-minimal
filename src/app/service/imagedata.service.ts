@@ -7,6 +7,7 @@ import { WotlweduImage } from '../datamodel/wotlwedu-image.model';
 import { WotlweduPagination } from '../datamodel/wotlwedu-pagination.model';
 import { SharedDataService } from './shareddata.service';
 import { ConfigService } from './config.service';
+import { WorkgroupScopeService } from './workgroupscope.service';
 
 @Injectable({ providedIn: 'root' })
 export class ImageDataService extends WotlweduPagination {
@@ -16,7 +17,8 @@ export class ImageDataService extends WotlweduPagination {
   constructor(
     private http: HttpClient,
     private sharedDataService: SharedDataService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private workgroupScope: WorkgroupScopeService
   ) {
     super();
     this.setCallbackFunction(this.getAllData);
@@ -35,6 +37,7 @@ export class ImageDataService extends WotlweduPagination {
   getAllData(filter?: string) {
     this.filterUpdate(filter);
     this.itemsPerPage = +this.sharedDataService.getPreference('itemsperpage');
+    const activeWorkgroupId = this.workgroupScope.getActiveWorkgroupId();
     const url =
       this.configService.config.apiUrl + 'image/' +
       '?detail=category' +
@@ -42,6 +45,7 @@ export class ImageDataService extends WotlweduPagination {
       this.page +
       '&items=' +
       this.itemsPerPage +
+      (activeWorkgroupId ? '&workgroupId=' + encodeURIComponent(activeWorkgroupId) : '') +
       (this.currentFilter.length > 0
         ? '&filter=' + encodeURIComponent(this.currentFilter)
         : '');
@@ -58,9 +62,11 @@ export class ImageDataService extends WotlweduPagination {
   }
 
   saveImage(imageId: string, name: string, description: string) {
+    const activeWorkgroupId = this.workgroupScope.getActiveWorkgroupId();
     const payload = {
       name: name,
       description: description,
+      workgroupId: activeWorkgroupId || null,
     };
 
     let url = this.configService.config.apiUrl + 'image/';

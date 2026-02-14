@@ -4,6 +4,7 @@ import { WotlweduMenuItem } from "./wotlwedu-menu-item.model";
 
 export class WotlweduItem extends WotlweduMenuItem{
     id: string;
+    workgroupId?: string;
     name: string;
     description: string;
     url: string;
