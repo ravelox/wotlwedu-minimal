@@ -71,28 +71,28 @@ export class RoleDataService extends WotlweduPagination {
     if (!roleId || !capabilities || capabilities.length === 0) return of({});
     let url = this.configService.config.apiUrl + 'role/' + roleId + '/bulkcapadd';
     const payload = { capabilityList: capabilities };
-    return this.http.post<WotlweduApiResponse>(url, payload);
+    return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   deleteCapabilities(roleId: string, capabilities: string[]) {
     if (!roleId || !capabilities || capabilities.length === 0) return of({});
     let url = this.configService.config.apiUrl + 'role/' + roleId + '/bulkcapdel';
     const payload = { capabilityList: capabilities };
-    return this.http.post<WotlweduApiResponse>(url, payload);
+    return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   addUsers(roleId: string, users: string[]) {
     if (!roleId || !users || users.length === 0) return of({});
     let url = this.configService.config.apiUrl + 'role/' + roleId + '/bulkuseradd';
     const payload = { userList: users };
-    return this.http.post<WotlweduApiResponse>(url, payload);
+    return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   deleteUsers(roleId: string, users: string[]) {
     if (!roleId || !users || users.length === 0) return of({});
     let url = this.configService.config.apiUrl + 'role/' + roleId + '/bulkuserdel';
     const payload = { userList: users };
-    return this.http.post<WotlweduApiResponse>(url, payload);
+    return this.http.put<WotlweduApiResponse>(url, payload);
   }
 
   deleteRole(roleId: string) {
