@@ -38,6 +38,11 @@ export class AuthDataService {
           firstName: response.data.firstName,
           lastName: response.data.lastName,
           admin: response.data.admin,
+          systemAdmin: response.data.systemAdmin,
+          organizationId: response.data.organizationId,
+          organizationAdmin: response.data.organizationAdmin,
+          workgroupAdmin: response.data.workgroupAdmin,
+          adminWorkgroupId: response.data.adminWorkgroupId,
         });
       })
     );
@@ -47,7 +52,15 @@ export class AuthDataService {
     this.tokenDataService.setId(authResponse.id);
     this.tokenDataService.setAuthToken(authResponse.authToken);
     this.tokenDataService.setRefreshToken(authResponse.refreshToken);
-    this.tokenDataService.setAdmin(authResponse.admin);
+    if (authResponse.systemAdmin || authResponse.systemAdmin === false) {
+      this.tokenDataService.setSystemAdmin(authResponse.systemAdmin === true);
+    } else {
+      this.tokenDataService.setAdmin(authResponse.admin === true);
+    }
+    this.tokenDataService.setOrganizationId(authResponse.organizationId || null);
+    this.tokenDataService.setOrganizationAdmin(authResponse.organizationAdmin === true);
+    this.tokenDataService.setWorkgroupAdmin(authResponse.workgroupAdmin === true);
+    this.tokenDataService.setAdminWorkgroupId(authResponse.adminWorkgroupId || null);
     const displayName =
       (authResponse.firstName ? authResponse.firstName : "") +
       (authResponse.lastName
@@ -104,6 +117,11 @@ export class AuthDataService {
           firstName: response.data.firstName,
           lastName: response.data.lastName,
           admin: response.data.admin,
+          systemAdmin: response.data.systemAdmin,
+          organizationId: response.data.organizationId,
+          organizationAdmin: response.data.organizationAdmin,
+          workgroupAdmin: response.data.workgroupAdmin,
+          adminWorkgroupId: response.data.adminWorkgroupId,
         });
       })
     );
@@ -120,7 +138,11 @@ export class AuthDataService {
     this.isLoggedIn.next({
       loginState: this.loggedIn,
       userName: this.userDisplayName,
-      isAdmin: this.tokenDataService.getAdmin(),
+      isSystemAdmin: this.tokenDataService.getSystemAdmin(),
+      isOrganizationAdmin: this.tokenDataService.getOrganizationAdmin(),
+      isWorkgroupAdmin: this.tokenDataService.getWorkgroupAdmin(),
+      organizationId: this.tokenDataService.getOrganizationId(),
+      adminWorkgroupId: this.tokenDataService.getAdminWorkgroupId(),
     });
   }
 

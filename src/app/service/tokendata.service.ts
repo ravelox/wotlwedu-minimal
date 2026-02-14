@@ -8,7 +8,13 @@ class StoreData {
   authToken: string = null;
   refreshToken: string = null;
   displayName: string = null;
+  // Legacy "admin" maps to system-admin behavior. Keep for backward compat.
   admin: boolean = false;
+  systemAdmin: boolean = false;
+  organizationId: string = null;
+  organizationAdmin: boolean = false;
+  workgroupAdmin: boolean = false;
+  adminWorkgroupId: string = null;
 }
 
 @Injectable()
@@ -94,10 +100,59 @@ export class TokenDataStorageService {
 
   public getAdmin() {
     if( !this.currentData ) return false;
-    return this.currentData.admin;
+    return this.currentData.admin || this.currentData.systemAdmin;
   }
 
   public setAdmin(admin: boolean) {
     this.currentData.admin = admin;
+    // Keep systemAdmin in sync for old payloads.
+    if (admin === true) this.currentData.systemAdmin = true;
+  }
+
+  public getSystemAdmin() {
+    if (!this.currentData) return false;
+    return this.currentData.systemAdmin || this.currentData.admin;
+  }
+
+  public setSystemAdmin(systemAdmin: boolean) {
+    this.currentData.systemAdmin = systemAdmin;
+    // Maintain legacy admin mirror.
+    this.currentData.admin = systemAdmin;
+  }
+
+  public getOrganizationId() {
+    if (!this.currentData) return null;
+    return this.currentData.organizationId;
+  }
+
+  public setOrganizationId(organizationId: string) {
+    this.currentData.organizationId = organizationId;
+  }
+
+  public getOrganizationAdmin() {
+    if (!this.currentData) return false;
+    return this.currentData.organizationAdmin === true;
+  }
+
+  public setOrganizationAdmin(organizationAdmin: boolean) {
+    this.currentData.organizationAdmin = organizationAdmin === true;
+  }
+
+  public getWorkgroupAdmin() {
+    if (!this.currentData) return false;
+    return this.currentData.workgroupAdmin === true;
+  }
+
+  public setWorkgroupAdmin(workgroupAdmin: boolean) {
+    this.currentData.workgroupAdmin = workgroupAdmin === true;
+  }
+
+  public getAdminWorkgroupId() {
+    if (!this.currentData) return null;
+    return this.currentData.adminWorkgroupId;
+  }
+
+  public setAdminWorkgroupId(adminWorkgroupId: string) {
+    this.currentData.adminWorkgroupId = adminWorkgroupId;
   }
 }

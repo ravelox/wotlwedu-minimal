@@ -20,7 +20,12 @@ export const AdminGuard: CanActivateFn = (
 
   return authDataService.authData.pipe(
     map((authDetails) => {
-      if (authDetails && authDetails.admin === true ) {
+      if (
+        authDetails &&
+        (authDetails.systemAdmin === true ||
+          authDetails.admin === true ||
+          authDetails.organizationAdmin === true)
+      ) {
         return true;
       }
       router.navigate([ configService.config.defaultStartPage ])
