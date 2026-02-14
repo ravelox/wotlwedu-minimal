@@ -113,14 +113,3 @@ Notes:
 
 For backend setup and current API details, see:
 - https://github.com/ravelox/wotlwedu-backend
-
-## AI-assisted features
-
-The Home screen includes an AI panel that calls backend `/ai/*` endpoints:
-- election recommendations and summaries
-- participant suggestions
-- list suggestions from prompt text
-- text categorization and moderation
-- notification digest and smart defaults
-- assistant query
-- image description by image ID
