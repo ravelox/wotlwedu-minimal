@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Subscription } from "rxjs";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { WotlweduWorkgroup } from "../../datamodel/wotlwedu-workgroup.model";
+import { WotlweduCategory } from "../../datamodel/wotlwedu-category.model";
 import { WorkgroupDataService } from "../../service/workgroupdata.service";
 import { WotlweduAlert } from "../../controller/wotlwedu-alert-controller.class";
 import { WotlweduDialogController } from "../../controller/wotlwedu-dialog-controller.class";
@@ -11,6 +12,7 @@ import { WotlweduSelectionService } from "../../service/selectiondata.service";
 import { DataSignalService } from "../../service/datasignal.service";
 import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-controller.class";
 import { TokenDataStorageService } from "../../service/tokendata.service";
+import { CategoryDataService } from "../../service/categorydata.service";
 
 class WotlweduSelectionData {
   type: string;
@@ -24,7 +26,9 @@ class WotlweduSelectionData {
 })
 export class WorkgroupDetailComponent implements OnInit, OnDestroy {
   workgroupSub: Subscription;
+  categorySub: Subscription;
   currentWorkgroup: WotlweduWorkgroup = null;
+  currentCategories: WotlweduCategory[] = [];
   workgroupDetailForm: FormGroup;
   editMode: boolean = false;
   alertBox: WotlweduAlert = new WotlweduAlert();
@@ -39,7 +43,8 @@ export class WorkgroupDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private selectionService: WotlweduSelectionService,
-    private dataSignalService: DataSignalService
+    private dataSignalService: DataSignalService,
+    private categoryDataService: CategoryDataService
   ) {}
 
   ngOnInit() {
@@ -65,6 +70,12 @@ export class WorkgroupDetailComponent implements OnInit, OnDestroy {
         this.loader.stop();
       },
     });
+    this.categorySub = this.categoryDataService.dataChanged.subscribe({
+      next: (categories: WotlweduCategory[]) => {
+        this.currentCategories = categories || [];
+      },
+    });
+    this.categoryDataService.getAllData();
     if (this.route.snapshot.params.workgroupId) {
       this.loader.start();
       this.workgroupDataService
@@ -88,6 +99,7 @@ export class WorkgroupDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.workgroupSub) this.workgroupSub.unsubscribe();
+    if (this.categorySub) this.categorySub.unsubscribe();
   }
 
   onSubmit() {
@@ -98,6 +110,7 @@ export class WorkgroupDetailComponent implements OnInit, OnDestroy {
     const name = this.workgroupDetailForm.value.name;
     const description = this.workgroupDetailForm.value.description;
     const organizationId = this.workgroupDetailForm.value.organizationId || null;
+    const categoryId = this.workgroupDetailForm.value.categoryId || null;
     const users = this.currentWorkgroup.users || [];
 
     /* Work out which users are added or deleted */
@@ -127,7 +140,7 @@ export class WorkgroupDetailComponent implements OnInit, OnDestroy {
     this.loader.start();
     /* Update the workgroup itself */
     this.workgroupDataService
-      .saveWorkgroup(workgroupId, name, description, organizationId)
+      .saveWorkgroup(workgroupId, name, description, organizationId, categoryId)
       .subscribe({
       error: (err) => {
         this.loader.stop();
@@ -170,12 +183,14 @@ export class WorkgroupDetailComponent implements OnInit, OnDestroy {
     let name = "";
     let description = "";
     let organizationId = "";
+    let categoryId = "";
 
     if (this.currentWorkgroup) {
       workgroupId = this.currentWorkgroup.id;
       name = this.currentWorkgroup.name;
       description = this.currentWorkgroup.description;
       organizationId = this.currentWorkgroup.organizationId || "";
+      categoryId = this.currentWorkgroup.category?.id || "";
     } else {
       this.currentWorkgroup = new WotlweduWorkgroup();
       this.currentWorkgroup.users = [];
@@ -186,6 +201,7 @@ export class WorkgroupDetailComponent implements OnInit, OnDestroy {
       organizationId: new FormControl(organizationId),
       name: new FormControl(name, Validators.required),
       description: new FormControl(description, Validators.required),
+      categoryId: new FormControl(categoryId),
     });
 
     if (!isSystemAdmin) {

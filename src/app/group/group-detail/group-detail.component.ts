@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Subscription } from "rxjs";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { WotlweduGroup } from "../../datamodel/wotlwedu-group.model";
+import { WotlweduCategory } from "../../datamodel/wotlwedu-category.model";
 import { GroupDataService } from "../../service/groupdata.service";
 import { WotlweduAlert } from "../../controller/wotlwedu-alert-controller.class";
 import { WotlweduDialogController } from "../../controller/wotlwedu-dialog-controller.class";
@@ -9,6 +10,7 @@ import { WotlweduPageStackService } from "../../service/pagestack.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { WotlweduSelectionService } from "../../service/selectiondata.service";
 import { DataSignalService } from "../../service/datasignal.service";
+import { CategoryDataService } from "../../service/categorydata.service";
 import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-controller.class";
 
 class WotlweduSelectionData {
@@ -23,7 +25,9 @@ class WotlweduSelectionData {
 })
 export class GroupDetailComponent implements OnInit, OnDestroy {
   groupSub: Subscription;
+  categorySub: Subscription;
   currentGroup: WotlweduGroup = null;
+  currentCategories: WotlweduCategory[] = [];
   groupDetailForm: FormGroup;
   editMode: boolean = false;
   alertBox: WotlweduAlert = new WotlweduAlert();
@@ -37,7 +41,8 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private selectionService: WotlweduSelectionService,
-    private dataSignalService: DataSignalService
+    private dataSignalService: DataSignalService,
+    private categoryDataService: CategoryDataService
   ) {}
 
   ngOnInit() {
@@ -63,6 +68,12 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
         this.loader.stop();
       },
     });
+    this.categorySub = this.categoryDataService.dataChanged.subscribe({
+      next: (categories: WotlweduCategory[]) => {
+        this.currentCategories = categories || [];
+      },
+    });
+    this.categoryDataService.getAllData();
     if (this.route.snapshot.params.groupId) {
       this.loader.start();
       this.groupDataService
@@ -86,6 +97,7 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.groupSub) this.groupSub.unsubscribe();
+    if (this.categorySub) this.categorySub.unsubscribe();
   }
 
   onSubmit() {
@@ -95,6 +107,7 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
     }
     const name = this.groupDetailForm.value.name;
     const description = this.groupDetailForm.value.description;
+    const categoryId = this.groupDetailForm.value.categoryId || null;
     const users = this.currentGroup.users;
 
     /* Work out which users are added or deleted */
@@ -123,7 +136,7 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
 
     this.loader.start();
     /* Update the group itself */
-    this.groupDataService.saveGroup(groupId, name, description).subscribe({
+    this.groupDataService.saveGroup(groupId, name, description, categoryId).subscribe({
       error: (err) => {
         this.loader.stop();
         this.alertBox.handleError(err);
@@ -164,11 +177,13 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
     let groupId = "";
     let name = "";
     let description = "";
+    let categoryId = "";
 
     if (this.currentGroup) {
       groupId = this.currentGroup.id;
       name = this.currentGroup.name;
       description = this.currentGroup.description;
+      categoryId = this.currentGroup.category?.id || "";
     } else {
       this.currentGroup = new WotlweduGroup();
       this.currentGroup.users = [];
@@ -177,6 +192,7 @@ export class GroupDetailComponent implements OnInit, OnDestroy {
       groupId: new FormControl(groupId),
       name: new FormControl(name, Validators.required),
       description: new FormControl(description, Validators.required),
+      categoryId: new FormControl(categoryId),
     });
 
     if (this.currentGroup) this.groupDetailForm.markAsDirty();

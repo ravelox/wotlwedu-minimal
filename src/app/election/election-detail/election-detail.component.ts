@@ -7,6 +7,7 @@ import { ListDataService } from "../../service/listdata.service";
 import { WotlweduList } from "../../datamodel/wotlwedu-list.model";
 import { GroupDataService } from "../../service/groupdata.service";
 import { WotlweduGroup } from "../../datamodel/wotlwedu-group.model";
+import { WotlweduCategory } from "../../datamodel/wotlwedu-category.model";
 import { WotlweduImage } from "../../datamodel/wotlwedu-image.model";
 import { ImageDataService } from "../../service/imagedata.service";
 import { WotlweduAlert } from "../../controller/wotlwedu-alert-controller.class";
@@ -16,6 +17,7 @@ import { DataSignalService } from "../../service/datasignal.service";
 import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-controller.class";
 import { ActivatedRoute, Router } from "@angular/router";
 import { WotlweduPageStackService } from "../../service/pagestack.service";
+import { CategoryDataService } from "../../service/categorydata.service";
 
 @Component({
   selector: "app-election-detail",
@@ -26,12 +28,14 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
   electionSub: Subscription = null;
   listSub: Subscription = null;
   groupSub: Subscription = null;
+  categorySub: Subscription = null;
   currentElection: WotlweduElection = null;
   electionDetailForm: FormGroup;
   filterForm: FormGroup;
   editMode: boolean = false;
   currentLists: WotlweduList[];
   currentGroups: WotlweduGroup[];
+  currentCategories: WotlweduCategory[] = [];
   currentImage: WotlweduImage = null;
   imageSelectorVisible: boolean = false;
   loader: WotlweduLoaderController = new WotlweduLoaderController();
@@ -45,6 +49,7 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
     private imageDataService: ImageDataService,
     private dataSignalService: DataSignalService,
     private sharedDataService: SharedDataService,
+    private categoryDataService: CategoryDataService,
     private router: Router,
     private route: ActivatedRoute,
     private pageStack: WotlweduPageStackService
@@ -78,6 +83,11 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
         this.currentGroups = groups;
       }
     );
+    this.categorySub = this.categoryDataService.dataChanged.subscribe(
+      (categories: WotlweduCategory[]) => {
+        this.currentCategories = categories || [];
+      }
+    );
 
     if( this.route.snapshot.params.electionId ) {
       this.loader.start();
@@ -95,6 +105,7 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
       })
     }
     this.dataSignalService.refreshData();
+    this.categoryDataService.getAllData();
     this.initForm();
     this.loader.stop();
   }
@@ -103,6 +114,7 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
     if (this.listSub) this.listSub.unsubscribe();
     if (this.groupSub) this.groupSub.unsubscribe();
     if (this.electionSub) this.electionSub.unsubscribe();
+    if (this.categorySub) this.categorySub.unsubscribe();
   }
 
   showDeleteConfirmationDialog(object: any) {
@@ -138,6 +150,7 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
     const description = this.electionDetailForm.value.description;
     const groupId = this.electionDetailForm.value.groupId;
     const listId = this.electionDetailForm.value.listId;
+    const categoryId = this.electionDetailForm.value.categoryId;
     let expiration: Date;
 
     election.id = electionId;
@@ -149,6 +162,7 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
 
     election.list = new WotlweduList();
     election.list.id = listId ? listId : null;
+    election.category = categoryId ? ({ id: categoryId } as WotlweduCategory) : null;
     if (this.currentImage) {
       election.image = new WotlweduImage();
       election.image.id = this.currentImage.id;
@@ -191,6 +205,7 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
     let description = "";
     let listId = "";
     let groupId = "";
+    let categoryId = "";
     let expiration = null;
 
     this.listDataService.getAllData();
@@ -204,6 +219,9 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
       }
       if (this.currentElection.group) {
         groupId = this.currentElection.group.id;
+      }
+      if (this.currentElection.category) {
+        categoryId = this.currentElection.category.id;
       }
       this.currentImage = this.currentElection.image
         ? this.currentElection.image
@@ -229,6 +247,7 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
       description: new FormControl(description, Validators.required),
       listId: new FormControl(listId),
       groupId: new FormControl(groupId),
+      categoryId: new FormControl(categoryId),
       expiration: new FormControl(expiration),
     });
 
@@ -237,6 +256,7 @@ export class ElectionDetailComponent implements OnInit, OnDestroy {
 
     // Get the list of groups
     this.groupDataService.getAllData();
+    this.categoryDataService.getAllData();
 
     if (this.currentElection) this.electionDetailForm.markAsDirty();
   }

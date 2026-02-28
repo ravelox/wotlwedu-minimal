@@ -35,6 +35,15 @@
         required
       />
     </div>
+    <div class="ww-form-input">
+      <label for="categoryId">Category</label>
+      <select formControlName="categoryId" id="categoryId">
+        <option value="">None</option>
+        <option *ngFor="let category of currentCategories" [value]="category.id">
+          {{ category.name }}
+        </option>
+      </select>
+    </div>
 
     <!-- Users Selection List -->
     <div>

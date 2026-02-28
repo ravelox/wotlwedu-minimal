@@ -61,11 +61,12 @@ export class ImageDataService extends WotlweduPagination {
     });
   }
 
-  saveImage(imageId: string, name: string, description: string) {
+  saveImage(imageId: string, name: string, description: string, categoryId?: string) {
     const activeWorkgroupId = this.workgroupScope.getActiveWorkgroupId();
     const payload = {
       name: name,
       description: description,
+      categoryId: categoryId || null,
       workgroupId: activeWorkgroupId || null,
     };
 

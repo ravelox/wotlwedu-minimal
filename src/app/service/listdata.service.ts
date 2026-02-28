@@ -65,11 +65,12 @@ export class ListDataService extends WotlweduPagination {
     });
   }
 
-  saveList(listId: string, name: string, description: string) {
+  saveList(listId: string, name: string, description: string, categoryId?: string) {
     const activeWorkgroupId = this.workgroupScope.getActiveWorkgroupId();
     const payload = {
       name: name,
       description: description,
+      categoryId: categoryId || null,
       workgroupId: activeWorkgroupId || null,
     };
     let url = this.configService.config.apiUrl + "list/";

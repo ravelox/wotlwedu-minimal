@@ -9,11 +9,13 @@ import {
 import { WotlweduItem } from "../../datamodel/wotlwedu-item.model";
 import { ItemDataService } from "../../service/itemdata.service";
 import { WotlweduImage } from "../../datamodel/wotlwedu-image.model";
+import { WotlweduCategory } from "../../datamodel/wotlwedu-category.model";
 import { WotlweduAlert } from "../../controller/wotlwedu-alert-controller.class";
 import { WotlweduDialogController } from "../../controller/wotlwedu-dialog-controller.class";
 import { WotlweduPageStackService } from "../../service/pagestack.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ImageDataService } from "../../service/imagedata.service";
+import { CategoryDataService } from "../../service/categorydata.service";
 import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-controller.class";
 
 @Component({
@@ -25,9 +27,11 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
   selectMode: boolean = false;
   itemDetailForm: FormGroup;
   itemSub: Subscription;
+  categorySub: Subscription;
   editMode: boolean = false;
   currentItem: WotlweduItem = null;
   currentImage: WotlweduImage = null;
+  currentCategories: WotlweduCategory[] = [];
   imageSelectorVisible: boolean = false;
   alertBox: WotlweduAlert = new WotlweduAlert();
   confirmDialog: WotlweduDialogController = new WotlweduDialogController();
@@ -36,6 +40,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
   constructor(
     private itemDataService: ItemDataService,
     private imageDataService: ImageDataService,
+    private categoryDataService: CategoryDataService,
     private router: Router,
     private route: ActivatedRoute,
     private pageStack: WotlweduPageStackService
@@ -58,6 +63,12 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
         this.loader.stop();
       },
     });
+    this.categorySub = this.categoryDataService.dataChanged.subscribe({
+      next: (categories: WotlweduCategory[]) => {
+        this.currentCategories = categories || [];
+      },
+    });
+    this.categoryDataService.getAllData();
     if (this.route.snapshot.params.itemId) {
       this.loader.start();
       this.itemDataService
@@ -82,6 +93,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.itemSub.unsubscribe();
+    if (this.categorySub) this.categorySub.unsubscribe();
   }
 
   onSubmit() {
@@ -96,6 +108,8 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     itemObject.location = this.itemDetailForm.value.location;
     itemObject.image = new WotlweduImage();
     itemObject.image.id = this.currentImage ? this.currentImage.id : null;
+    const categoryId = this.itemDetailForm.value.categoryId;
+    itemObject.category = categoryId ? ({ id: categoryId } as WotlweduCategory) : null;
 
     this.loader.start();
     this.itemDataService.saveItem(itemObject).subscribe({
@@ -117,6 +131,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
     let description = "";
     let url = "";
     let location = "";
+    let categoryId = "";
 
     if (this.currentItem) {
       itemId = this.currentItem.id;
@@ -124,6 +139,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
       description = this.currentItem.description;
       url = this.currentItem.url;
       location = this.currentItem.location;
+      categoryId = this.currentItem.category?.id || "";
 
       this.currentImage = this.currentItem.image
         ? this.currentItem.image
@@ -136,6 +152,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
       description: new FormControl(description, Validators.required),
       url: new FormControl(url),
       location: new FormControl(location),
+      categoryId: new FormControl(categoryId),
     });
 
     this.itemDetailForm.addValidators(

@@ -53,10 +53,11 @@ export class GroupDataService extends WotlweduPagination {
     });
   }
 
-  saveGroup(groupId: string, name: string, description: string) {
+  saveGroup(groupId: string, name: string, description: string, categoryId?: string) {
     const payload = {
       name: name,
       description: description,
+      categoryId: categoryId || null,
     };
     let url = this.configService.config.apiUrl + 'group/';
 

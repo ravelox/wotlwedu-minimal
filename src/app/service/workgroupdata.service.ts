@@ -74,10 +74,17 @@ export class WorkgroupDataService extends WotlweduPagination {
     return this.http.get<WotlweduApiResponse>(url);
   }
 
-  saveWorkgroup(workgroupId: string, name: string, description: string, organizationId?: string) {
+  saveWorkgroup(
+    workgroupId: string,
+    name: string,
+    description: string,
+    organizationId?: string,
+    categoryId?: string
+  ) {
     const payload: any = {
       name: name,
       description: description,
+      categoryId: categoryId || null,
     };
     if (organizationId) payload.organizationId = organizationId;
 

@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Subscription } from "rxjs";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { WotlweduImage } from "../../datamodel/wotlwedu-image.model";
+import { WotlweduCategory } from "../../datamodel/wotlwedu-category.model";
 import { ImageDataService } from "../../service/imagedata.service";
 import { WotlweduAlert } from "../../controller/wotlwedu-alert-controller.class";
 import { WotlweduDialogController } from "../../controller/wotlwedu-dialog-controller.class";
@@ -9,6 +10,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { WotlweduPageStackService } from "../../service/pagestack.service";
 import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-controller.class";
 import { WotlweduViewerController } from "../../controller/wotlwedu-viewer-controller.class";
+import { CategoryDataService } from "../../service/categorydata.service";
 
 @Component({
   selector: "app-image-detail",
@@ -18,8 +20,10 @@ import { WotlweduViewerController } from "../../controller/wotlwedu-viewer-contr
 export class ImageDetailComponent implements OnInit, OnDestroy {
   imageDetailForm: FormGroup;
   imageSub: Subscription;
+  categorySub: Subscription;
   editMode: boolean = false;
   currentImage: WotlweduImage = null;
+  currentCategories: WotlweduCategory[] = [];
   alertBox: WotlweduAlert = new WotlweduAlert();
   currentUploadFile: File = null;
   confirmDialog: WotlweduDialogController = new WotlweduDialogController();
@@ -28,6 +32,7 @@ export class ImageDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     private imageDataService: ImageDataService,
+    private categoryDataService: CategoryDataService,
     private router: Router,
     private route: ActivatedRoute,
     private pageStack: WotlweduPageStackService
@@ -56,6 +61,12 @@ export class ImageDetailComponent implements OnInit, OnDestroy {
         this.initForm();
       },
     });
+    this.categorySub = this.categoryDataService.dataChanged.subscribe({
+      next: (categories: WotlweduCategory[]) => {
+        this.currentCategories = categories || [];
+      },
+    });
+    this.categoryDataService.getAllData();
 
     if (this.route.snapshot.params.imageId) {
       this.loader.start();
@@ -81,6 +92,7 @@ export class ImageDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.imageSub.unsubscribe();
+    if (this.categorySub) this.categorySub.unsubscribe();
   }
 
   onSubmit() {
@@ -90,9 +102,10 @@ export class ImageDetailComponent implements OnInit, OnDestroy {
     }
     const name = this.imageDetailForm.value.name;
     const description = this.imageDetailForm.value.description;
+    const categoryId = this.imageDetailForm.value.categoryId || null;
 
     this.loader.start();
-    this.imageDataService.saveImage(imageId, name, description).subscribe({
+    this.imageDataService.saveImage(imageId, name, description, categoryId).subscribe({
       error: (err) => {
         this.loader.stop();
         this.alertBox.handleError(err);
@@ -125,17 +138,20 @@ export class ImageDetailComponent implements OnInit, OnDestroy {
     let name = "";
     let description = "";
     let filename = null;
+    let categoryId = "";
 
     if (this.currentImage) {
       imageId = this.currentImage.id;
       name = this.currentImage.name;
       description = this.currentImage.description;
+      categoryId = this.currentImage.category?.id || "";
     }
 
     this.imageDetailForm = new FormGroup({
       imageId: new FormControl(imageId),
       name: new FormControl(name, Validators.required),
       description: new FormControl(description, Validators.required),
+      categoryId: new FormControl(categoryId),
       filename: new FormControl(filename),
     });
 

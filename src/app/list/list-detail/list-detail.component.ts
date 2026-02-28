@@ -9,8 +9,10 @@ import { WotlweduSelectionService } from "../../service/selectiondata.service";
 import { DataSignalService } from "../../service/datasignal.service";
 import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-controller.class";
 import { WotlweduList } from "../../datamodel/wotlwedu-list.model";
+import { WotlweduCategory } from "../../datamodel/wotlwedu-category.model";
 import { ListDataService } from "../../service/listdata.service";
 import { ItemDataService } from "../../service/itemdata.service";
+import { CategoryDataService } from "../../service/categorydata.service";
 
 class WotlweduSelectionData {
   type: string;
@@ -24,7 +26,9 @@ class WotlweduSelectionData {
 })
 export class ListDetailComponent implements OnInit, OnDestroy {
   listSub: Subscription;
+  categorySub: Subscription;
   currentList: WotlweduList = null;
+  currentCategories: WotlweduCategory[] = [];
   listDetailForm: FormGroup;
   editMode: boolean = false;
   alertBox: WotlweduAlert = new WotlweduAlert();
@@ -39,7 +43,8 @@ export class ListDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private selectionService: WotlweduSelectionService,
     private dataSignalService: DataSignalService,
-    private itemDataService: ItemDataService
+    private itemDataService: ItemDataService,
+    private categoryDataService: CategoryDataService
   ) {}
 
   ngOnInit() {
@@ -65,6 +70,12 @@ export class ListDetailComponent implements OnInit, OnDestroy {
         this.loader.stop();
       },
     });
+    this.categorySub = this.categoryDataService.dataChanged.subscribe({
+      next: (categories: WotlweduCategory[]) => {
+        this.currentCategories = categories || [];
+      },
+    });
+    this.categoryDataService.getAllData();
     if (this.route.snapshot.params.listId) {
       this.loader.start();
       this.listDataService
@@ -88,6 +99,7 @@ export class ListDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.listSub) this.listSub.unsubscribe();
+    if (this.categorySub) this.categorySub.unsubscribe();
   }
 
   onSubmit() {
@@ -97,6 +109,7 @@ export class ListDetailComponent implements OnInit, OnDestroy {
     }
     const name = this.listDetailForm.value.name;
     const description = this.listDetailForm.value.description;
+    const categoryId = this.listDetailForm.value.categoryId || null;
     const items = this.currentList.items;
 
     /* Work out which items are added or deleted */
@@ -125,7 +138,7 @@ export class ListDetailComponent implements OnInit, OnDestroy {
 
     this.loader.start();
     /* Update the group itself */
-    this.listDataService.saveList(listId, name, description).subscribe({
+    this.listDataService.saveList(listId, name, description, categoryId).subscribe({
       error: (err) => {
         this.loader.stop();
         this.alertBox.handleError(err);
@@ -166,11 +179,13 @@ export class ListDetailComponent implements OnInit, OnDestroy {
     let listId = "";
     let name = "";
     let description = "";
+    let categoryId = "";
 
     if (this.currentList) {
       listId = this.currentList.id;
       name = this.currentList.name;
       description = this.currentList.description;
+      categoryId = this.currentList.category?.id || "";
     } else {
       this.currentList = new WotlweduList();
       this.currentList.items = [];
@@ -179,6 +194,7 @@ export class ListDetailComponent implements OnInit, OnDestroy {
       listId: new FormControl(listId),
       name: new FormControl(name, Validators.required),
       description: new FormControl(description, Validators.required),
+      categoryId: new FormControl(categoryId),
     });
 
     if (this.currentList) this.listDetailForm.markAsDirty();

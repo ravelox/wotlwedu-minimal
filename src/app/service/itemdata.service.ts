@@ -72,7 +72,7 @@ export class ItemDataService extends WotlweduPagination {
       url: itemObject.url,
       location: itemObject.location,
       imageId: itemObject.image.id,
-      categoryId: null,
+      categoryId: itemObject.category?.id || null,
       workgroupId: itemObject.workgroupId || activeWorkgroupId || null,
     };
 

@@ -1,3 +1,4 @@
+import { WotlweduCategory } from "./wotlwedu-category.model";
 import { WotlweduItem } from "./wotlwedu-item.model";
 import { WotlweduMenuItem } from "./wotlwedu-menu-item.model";
 
@@ -6,5 +7,6 @@ export class WotlweduList extends WotlweduMenuItem {
     workgroupId?: string;
     name: string;
     description: string;
+    category?: WotlweduCategory;
     items: WotlweduItem[];
 }
