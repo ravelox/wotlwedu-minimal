@@ -1,21 +1,33 @@
-{{- if .Values.ingress.enabled }}
+{{- $service := deepCopy .Values.service -}}
+{{- $ingress := deepCopy .Values.ingress -}}
+{{- $environment := default "" .Values.environment -}}
+{{- if and $environment (hasKey .Values.environments $environment) -}}
+  {{- $envConfig := index .Values.environments $environment -}}
+  {{- if hasKey $envConfig "service" -}}
+    {{- $service = mergeOverwrite $service $envConfig.service -}}
+  {{- end -}}
+  {{- if hasKey $envConfig "ingress" -}}
+    {{- $ingress = mergeOverwrite $ingress $envConfig.ingress -}}
+  {{- end -}}
+{{- end -}}
+{{- if $ingress.enabled }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ include "wotlwedu-minimal.fullname" . }}
   labels:
     {{- include "wotlwedu-minimal.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+  {{- with $ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if .Values.ingress.className }}
-  ingressClassName: {{ .Values.ingress.className }}
+  {{- if $ingress.className }}
+  ingressClassName: {{ $ingress.className }}
   {{- end }}
-  {{- if .Values.ingress.tls }}
+  {{- if $ingress.tls }}
   tls:
-    {{- range .Values.ingress.tls }}
+    {{- range $ingress.tls }}
     - secretName: {{ .secretName }}
       hosts:
         {{- range .hosts }}
@@ -24,7 +36,7 @@ spec:
     {{- end }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
+    {{- range $ingress.hosts }}
     - host: {{ .host }}
       http:
         paths:
@@ -36,9 +48,9 @@ spec:
                 name: {{ include "wotlwedu-minimal.fullname" $ }}
                 port:
                   {{- if eq .servicePort "https" }}
-                  number: {{ $.Values.service.httpsPort }}
+                  number: {{ $service.httpsPort }}
                   {{- else if eq .servicePort "http" }}
-                  number: {{ $.Values.service.httpPort }}
+                  number: {{ $service.httpPort }}
                   {{- else }}
                   name: {{ .servicePort }}
                   {{- end }}

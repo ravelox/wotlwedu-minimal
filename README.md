@@ -19,7 +19,7 @@ You can attach images to items/elections, and share images/items/lists with frie
 - Node.js + npm
 - Runtime API config loaded from `src/assets/wotlwedu-config.json`
 - Optional Docker deployment with NGINX (HTTP + HTTPS)
-- Current app config template version: `0.1.3`
+- Current app config template version: `0.1.4`
 
 ## Tenant/admin concepts
 
@@ -32,7 +32,7 @@ The backend now supports tenancy and scoped administration:
 
 If your UI consumes user/auth payloads, ensure it tolerates these additional fields.
 
-## Backend compatibility notes (0.1.3)
+## Backend compatibility notes (0.1.4)
 - Category assignment is now user-scoped in the backend: submitted `categoryId` values must belong to the authenticated user.
 - Category-enabled collection endpoints may return grouped category menus when `collapsible=true` is sent.
 - Workgroup/organization IDs should be treated as optional and sanitized client-side; backend now normalizes placeholder values like `""`, `"undefined"`, and `"null"`.
@@ -113,6 +113,12 @@ Notes:
 - `WOTLWEDU_API_URL` is injected into `/usr/share/nginx/html/assets/wotlwedu-config.json` at startup.
 - SSL certificate/key files must exist inside the container path you configure (typically via a mounted `/secrets` volume).
 - Update the compose volume path to match your host filesystem.
+
+## Helm
+A Helm chart is available under `helm/wotlwedu-minimal`.
+
+Notes:
+- Set `environment` and `environments.<name>.service` / `environments.<name>.ingress` in Helm values to apply optional per-environment service and ingress overrides.
 
 ## Backend reference
 

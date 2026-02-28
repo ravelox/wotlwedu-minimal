@@ -1,4 +1,5 @@
 replicaCount: 2
+environment: ""
 
 image:
   repository: ravelox/wotlwedu-minimal
@@ -61,3 +62,24 @@ tlsSecret:
   certificate: ""
   privateKey: ""
   mountPath: /etc/wotlwedu/tls
+
+environments: {}
+# Example:
+# environments:
+#   dev:
+#     service:
+#       type: NodePort
+#       httpPort: 8080
+#       httpsPort: 8443
+#     ingress:
+#       enabled: true
+#       hosts:
+#         - host: mobile-dev.wotlwedu.com
+#           paths:
+#             - path: /
+#               pathType: Prefix
+#               servicePort: http
+#       tls:
+#         - secretName: wotlwedu-minimal-dev-tls
+#           hosts:
+#             - mobile-dev.wotlwedu.com

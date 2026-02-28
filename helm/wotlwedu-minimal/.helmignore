@@ -1,0 +1,17 @@
+# Common VCS dirs
+.git/
+.gitignore
+
+# Node/build artifacts
+node_modules/
+dist/
+npm-debug.log
+
+# Helm artifacts
+*.tgz
+Chart.lock
+
+# IDE/editor
+.DS_Store
+.idea/
+.vscode/
