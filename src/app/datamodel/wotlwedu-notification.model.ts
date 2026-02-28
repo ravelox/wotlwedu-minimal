@@ -5,8 +5,10 @@ import { WotlweduUser } from "./wotlwedu-user.model";
 export class WotlweduNotification extends WotlweduMenuItem{
     id: string;
     type: number;
+    objectId: string;
     status: WotlweduStatus;
     text: string;
     user: WotlweduUser;
     sender: WotlweduUser;
+    createdAt: string;
 }

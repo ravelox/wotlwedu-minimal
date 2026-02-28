@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.6 - 2026-02-28
+- Refactor notifications to use a local store with optimistic item/status updates instead of refetching the full list after every action.
+- Consume structured backend notification socket payloads to update unread badges and inbox rows with deltas.
+- Remove redundant per-notification detail fetches for common actions by using the notification list payload directly.
+
 ## 0.1.4 - 2026-02-28
 - Align with backend category behavior updates:
 - Category assignment is user-scoped.

@@ -19,7 +19,7 @@ You can attach images to items/elections, and share images/items/lists with frie
 - Node.js + npm
 - Runtime API config loaded from `src/assets/wotlwedu-config.json`
 - Optional Docker deployment with NGINX (HTTP + HTTPS)
-- Current app config template version: `0.1.4`
+- Current frontend package version: `0.1.5` (`package.json`)
 
 ## Tenant/admin concepts
 
@@ -32,10 +32,18 @@ The backend now supports tenancy and scoped administration:
 
 If your UI consumes user/auth payloads, ensure it tolerates these additional fields.
 
-## Backend compatibility notes (0.1.4)
+## Backend compatibility notes
 - Category assignment is now user-scoped in the backend: submitted `categoryId` values must belong to the authenticated user.
 - Category-enabled collection endpoints may return grouped category menus when `collapsible=true` is sent.
 - Workgroup/organization IDs should be treated as optional and sanitized client-side; backend now normalizes placeholder values like `""`, `"undefined"`, and `"null"`.
+- Notification list endpoints are paged newest-first, unread counts are count-based, and live notification events now carry structured payloads for local inbox updates.
+
+## Notification behavior
+
+The current notification implementation:
+- keeps inbox rows and unread counts in a local store,
+- applies structured Socket.IO notification deltas when available,
+- avoids extra notification-detail fetches for common actions such as vote entry, friend acceptance, and shared item/image/list actions.
 
 ## Local development
 

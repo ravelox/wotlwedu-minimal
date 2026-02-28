@@ -59,12 +59,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.pageStack.setRouter(this.router);
     this._updateInProgress = false;
-    this._notificationSignal =
-      this.dataSignalService.hasNotificationSignal.subscribe({
-        next: () => {
-          this.getUnreadCount.bind(this)();
-        },
-      });
+    this._notificationSignal = this.notifDataService.unreadCountChanged.subscribe({
+      next: (count) => {
+        this.unreadCount = +(count || 0);
+      },
+    });
 
     this.appVersion = this.configService.config.appVersion;
     this._refreshSignal = this.dataSignalService.refreshDataSignal.subscribe({
@@ -87,6 +86,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.activeWorkgroupId = this.workgroupScope.getActiveWorkgroupId() || "";
 
           if (this.isLoggedIn) {
+            this.notifDataService.refreshUnreadCount();
             this.healthcheckService.ping().subscribe({
               next: (response) => {
                 if (response && response.data && response.data.version) {
@@ -125,6 +125,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.workgroups = [];
           this.workgroupScope.setActiveWorkgroupId(null);
           this.activeWorkgroupId = "";
+          this.unreadCount = 0;
         }
       },
     });
@@ -144,15 +145,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         error: (err) => {
           this._updateInProgress = false;
         },
-        next: (response) => {
+        next: (unread) => {
           this._updateInProgress = false;
-          if (
-            response &&
-            response.data &&
-            (response.data.unread || response.data.unread === 0)
-          ) {
-            this.unreadCount = +response.data.unread;
-          }
+          this.unreadCount = +(unread || 0);
         },
       });
     }

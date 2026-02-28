@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 
 import { Subject } from 'rxjs';
+import { WotlweduNotificationEvent } from '../datamodel/wotlwedu-notification-constants';
 
 @Injectable({ providedIn: 'root' })
 export class DataSignalService {
   dialogCloseSignal = new Subject<boolean>();
   refreshDataSignal = new Subject<boolean>();
   isErrorSignal = new Subject<boolean>();
-  hasNotificationSignal = new Subject<boolean>();
+  hasNotificationSignal = new Subject<WotlweduNotificationEvent | null>();
 
   constructor() {}
 
@@ -28,7 +29,7 @@ export class DataSignalService {
     this.isErrorSignal.next(false);
   }
 
-  hasNotification() {
-    this.hasNotificationSignal.next(true);
+  hasNotification(event?: WotlweduNotificationEvent | null) {
+    this.hasNotificationSignal.next(event || null);
   }
 }

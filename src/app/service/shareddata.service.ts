@@ -18,6 +18,7 @@ export class SharedDataService {
   private preference: WotlweduPreference[] = [];
   private _ioSocket: Socket = null;
   private isAuthenticated = false;
+  private _statusLoadPromise: Promise<void> | null = null;
 
   constructor(
     private http: HttpClient,
@@ -28,8 +29,8 @@ export class SharedDataService {
   ) {
     console.trace("In SharedDataService constructor");
     this._ioSocket = io(this.configService.config.apiUrl);
-    this._ioSocket.on("notification", () => {
-      this.dataSignalService.hasNotification();
+    this._ioSocket.on("notification", (event) => {
+      this.dataSignalService.hasNotification(event || null);
     });
     this._ioSocket.on("refresh", () => {
       this.dataSignalService.refreshData();
@@ -39,7 +40,7 @@ export class SharedDataService {
         if (!this.isAuthenticated) {
           return;
         }
-        this.loadStatusNames();
+        this.ensureStatusNamesLoaded(true);
         this.loadPreferences();
       },
     });
@@ -54,6 +55,7 @@ export class SharedDataService {
       next: (authData) => {
         if (authData && authData.id) {
           this.isAuthenticated = true;
+          this.ensureStatusNamesLoaded(true);
           this._ioSocket.emit("register", { id: authData.id });
           this._ioSocket.on("connected", () => {
             console.log("Connected");
@@ -80,20 +82,39 @@ export class SharedDataService {
       next: (response) => {
         if (response && response.data && response.data.status) {
           this.status = response.data.status;
+          this._statusLoadPromise = null;
         }
+      },
+      error: () => {
+        this._statusLoadPromise = null;
       },
     });
   }
 
   private async loadStatusNamesAsync() {
     const url = this.configService.config.apiUrl + "helper/" + "status";
-    const response: any = firstValueFrom(
+    const response: any = await firstValueFrom(
       this.http.get<WotlweduApiResponse>(url)
     );
     if (response && response.data && response.data.status) {
-      const objects: WotlweduPreference[] = response.data.preferences;
       this.status = response.data.status;
     }
+  }
+
+  ensureStatusNamesLoaded(force: boolean = false) {
+    if (!force && this.status && this.status.length > 0) {
+      return Promise.resolve();
+    }
+
+    if (!this._statusLoadPromise || force) {
+      this._statusLoadPromise = this.loadStatusNamesAsync()
+        .catch(() => undefined)
+        .finally(() => {
+          this._statusLoadPromise = null;
+        });
+    }
+
+    return this._statusLoadPromise;
   }
 
   private loadPreferences() {
@@ -104,31 +125,17 @@ export class SharedDataService {
     const res = this.preferenceDataService.getAllDataAsync();
   }
 
-  getStatusIdAsync(name: string) {
-    this.loadStatusNamesAsync();
-    const foundStatus = this.status.find(
-      (x) => x.name.toLowerCase() === name.toLowerCase()
-    );
-    if (foundStatus) {
-      return foundStatus.id;
-    } else {
-      return 0;
-    }
-  }
-
   getStatusId(name: string) {
-    if (this.status) {
+    if (this.status && this.status.length > 0) {
       const foundStatus = this.status.find(
         (x) => x.name.toLowerCase() === name.toLowerCase()
       );
       if (foundStatus) {
         return foundStatus.id;
-      } else {
-        return this.getStatusIdAsync(name);
       }
-    } else {
-      return 0;
     }
+    this.ensureStatusNamesLoaded();
+    return 0;
   }
 
   getPreference(name: string) {
