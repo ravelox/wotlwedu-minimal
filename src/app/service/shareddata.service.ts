@@ -13,9 +13,11 @@ import { ConfigService } from "./config.service";
 
 @Injectable({ providedIn: "root" })
 export class SharedDataService {
+  private static readonly DEFAULT_ITEMS_PER_PAGE = 25;
   private status: any[] = [];
   private preference: WotlweduPreference[] = [];
   private _ioSocket: Socket = null;
+  private isAuthenticated = false;
 
   constructor(
     private http: HttpClient,
@@ -24,7 +26,7 @@ export class SharedDataService {
     private authDataService: AuthDataService,
     private configService: ConfigService
   ) {
-    console.trace("In SharedDataService constructor")
+    console.trace("In SharedDataService constructor");
     this._ioSocket = io(this.configService.config.apiUrl);
     this._ioSocket.on("notification", () => {
       this.dataSignalService.hasNotification();
@@ -34,6 +36,9 @@ export class SharedDataService {
     });
     this.dataSignalService.refreshDataSignal.subscribe({
       next: () => {
+        if (!this.isAuthenticated) {
+          return;
+        }
         this.loadStatusNames();
         this.loadPreferences();
       },
@@ -48,6 +53,7 @@ export class SharedDataService {
     this.authDataService.authData.subscribe({
       next: (authData) => {
         if (authData && authData.id) {
+          this.isAuthenticated = true;
           this._ioSocket.emit("register", { id: authData.id });
           this._ioSocket.on("connected", () => {
             console.log("Connected");
@@ -57,6 +63,7 @@ export class SharedDataService {
             this._ioSocket.emit("register", { id: authData.id });
           });
         } else {
+          this.isAuthenticated = false;
           this._ioSocket.emit("unregister");
         }
       },
@@ -137,5 +144,14 @@ export class SharedDataService {
     } else {
       this.preferenceDataService.getAllData();
     }
+  }
+
+  getItemsPerPage() {
+    const preferenceValue = Number(this.getPreference("itemsperpage"));
+    if (Number.isFinite(preferenceValue) && preferenceValue > 0) {
+      return preferenceValue;
+    }
+
+    return SharedDataService.DEFAULT_ITEMS_PER_PAGE;
   }
 }

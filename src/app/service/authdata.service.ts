@@ -75,6 +75,15 @@ export class AuthDataService {
 
   autoLogin() {
     const storedData = this.tokenDataService.load();
+    const expiration = this.tokenDataService.checkTokenExpiration();
+    const refreshTokenExpired =
+      !expiration.refresh || expiration.refresh.timeout <= 0;
+
+    if (refreshTokenExpired) {
+      this.reset();
+      return;
+    }
+
     if (storedData) {
       this.setLoggedIn(true);
       this.authData.next(storedData);

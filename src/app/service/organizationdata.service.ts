@@ -30,7 +30,7 @@ export class OrganizationDataService extends WotlweduPagination {
 
   getAllData(filter?: string) {
     this.filterUpdate(filter);
-    this.itemsPerPage = +this.sharedDataService.getPreference("itemsperpage");
+    this.itemsPerPage = this.sharedDataService.getItemsPerPage();
 
     const url =
       this.configService.config.apiUrl +

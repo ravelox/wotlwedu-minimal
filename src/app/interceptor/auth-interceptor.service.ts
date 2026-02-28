@@ -95,14 +95,16 @@ export class AuthInterceptorService implements HttpInterceptor {
           }),
           catchError((err) => {
             this.handlingRefresh = false;
-            return throwError(() => {
-              return this.router.navigate(['/auth']);
-            });
+            this.router.navigate(['/auth']);
+            return throwError(() => err);
           })
         );
       }
     }
-    return next.handle(req);
+
+    this.handlingRefresh = false;
+    this.router.navigate(['/auth']);
+    return throwError(() => new Error('Authentication required'));
   }
 }
 

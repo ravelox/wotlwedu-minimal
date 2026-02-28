@@ -33,7 +33,7 @@ export class ElectionDataService extends WotlweduPagination {
 
   getAllData(filter?: string) {
     this.filterUpdate(filter);
-    this.itemsPerPage = +this.sharedDataService.getPreference('itemsperpage');
+    this.itemsPerPage = this.sharedDataService.getItemsPerPage();
     const activeWorkgroupId = this.workgroupScope.getActiveWorkgroupId();
 
     const url =
