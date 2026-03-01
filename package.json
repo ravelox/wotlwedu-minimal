@@ -1,7 +1,12 @@
 {
   "name": "frontend",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "scripts": {
+    "sync:config-version": "node ./scripts/sync-config-version.mjs",
+    "prestart": "npm run sync:config-version",
+    "prebuild": "npm run sync:config-version",
+    "prewatch": "npm run sync:config-version",
+    "pretest": "npm run sync:config-version",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",

@@ -14,6 +14,12 @@ import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-contr
 import { WotlweduPageStackService } from "../../service/pagestack.service";
 import { ActivatedRoute, Router } from "@angular/router";
 
+type ListCategoryGroup = {
+  categoryName: string;
+  lists: WotlweduList[];
+  collapsed: boolean;
+};
+
 @Component({
   selector: "app-list-select",
   templateUrl: "./list-select.component.html",
@@ -21,6 +27,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 })
 export class ListSelectComponent implements OnInit, OnDestroy {
   lists: WotlweduList[];
+  groupedLists: ListCategoryGroup[] = [];
   listsSub: Subscription;
   listData = new BehaviorSubject<any>(null);
   alertBox: WotlweduAlert = new WotlweduAlert();
@@ -72,6 +79,7 @@ export class ListSelectComponent implements OnInit, OnDestroy {
         this.lists.forEach((x) => {
           x.isAvailable = true;
         });
+        this.groupLists();
         this.pages.updatePages();
       },
     });
@@ -80,6 +88,29 @@ export class ListSelectComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.listsSub.unsubscribe();
+  }
+
+  private groupLists() {
+    if (!this.lists || this.lists.length === 0) {
+      this.groupedLists = [];
+      return;
+    }
+
+    const groupedLists = new Map<string, WotlweduList[]>();
+    this.lists.forEach((list) => {
+      const categoryName = list.category?.name?.trim() || "Uncategorized";
+      const existingLists = groupedLists.get(categoryName) || [];
+      existingLists.push(list);
+      groupedLists.set(categoryName, existingLists);
+    });
+
+    this.groupedLists = Array.from(groupedLists.entries())
+      .sort(([leftName], [rightName]) => leftName.localeCompare(rightName))
+      .map(([categoryName, lists]) => ({ categoryName, lists, collapsed: false }));
+  }
+
+  toggleCategory(group: ListCategoryGroup) {
+    group.collapsed = !group.collapsed;
   }
 
   onSelect(index: number) {

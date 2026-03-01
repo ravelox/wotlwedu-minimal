@@ -19,7 +19,8 @@ You can attach images to items/elections, and share images/items/lists with frie
 - Node.js + npm
 - Runtime API config loaded from `src/assets/wotlwedu-config.json`
 - Optional Docker deployment with NGINX (HTTP + HTTPS)
-- Current frontend package version: `0.1.5` (`package.json`)
+- Current frontend package version: `0.1.7` (`package.json`)
+- Runtime config `appVersion` is auto-synced from `package.json` before local builds/starts/tests.
 
 ## Tenant/admin concepts
 
@@ -80,7 +81,7 @@ Build optimized assets:
 npm run build -- --configuration=production
 ```
 
-Build output is written under `dist/frontend/browser`.
+Build output is written under `dist/frontend`.
 
 When serving from a web server, configure SPA fallback so unknown routes return `index.html`.
 
@@ -99,8 +100,14 @@ docker build --no-cache -t ravelox/wotlwedu-minimal:nginx .
 
 Start with compose:
 ```bash
-docker compose -f docker-compose.yaml up -d
+docker compose up --build -d
 ```
+
+Current frontend behavior highlights:
+- runtime config `appVersion` is generated from `package.json` automatically before local starts/builds/tests
+- categorized item, image, list, election, group, and workgroup selectors render in collapsible category sections
+- category labels preserve the exact casing entered by the user
+- invalid saved auth/workgroup state is sanitized on startup to avoid broken auto-login and stale scoped requests
 
 Default compose port mapping:
 - `9080 -> 80`

@@ -101,10 +101,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
                 const list = response?.data?.workgroups || [];
                 this.workgroups = Array.isArray(list) ? list : [];
 
-                // Default the active workgroup for workgroup admins.
+                // Drop stale persisted scope values that are no longer visible.
                 const current = this.workgroupScope.getActiveWorkgroupId();
+                const currentExists = !!current && this.workgroups.some((workgroup) => workgroup?.id === current);
                 const adminWg = loginDetails.adminWorkgroupId || null;
-                if (!current && this.isWorkgroupAdmin && adminWg) {
+                if (current && !currentExists) {
+                  this.workgroupScope.setActiveWorkgroupId(null);
+                  this.activeWorkgroupId = "";
+                  this.dataSignalService.refreshData();
+                } else if (!current && this.isWorkgroupAdmin && adminWg) {
                   this.workgroupScope.setActiveWorkgroupId(adminWg);
                   this.activeWorkgroupId = adminWg;
                 } else if (!current && this.workgroups.length === 1 && this.workgroups[0]?.id) {

@@ -1,4 +1,4 @@
-FROM node:slim as build-stage
+FROM node:slim AS build-stage
 
 WORKDIR /build
 COPY . .

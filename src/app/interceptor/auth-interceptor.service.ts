@@ -14,6 +14,7 @@ import { AuthDataService } from '../service/authdata.service';
 import { WotlweduApiResponse } from '../datamodel/wotlwedu-api-response.model';
 import { Router } from '@angular/router';
 import { DataSignalService } from '../service/datasignal.service';
+import { WorkgroupScopeService } from '../service/workgroupscope.service';
 
 @Injectable()
 export class AuthInterceptorService implements HttpInterceptor {
@@ -23,7 +24,8 @@ export class AuthInterceptorService implements HttpInterceptor {
     private authService: AuthDataService,
     private tokenDataService: TokenDataStorageService,
     private router: Router,
-    private dataSignalService: DataSignalService
+    private dataSignalService: DataSignalService,
+    private workgroupScope: WorkgroupScopeService
   ) {}
 
   intercept(
@@ -49,6 +51,14 @@ export class AuthInterceptorService implements HttpInterceptor {
         /* If forbidden, go to the login page */
         if (error instanceof HttpErrorResponse && error.status === 403) {
           this.router.navigate(['/auth']);
+        }
+
+        if (error instanceof HttpErrorResponse && error.status === 421) {
+          const activeWorkgroupId = this.workgroupScope.getActiveWorkgroupId();
+          if (activeWorkgroupId) {
+            this.workgroupScope.setActiveWorkgroupId(null);
+            this.dataSignalService.refreshData();
+          }
         }
 
         if( error instanceof HttpErrorResponse && error.status === 0 ) {

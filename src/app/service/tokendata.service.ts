@@ -34,12 +34,29 @@ export class TokenDataStorageService {
   }
 
   load() {
-    this.currentData = JSON.parse(localStorage.getItem(WOTLWEDU_STORAGE_NAME));
+    const storedValue = localStorage.getItem(WOTLWEDU_STORAGE_NAME);
+    if (!storedValue) {
+      this.currentData = new StoreData();
+      return this.currentData;
+    }
+
+    try {
+      const parsedData = JSON.parse(storedValue);
+      this.currentData = parsedData ? { ...new StoreData(), ...parsedData } : new StoreData();
+    } catch {
+      this.currentData = new StoreData();
+    }
+
     return this.currentData;
   }
 
   checkTokenExpiration() {
     const tokenData = { auth: null, refresh: null };
+    if (!this.currentData) {
+      this.currentData = new StoreData();
+      return tokenData;
+    }
+
     if (this.currentData.authToken) {
       const decodedToken = this.jwtHelper.decodeToken(
         this.currentData.authToken

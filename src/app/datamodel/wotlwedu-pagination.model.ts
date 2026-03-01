@@ -1,9 +1,9 @@
 import { Subject } from 'rxjs';
 
 export class WotlweduPagination {
-  itemsPerPage: number;
-  total: number;
-  page: number;
+  itemsPerPage: number = 25;
+  total: number = 0;
+  page: number = 1;
   cb: VoidFunction;
   currentFilter: string = '';
   cancel = new Subject<boolean>();

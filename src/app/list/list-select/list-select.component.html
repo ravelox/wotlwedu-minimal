@@ -72,35 +72,43 @@
 
   <!-- Selection List -->
   <div class="ww-flex-column ww-select-container" #listselectlist>
-    <div
-      *ngFor="let list of lists; let i = index"
-      [class.ww-selected-item]="list.isSelected"
-      [class.ww-not-full-selection]="!list.isAvailable"
-      class="ww-flex-row ww-card"
-    >
-      <div
-        class="ww-flex-row"
-        style="
-          justify-content: space-between;
-          flex-grow: 1;
-          padding-right: 10px;
-        "
-        (click)="onSelect(i)"
-      >
-        <div class="ww-avatar-container">
-          <div class="ww-avatar-initial">
-            {{ list.name.substr(0, 1) }}
+    <div *ngFor="let group of groupedLists" class="ww-flex-column ww-item-category-group">
+      <button type="button" class="ww-item-category-header" (click)="toggleCategory(group)">
+        <span>{{ group.categoryName }}</span>
+        <span class="ww-item-category-chevron">{{ group.collapsed ? '▸' : '▾' }}</span>
+      </button>
+      <ng-container *ngIf="!group.collapsed">
+        <div
+          *ngFor="let list of group.lists"
+          [class.ww-selected-item]="list.isSelected"
+          [class.ww-not-full-selection]="!list.isAvailable"
+          class="ww-flex-row ww-card"
+        >
+        <div
+          class="ww-flex-row"
+          style="
+            justify-content: space-between;
+            flex-grow: 1;
+            padding-right: 10px;
+          "
+          (click)="onSelect(lists.indexOf(list))"
+        >
+          <div class="ww-avatar-container">
+            <div class="ww-avatar-initial">
+              {{ list.name.substr(0, 1) }}
+            </div>
+          </div>
+
+          <div class="ww-info-block">
+            <div class="ww-info-block-title">{{ list.name }}</div>
+            <div class="ww-info-block-text ww-truncate-30">{{ list.description }}</div>
           </div>
         </div>
-
-        <div class="ww-info-block">
-          <div class="ww-info-block-title">{{ list.name }}</div>
-          <div class="ww-info-block-text ww-truncate-30">{{ list.description }}</div>
+        <div class="ww-context-selector" (click)="onContextMenu($event, lists.indexOf(list))">
+          <div style="font-size: 2rem">&#x22EE;</div>
         </div>
-      </div>
-      <div class="ww-context-selector" (click)="onContextMenu($event, i)">
-        <div style="font-size: 2rem">&#x22EE;</div>
-      </div>
+        </div>
+      </ng-container>
     </div>
   </div>
 

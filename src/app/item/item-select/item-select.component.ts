@@ -24,6 +24,12 @@ import { WotlweduPageStackService } from "../../service/pagestack.service";
 import { WotlweduSelectionService } from "../../service/selectiondata.service";
 import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-controller.class";
 
+type ItemCategoryGroup = {
+  categoryName: string;
+  items: WotlweduItem[];
+  collapsed: boolean;
+};
+
 @Component({
   selector: "app-item-select",
   templateUrl: "./item-select.component.html",
@@ -33,6 +39,7 @@ export class ItemSelectComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() selectMode: boolean = false;
   @Input() allowAdd: boolean = true;
   items: WotlweduItem[];
+  groupedItems: ItemCategoryGroup[] = [];
   itemsSub: Subscription;
   itemData = new BehaviorSubject<any>(null);
   listName: string = "itemselect";
@@ -84,6 +91,7 @@ export class ItemSelectComponent implements OnInit, OnDestroy, AfterViewInit {
       next: (items) => {
         this.items = items;
         this.refreshData();
+        this.groupItems();
         this.pages.updatePages();
         this.loader.stop();
       },
@@ -115,6 +123,31 @@ export class ItemSelectComponent implements OnInit, OnDestroy, AfterViewInit {
         x.isSelected = this.selectionService.find(x.id) ? true : false;
       }
     });
+  }
+
+  private groupItems() {
+    if (!this.items || this.items.length === 0) {
+      this.groupedItems = [];
+      return;
+    }
+
+    const groupedItems = new Map<string, WotlweduItem[]>();
+
+    this.items.forEach((item) => {
+      const categoryName =
+        item.category?.name?.trim() || "Uncategorized";
+      const existingItems = groupedItems.get(categoryName) || [];
+      existingItems.push(item);
+      groupedItems.set(categoryName, existingItems);
+    });
+
+    this.groupedItems = Array.from(groupedItems.entries())
+      .sort(([leftName], [rightName]) => leftName.localeCompare(rightName))
+      .map(([categoryName, items]) => ({ categoryName, items, collapsed: false }));
+  }
+
+  toggleCategory(group: ItemCategoryGroup) {
+    group.collapsed = !group.collapsed;
   }
 
   onSelect(index: number) {

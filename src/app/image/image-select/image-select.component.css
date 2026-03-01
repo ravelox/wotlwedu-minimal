@@ -1,0 +1,29 @@
+.ww-item-category-header {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  font-size: 0.85rem;
+  font-weight: 700;
+  justify-content: space-between;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+  padding: 0.5rem 0.25rem 0.25rem;
+  text-align: left;
+  width: 100%;
+}
+
+.ww-item-category-group {
+  width: 100%;
+}
+
+.ww-item-category-group .ww-card {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.ww-item-category-chevron {
+  font-size: 0.95rem;
+}

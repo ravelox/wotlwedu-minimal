@@ -50,33 +50,41 @@
 
   <!-- Selection List -->
   <div class="ww-flex-column ww-select-container">
-    <div
-      *ngFor="let workgroup of workgroups; let i = index"
-      (click)="onSelect(i)"
-      class="ww-flex-row ww-card"
-    >
-      <div
-        class="ww-flex-row"
-        style="
-          justify-content: space-between;
-          flex-grow: 1;
-          padding-right: 10px;
-        "
-      >
-        <div class="ww-avatar-container">
-          <div class="ww-avatar-initial">
-            {{ workgroup.name.substr(0, 1) }}
+    <div *ngFor="let grouped of groupedWorkgroups" class="ww-flex-column ww-item-category-group">
+      <button type="button" class="ww-item-category-header" (click)="toggleCategory(grouped)">
+        <span>{{ grouped.categoryName }}</span>
+        <span class="ww-item-category-chevron">{{ grouped.collapsed ? '▸' : '▾' }}</span>
+      </button>
+      <ng-container *ngIf="!grouped.collapsed">
+        <div
+          *ngFor="let workgroup of grouped.workgroups"
+          (click)="onSelect(workgroups.indexOf(workgroup))"
+          class="ww-flex-row ww-card"
+        >
+        <div
+          class="ww-flex-row"
+          style="
+            justify-content: space-between;
+            flex-grow: 1;
+            padding-right: 10px;
+          "
+        >
+          <div class="ww-avatar-container">
+            <div class="ww-avatar-initial">
+              {{ workgroup.name.substr(0, 1) }}
+            </div>
+          </div>
+          <div class="ww-info-block">
+            <div class="ww-info-block-title">
+              {{ workgroup.name }}
+            </div>
+            <div class="ww-info-block-text ww-truncate-30">
+              {{ workgroup.description }}
+            </div>
           </div>
         </div>
-        <div class="ww-info-block">
-          <div class="ww-info-block-title">
-            {{ workgroup.name }}
-          </div>
-          <div class="ww-info-block-text ww-truncate-30">
-            {{ workgroup.description }}
-          </div>
         </div>
-      </div>
+      </ng-container>
     </div>
   </div>
 

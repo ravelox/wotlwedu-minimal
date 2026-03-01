@@ -32,7 +32,7 @@ export class ItemDataService extends WotlweduPagination {
       url = url + '/notif/' + notificationId;
     }
     
-    url = url + '?detail=image';
+    url = url + '?detail=image,category';
     return this.http.get<WotlweduApiResponse>(url);
   }
 
@@ -43,7 +43,7 @@ export class ItemDataService extends WotlweduPagination {
     const activeWorkgroupId = this.workgroupScope.getActiveWorkgroupId();
     const url =
       this.configService.config.apiUrl + 'item/' +
-      '?detail=image&page=' +
+      '?detail=image,category&page=' +
       this.page +
       '&items=' +
       this.itemsPerPage +

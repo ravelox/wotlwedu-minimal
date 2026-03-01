@@ -9,6 +9,12 @@ import { WotlweduFilterController } from "../../controller/wotlwedu-filter-contr
 import { WotlweduPageStackService } from "../../service/pagestack.service";
 import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-controller.class";
 
+type WorkgroupCategoryGroup = {
+  categoryName: string;
+  workgroups: WotlweduWorkgroup[];
+  collapsed: boolean;
+};
+
 @Component({
   selector: "app-workgroup-select",
   templateUrl: "./workgroup-select.component.html",
@@ -17,6 +23,7 @@ import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-contr
 export class WorkgroupSelectComponent implements OnInit, OnDestroy {
   @Input() selectMode: boolean = false;
   workgroups: WotlweduWorkgroup[];
+  groupedWorkgroups: WorkgroupCategoryGroup[] = [];
   workgroupsSub: Subscription;
   workgroupData = new BehaviorSubject<any>(null);
   alertBox: WotlweduAlert = new WotlweduAlert();
@@ -42,6 +49,7 @@ export class WorkgroupSelectComponent implements OnInit, OnDestroy {
       },
       next: (workgroups) => {
         this.workgroups = workgroups;
+        this.groupWorkgroups();
         this.pages.updatePages();
         this.loader.stop();
       },
@@ -50,6 +58,29 @@ export class WorkgroupSelectComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.workgroupsSub) this.workgroupsSub.unsubscribe();
+  }
+
+  private groupWorkgroups() {
+    if (!this.workgroups || this.workgroups.length === 0) {
+      this.groupedWorkgroups = [];
+      return;
+    }
+
+    const groupedWorkgroups = new Map<string, WotlweduWorkgroup[]>();
+    this.workgroups.forEach((workgroup) => {
+      const categoryName = workgroup.category?.name?.trim() || "Uncategorized";
+      const existingWorkgroups = groupedWorkgroups.get(categoryName) || [];
+      existingWorkgroups.push(workgroup);
+      groupedWorkgroups.set(categoryName, existingWorkgroups);
+    });
+
+    this.groupedWorkgroups = Array.from(groupedWorkgroups.entries())
+      .sort(([leftName], [rightName]) => leftName.localeCompare(rightName))
+      .map(([categoryName, workgroups]) => ({ categoryName, workgroups, collapsed: false }));
+  }
+
+  toggleCategory(group: WorkgroupCategoryGroup) {
+    group.collapsed = !group.collapsed;
   }
 
   onSelect(index: number) {

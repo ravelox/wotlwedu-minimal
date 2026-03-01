@@ -14,6 +14,12 @@ import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-contr
 import { WotlweduPageStackService } from "../../service/pagestack.service";
 import { ActivatedRoute, Router } from "@angular/router";
 
+type ElectionCategoryGroup = {
+  categoryName: string;
+  elections: WotlweduElection[];
+  collapsed: boolean;
+};
+
 @Component({
   selector: "app-election-select",
   templateUrl: "./election-select.component.html",
@@ -22,6 +28,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 export class ElectionSelectComponent implements OnInit, OnDestroy {
   @Input() isCard: boolean = false;
   elections: WotlweduElection[];
+  groupedElections: ElectionCategoryGroup[] = [];
   electionsSub: Subscription;
   dataRefreshSub: Subscription;
   electionData = new BehaviorSubject<any>(null);
@@ -85,6 +92,7 @@ export class ElectionSelectComponent implements OnInit, OnDestroy {
         this.elections.forEach((x)=>{
           x.isAvailable = true;
         })
+        this.groupElections();
         this.pages.updatePages();
         this.loader.stop();
       },
@@ -100,6 +108,29 @@ export class ElectionSelectComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if( this.electionsSub ) this.electionsSub.unsubscribe();
     if( this.dataRefreshSub ) this.dataRefreshSub.unsubscribe();
+  }
+
+  private groupElections() {
+    if (!this.elections || this.elections.length === 0) {
+      this.groupedElections = [];
+      return;
+    }
+
+    const groupedElections = new Map<string, WotlweduElection[]>();
+    this.elections.forEach((election) => {
+      const categoryName = election.category?.name?.trim() || "Uncategorized";
+      const existingElections = groupedElections.get(categoryName) || [];
+      existingElections.push(election);
+      groupedElections.set(categoryName, existingElections);
+    });
+
+    this.groupedElections = Array.from(groupedElections.entries())
+      .sort(([leftName], [rightName]) => leftName.localeCompare(rightName))
+      .map(([categoryName, elections]) => ({ categoryName, elections, collapsed: false }));
+  }
+
+  toggleCategory(group: ElectionCategoryGroup) {
+    group.collapsed = !group.collapsed;
   }
 
   showDeleteConfirmationDialog(object: any) {

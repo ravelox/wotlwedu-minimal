@@ -15,6 +15,12 @@ import { WotlweduPageStackService } from "../../service/pagestack.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-controller.class";
 
+type ImageCategoryGroup = {
+  categoryName: string;
+  images: WotlweduImage[];
+  collapsed: boolean;
+};
+
 @Component({
   selector: "app-image-select",
   templateUrl: "./image-select.component.html",
@@ -23,6 +29,7 @@ import { WotlweduLoaderController } from "../../controller/wotlwedu-loader-contr
 export class ImageSelectComponent implements OnInit, OnDestroy {
   filterForm: FormGroup;
   images: WotlweduImage[];
+  groupedImages: ImageCategoryGroup[] = [];
   imagesSub: Subscription;
   filterText: string = "";
   imageData = new BehaviorSubject<any>(null);
@@ -74,6 +81,7 @@ export class ImageSelectComponent implements OnInit, OnDestroy {
         this.images.forEach((x) => {
           x.isAvailable = true;
         });
+        this.groupImages();
         this.loader.stop();
         this.pages.updatePages();
       },
@@ -83,6 +91,29 @@ export class ImageSelectComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.imagesSub.unsubscribe();
+  }
+
+  private groupImages() {
+    if (!this.images || this.images.length === 0) {
+      this.groupedImages = [];
+      return;
+    }
+
+    const groupedImages = new Map<string, WotlweduImage[]>();
+    this.images.forEach((image) => {
+      const categoryName = image.category?.name?.trim() || "Uncategorized";
+      const existingImages = groupedImages.get(categoryName) || [];
+      existingImages.push(image);
+      groupedImages.set(categoryName, existingImages);
+    });
+
+    this.groupedImages = Array.from(groupedImages.entries())
+      .sort(([leftName], [rightName]) => leftName.localeCompare(rightName))
+      .map(([categoryName, images]) => ({ categoryName, images, collapsed: false }));
+  }
+
+  toggleCategory(group: ImageCategoryGroup) {
+    group.collapsed = !group.collapsed;
   }
 
   onSelect(index: number) {
