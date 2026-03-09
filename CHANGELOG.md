@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.1.8 - 2026-03-09
+- Harden client auth/session restoration logic to avoid using malformed persisted token state.
+- Align register/password-reset token flow handling with backend security validation changes.
+- Bump runtime config metadata to app version `0.1.8`.
+
 ## 0.1.7 - 2026-03-01
 - automatically sync `src/assets/wotlwedu-config.json.template` `appVersion` from `package.json` before local builds, starts, watches, and tests
 - fix startup auth-state handling so missing saved token data no longer crashes auto-login

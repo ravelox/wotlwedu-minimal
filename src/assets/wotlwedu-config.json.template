@@ -1,6 +1,6 @@
 {
     "apiUrl": "${WOTLWEDU_API_URL}",
-    "appVersion": "0.1.7",
+    "appVersion": "0.1.8",
     "defaultStartPage": "/home",
     "errorCountdown": 30
 }

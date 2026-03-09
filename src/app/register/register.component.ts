@@ -6,7 +6,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { WotlweduAlert } from "../controller/wotlwedu-alert-controller.class";
 import { WotlweduLoaderController } from "../controller/wotlwedu-loader-controller.class";
 import { CompareValidator } from "../validator/compare.validator";
-import * as bcrypt from "bcryptjs";
 
 @Component({
   selector: "app-register",
@@ -54,12 +53,7 @@ export class RegisterComponent implements OnInit {
     registration.lastName = registerForm.value.lastName;
     registration.alias = registerForm.value.alias;
 
-    const salt = bcrypt.genSaltSync(12);
-    const encryptedPwd = bcrypt.hashSync(
-      this.registrationForm.value.newpass,
-      salt
-    );
-    registration.auth = encryptedPwd;
+    registration.auth = this.registrationForm.value.newpass;
 
     this.loader.start();
 

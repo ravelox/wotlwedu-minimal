@@ -27,14 +27,14 @@ export class TokenDataStorageService {
   }
 
   save() {
-    localStorage.setItem(
+    sessionStorage.setItem(
       WOTLWEDU_STORAGE_NAME,
       JSON.stringify(this.currentData)
     );
   }
 
   load() {
-    const storedValue = localStorage.getItem(WOTLWEDU_STORAGE_NAME);
+    const storedValue = sessionStorage.getItem(WOTLWEDU_STORAGE_NAME);
     if (!storedValue) {
       this.currentData = new StoreData();
       return this.currentData;
@@ -78,7 +78,7 @@ export class TokenDataStorageService {
   }
 
   reset() {
-    localStorage.removeItem(WOTLWEDU_STORAGE_NAME);
+    sessionStorage.removeItem(WOTLWEDU_STORAGE_NAME);
     this.currentData = new StoreData();
   }
 

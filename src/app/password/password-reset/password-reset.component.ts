@@ -7,7 +7,6 @@ import {
 } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
 import { AuthDataService } from "../../service/authdata.service";
-import * as bcrypt from "bcryptjs";
 import { WotlweduAlert } from "../../controller/wotlwedu-alert-controller.class";
 import { CompareValidator } from "../../validator/compare.validator";
 
@@ -41,14 +40,11 @@ export class PasswordResetComponent implements OnInit {
 
   onSubmit() {
     if (this.resetForm.value.newpass) {
-      const salt = bcrypt.genSaltSync(12);
-      const encryptedPwd = bcrypt.hashSync(this.resetForm.value.newpass, salt);
-
       this.authDataService
         .resetPassword(
           this.route.snapshot.params.userid,
           this.route.snapshot.params.resettoken,
-          encryptedPwd
+          this.resetForm.value.newpass
         )
         .subscribe({
           error: (err) => this.alertBox.handleError(err),

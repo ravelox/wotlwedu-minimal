@@ -97,10 +97,10 @@ export class AuthDataService {
     return this.http.post<WotlweduApiResponse>(url, refreshCredentials);
   }
 
-  resetPassword(userId: string, token: string, encryptedPwd: string) {
+  resetPassword(userId: string, token: string, newPassword: string) {
     const payload = {
       resetToken: token,
-      newPassword: encryptedPwd,
+      newPassword: newPassword,
     };
     let url = this.configService.config.apiUrl + "login/password/";
     return this.http.put<WotlweduApiResponse>(url + userId, payload);
