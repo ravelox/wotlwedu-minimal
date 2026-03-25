@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.1.9 - 2026-03-24
+- Add Google sign-in to the Angular auth flow.
+- Add invite-aware onboarding against `GET /login/invite/:token` and `POST /login/google`.
+- Add runtime `googleClientId` configuration for local and container deployments.
 
 ## 0.1.8 - 2026-03-09
 - Harden client auth/session restoration logic to avoid using malformed persisted token state.

@@ -16,6 +16,14 @@
   [message]="alertBox.errorMessage"
   (close)="alertBox.onCloseAlert()"
 ></app-modal-alert>
+<div *ngIf="inviteDetails" class="ww-invite-banner">
+  <strong>Invitation ready</strong>
+  <div>
+    Sign in with Google to join {{ inviteDetails.organizationName }} as
+    {{ inviteDetails.email }}.
+  </div>
+</div>
+<div *ngIf="inviteLoading" class="ww-invite-pending">Checking invite...</div>
 <div
   class="ww-flex-column ww-simple-component"
   style="align-items: center; margin-top: 20px"
@@ -95,6 +103,16 @@
           Login
         </button>
       </div>
+      <div *ngIf="googleEnabled" class="ww-google-divider">
+        <span></span>
+        <span>or continue with Google</span>
+        <span></span>
+      </div>
+      <div
+        *ngIf="googleEnabled"
+        #googleButtonHost
+        class="ww-google-button-slot"
+      ></div>
       <p>Forgotten Password? <a href="/pwdrequest">Reset Password</a></p>
       <p>New to Wotlwedu? <a href="/register">Register here</a></p>
     </form>

@@ -48,6 +48,45 @@ export class AuthDataService {
     );
   }
 
+  loginGoogle(idToken: string, inviteToken?: string) {
+    const payload: any = { idToken: idToken };
+    if (inviteToken) payload.inviteToken = inviteToken;
+    const url = this.configService.config.apiUrl + "login/google";
+
+    return this.http.post<WotlweduApiResponse>(url, payload).pipe(
+      catchError((err: any) => {
+        return throwError(() => err);
+      }),
+      tap((response) => {
+        this.handleAuth({
+          id: response.data.userId,
+          authToken: response.data.authToken,
+          refreshToken: response.data.refreshToken,
+          firstName: response.data.firstName,
+          lastName: response.data.lastName,
+          admin: response.data.admin,
+          systemAdmin: response.data.systemAdmin,
+          organizationId: response.data.organizationId,
+          organizationAdmin: response.data.organizationAdmin,
+          workgroupAdmin: response.data.workgroupAdmin,
+          adminWorkgroupId: response.data.adminWorkgroupId,
+        });
+      })
+    );
+  }
+
+  getInvite(inviteToken: string) {
+    const url =
+      this.configService.config.apiUrl +
+      "login/invite/" +
+      encodeURIComponent(inviteToken);
+    return this.http.get<WotlweduApiResponse>(url).pipe(
+      catchError((err: any) => {
+        return throwError(() => err);
+      })
+    );
+  }
+
   private handleAuth(authResponse: any) {
     this.tokenDataService.setId(authResponse.id);
     this.tokenDataService.setAuthToken(authResponse.authToken);

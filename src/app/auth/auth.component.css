@@ -16,3 +16,40 @@
     padding-right: 2px;
     font-size: 15px;
 }
+
+.ww-invite-banner {
+    margin: 12px auto 0;
+    max-width: 520px;
+    padding: 12px 14px;
+    border: 1px solid #b8d6fb;
+    border-radius: 10px;
+    background: #edf6ff;
+    color: #0d3967;
+}
+
+.ww-invite-pending {
+    margin-top: 10px;
+    text-align: center;
+    color: #506070;
+}
+
+.ww-google-divider {
+    margin: 12px 0 8px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 10px;
+    align-items: center;
+    color: #506070;
+}
+
+.ww-google-divider span:first-child,
+.ww-google-divider span:last-child {
+    height: 1px;
+    background: #c7d4e7;
+}
+
+.ww-google-button-slot {
+    display: flex;
+    justify-content: center;
+    min-height: 44px;
+}

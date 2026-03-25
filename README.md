@@ -19,7 +19,7 @@ You can attach images to items/elections, and share images/items/lists with frie
 - Node.js + npm
 - Runtime API config loaded from `src/assets/wotlwedu-config.json`
 - Optional Docker deployment with NGINX (HTTP + HTTPS)
-- Current frontend package version: `0.1.8` (`package.json`)
+- Current frontend package version: `0.1.9` (`package.json`)
 - Runtime config `appVersion` is auto-synced from `package.json` before local builds/starts/tests.
 
 ## Tenant/admin concepts
@@ -38,6 +38,7 @@ If your UI consumes user/auth payloads, ensure it tolerates these additional fie
 - Category-enabled collection endpoints may return grouped category menus when `collapsible=true` is sent.
 - Workgroup/organization IDs should be treated as optional and sanitized client-side; backend now normalizes placeholder values like `""`, `"undefined"`, and `"null"`.
 - Notification list endpoints are paged newest-first, unread counts are count-based, and live notification events now carry structured payloads for local inbox updates.
+- The login page supports Google sign-in through `/login/google` and invite lookup through `/login/invite/:token`.
 
 ## Notification behavior
 
@@ -61,7 +62,9 @@ The current notification implementation:
    ```bash
    cp src/assets/wotlwedu-config.json.template src/assets/wotlwedu-config.json
    ```
-4. Edit `src/assets/wotlwedu-config.json` and set `apiUrl` to your backend URL (for example `https://api.wotlwedu.com:9876/`).
+4. Edit `src/assets/wotlwedu-config.json` and set:
+   - `apiUrl` to your backend URL (for example `https://api.wotlwedu.com:9876/`)
+   - `googleClientId` to your Google web client ID if you want Google sign-in enabled
 5. Start dev server:
    ```bash
    npm start
@@ -119,6 +122,7 @@ Set these for container runtime configuration:
 
 ```bash
 WOTLWEDU_API_URL=https://api.wotlwedu.com:9876/
+WOTLWEDU_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 WOTLWEDU_SERVER_NAME=localhost
 WOTLWEDU_SSL_CERT_FILE=/secrets/localhost.crt
 WOTLWEDU_SSL_KEY_FILE=/secrets/localhost.key
@@ -126,6 +130,7 @@ WOTLWEDU_SSL_KEY_FILE=/secrets/localhost.key
 
 Notes:
 - `WOTLWEDU_API_URL` is injected into `/usr/share/nginx/html/assets/wotlwedu-config.json` at startup.
+- `WOTLWEDU_GOOGLE_CLIENT_ID` is injected into the same runtime config and enables the Google sign-in button.
 - SSL certificate/key files must exist inside the container path you configure (typically via a mounted `/secrets` volume).
 - Update the compose volume path to match your host filesystem.
 
