@@ -58,6 +58,34 @@ export class AuthDataService {
         return throwError(() => err);
       }),
       tap((response) => {
+        if (!response?.data?.authToken) return;
+        this.handleAuth({
+          id: response.data.userId,
+          authToken: response.data.authToken,
+          refreshToken: response.data.refreshToken,
+          firstName: response.data.firstName,
+          lastName: response.data.lastName,
+          admin: response.data.admin,
+          systemAdmin: response.data.systemAdmin,
+          organizationId: response.data.organizationId,
+          organizationAdmin: response.data.organizationAdmin,
+          workgroupAdmin: response.data.workgroupAdmin,
+          adminWorkgroupId: response.data.adminWorkgroupId,
+        });
+      })
+    );
+  }
+
+  confirmGoogleLink(linkToken: string) {
+    const payload = { linkToken: linkToken };
+    const url = this.configService.config.apiUrl + "login/google/link";
+
+    return this.http.post<WotlweduApiResponse>(url, payload).pipe(
+      catchError((err: any) => {
+        return throwError(() => err);
+      }),
+      tap((response) => {
+        if (!response?.data?.authToken) return;
         this.handleAuth({
           id: response.data.userId,
           authToken: response.data.authToken,

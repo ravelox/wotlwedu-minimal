@@ -24,6 +24,22 @@
   </div>
 </div>
 <div *ngIf="inviteLoading" class="ww-invite-pending">Checking invite...</div>
+<div *ngIf="pendingLinkToken" class="ww-invite-banner">
+  <strong>Confirmation required</strong>
+  <div>
+    Google authentication succeeded. Confirm to link this Google sign-in to
+    your existing Wotlwedu account.
+  </div>
+  <div style="margin-top: 10px">
+    <button
+      type="button"
+      class="ww-button ww-button-blue"
+      (click)="onConfirmGoogleLink()"
+    >
+      Confirm Link
+    </button>
+  </div>
+</div>
 <div
   class="ww-flex-column ww-simple-component"
   style="align-items: center; margin-top: 20px"

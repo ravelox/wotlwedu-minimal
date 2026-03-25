@@ -24,6 +24,7 @@ export class AuthComponent implements OnInit, AfterViewInit, OnDestroy {
   inviteToken: string = "";
   inviteDetails: any = null;
   inviteLoading: boolean = false;
+  pendingLinkToken: string = "";
   private googleScript?: HTMLScriptElement;
   @ViewChild("passwordinput") passwordInput: ElementRef;
   @ViewChild("googleButtonHost") googleButtonHost?: ElementRef<HTMLDivElement>;
@@ -36,6 +37,7 @@ export class AuthComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   onSubmit(authForm: NgForm) {
+    this.pendingLinkToken = "";
     this.authService
       .login(authForm.value.email, authForm.value.password)
       .subscribe({
@@ -128,8 +130,29 @@ export class AuthComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   private onGoogleCredential(response: any) {
+    this.pendingLinkToken = "";
     this.authService.loginGoogle(response?.credential, this.inviteToken || undefined).subscribe({
+      next: (result) => {
+        if (result?.data?.linkRequired === true) {
+          this.pendingLinkToken = result?.data?.linkToken || "";
+          return;
+        }
+        this.authService.setLoggedIn(true);
+        return this.router.navigate([this.configService.config.defaultStartPage]);
+      },
+      error: (err) => {
+        this.alertBox.handleError(err);
+        return of(err);
+      },
+    });
+  }
+
+  onConfirmGoogleLink() {
+    if (!this.pendingLinkToken) return;
+
+    this.authService.confirmGoogleLink(this.pendingLinkToken).subscribe({
       next: () => {
+        this.pendingLinkToken = "";
         this.authService.setLoggedIn(true);
         return this.router.navigate([this.configService.config.defaultStartPage]);
       },
