@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "scripts": {
     "sync:config-version": "node ./scripts/sync-config-version.mjs",
     "prestart": "npm run sync:config-version",

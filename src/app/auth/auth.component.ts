@@ -157,7 +157,13 @@ export class AuthComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.router.navigate([this.configService.config.defaultStartPage]);
       },
       error: (err) => {
-        this.alertBox.handleError(err);
+        if (err?.error?.message === "Invalid social link token") {
+          this.alertBox.setErrorMessage(
+            "Link confirmation expired. Sign in with Google again to restart linking."
+          );
+        } else {
+          this.alertBox.handleError(err);
+        }
         return of(err);
       },
     });

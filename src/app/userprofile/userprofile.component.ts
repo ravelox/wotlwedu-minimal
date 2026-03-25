@@ -30,6 +30,10 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   enable2faVisible: boolean = false;
   verify2faVisible: boolean = false;
   loader: WotlweduLoaderController = new WotlweduLoaderController();
+  signInMethods: any = { passwordEnabled: false, linkedProviders: [] };
+  userAudits: any[] = [];
+  organizationAudits: any[] = [];
+  auditOutcomeFilter: string = "all";
   private _pendingEnable2FA: boolean = false;
   private _pendingEnable2FAValue: boolean = false;
   private _pendingLogout: boolean = false;
@@ -50,6 +54,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         if (authData && authData.id) {
           this.authUserId = authData.id;
           this.getAuthUserData();
+          this.loadSupportData();
         }
       },
     });
@@ -131,6 +136,54 @@ export class UserProfileComponent implements OnInit, OnDestroy {
         },
       });
     }
+  }
+
+  loadSupportData() {
+    if (!this.authUserId) return;
+    this.userDataService.getSignInMethods(this.authUserId).subscribe({
+      error: (err) => this.alertBox.handleError(err),
+      next: (response) => {
+        this.signInMethods = response?.data?.methods || {
+          passwordEnabled: false,
+          linkedProviders: [],
+        };
+      },
+    });
+    this.userDataService.getUserAudit(this.authUserId).subscribe({
+      error: (err) => this.alertBox.handleError(err),
+      next: (response) => {
+        this.userAudits = response?.data?.audits || [];
+      },
+    });
+    this.authDataService.isLoggedIn.pipe(take(1)).subscribe({
+      next: (state) => {
+        if (state?.organizationId && (state?.isOrganizationAdmin || state?.isSystemAdmin)) {
+          this.userDataService
+            .getOrganizationAudit(state.organizationId, this.auditOutcomeFilter)
+            .subscribe({
+              error: (err) => this.alertBox.handleError(err),
+              next: (response) => {
+                this.organizationAudits = response?.data?.audits || [];
+              },
+            });
+        } else {
+          this.organizationAudits = [];
+        }
+      },
+    });
+  }
+
+  onUnlinkMethod(identityId: string) {
+    if (!this.authUserId || !identityId) return;
+    this.userDataService.unlinkSignInMethod(this.authUserId, identityId).subscribe({
+      error: (err) => this.alertBox.handleError(err),
+      next: () => this.loadSupportData(),
+    });
+  }
+
+  onAuditFilterChange(outcome: string) {
+    this.auditOutcomeFilter = outcome;
+    this.loadSupportData();
   }
 
   toggleImageSelector() {

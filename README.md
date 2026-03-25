@@ -39,6 +39,7 @@ If your UI consumes user/auth payloads, ensure it tolerates these additional fie
 - Workgroup/organization IDs should be treated as optional and sanitized client-side; backend now normalizes placeholder values like `""`, `"undefined"`, and `"null"`.
 - Notification list endpoints are paged newest-first, unread counts are count-based, and live notification events now carry structured payloads for local inbox updates.
 - The login page supports Google sign-in through `/login/google` and invite lookup through `/login/invite/:token`.
+- The profile page now surfaces linked sign-in methods, recent account activity, and organization audit activity when the backend allows access.
 
 ## Notification behavior
 
@@ -65,6 +66,7 @@ The current notification implementation:
 4. Edit `src/assets/wotlwedu-config.json` and set:
    - `apiUrl` to your backend URL (for example `https://api.wotlwedu.com:9876/`)
    - `googleClientId` to your Google web client ID if you want Google sign-in enabled
+   - optionally other defaults such as `defaultStartPage` and `errorCountdown`
 5. Start dev server:
    ```bash
    npm start
@@ -133,6 +135,7 @@ Notes:
 - `WOTLWEDU_GOOGLE_CLIENT_ID` is injected into the same runtime config and enables the Google sign-in button.
 - SSL certificate/key files must exist inside the container path you configure (typically via a mounted `/secrets` volume).
 - Update the compose volume path to match your host filesystem.
+- The runtime config template at [`src/assets/wotlwedu-config.json.template`](/Users/dkelly/Projects/wotlwedu/wotlwedu-minimal/src/assets/wotlwedu-config.json.template) already includes the Google client ID slot.
 
 ## Helm
 A Helm chart is available under `helm/wotlwedu-minimal`.

@@ -29,6 +29,49 @@ export class UserDataService extends WotlweduPagination {
     return this.http.get<WotlweduApiResponse>(url);
   }
 
+  getSignInMethods(userId: string) {
+    if (!userId || userId === '') return of(null);
+    const url = this.configService.config.apiUrl + 'user/' + userId + '/signin-method';
+    return this.http.get<WotlweduApiResponse>(url);
+  }
+
+  getUserAudit(userId: string, items: number = 10) {
+    if (!userId || userId === '') return of(null);
+    const url =
+      this.configService.config.apiUrl +
+      'user/' +
+      userId +
+      '/authaudit?items=' +
+      items;
+    return this.http.get<WotlweduApiResponse>(url);
+  }
+
+  getOrganizationAudit(organizationId: string, outcome?: string, items: number = 20) {
+    if (!organizationId || organizationId === '') return of(null);
+    const params = ['items=' + items];
+    if (outcome && outcome !== 'all') {
+      params.push('outcome=' + encodeURIComponent(outcome));
+    }
+    const url =
+      this.configService.config.apiUrl +
+      'organization/' +
+      organizationId +
+      '/authaudit?' +
+      params.join('&');
+    return this.http.get<WotlweduApiResponse>(url);
+  }
+
+  unlinkSignInMethod(userId: string, identityId: string) {
+    if (!userId || !identityId) return of(null);
+    const url =
+      this.configService.config.apiUrl +
+      'user/' +
+      userId +
+      '/signin-method/' +
+      identityId;
+    return this.http.delete<WotlweduApiResponse>(url);
+  }
+
   getAllData(filter?: string) {
     this.filterUpdate(filter);
     this.itemsPerPage = this.sharedDataService.getItemsPerPage();
