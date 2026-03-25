@@ -27,39 +27,103 @@
   </div>
 </div>
 <div class="ww-page-header-title">User Profile</div>
-<div class="ww-flex-column">
-  <div style="margin-bottom: 16px">
+<div class="ww-flex-column ww-profile-stack">
+  <div class="ww-support-section">
     <div class="ww-label">Sign-in methods</div>
-    <div style="margin: 6px 0">Password: {{ signInMethods?.passwordEnabled ? 'Enabled' : 'Disabled' }}</div>
-    <div *ngFor="let method of signInMethods?.linkedProviders" style="margin: 8px 0; border: 1px solid #ccc; padding: 8px; border-radius: 6px">
-      <div><strong>{{ method.provider }}</strong> {{ method.email ? '(' + method.email + ')' : '' }}</div>
-      <div style="font-size: 0.8rem">Updated {{ method.updatedAt | date:'short' }}</div>
-      <button type="button" (click)="onUnlinkMethod(method.id)">Unlink</button>
+    <div class="ww-card ww-support-card ww-support-row">
+      <div>
+        <div class="ww-support-title">Password</div>
+        <div class="ww-support-subtle">Local password login availability.</div>
+      </div>
+      <div class="ww-chip" [class.ww-chip-success]="signInMethods?.passwordEnabled">
+        {{ signInMethods?.passwordEnabled ? 'Enabled' : 'Disabled' }}
+      </div>
+    </div>
+    <div *ngFor="let method of signInMethods?.linkedProviders" class="ww-card ww-support-card">
+      <div class="ww-support-row">
+        <div>
+          <div class="ww-support-title">{{ methodLabel(method) }}</div>
+          <div class="ww-support-subtle">{{ method.subjectPreview || 'Linked provider' }}</div>
+        </div>
+        <button type="button" (click)="onUnlinkMethod(method.id)">Unlink</button>
+      </div>
+      <div class="ww-support-meta">Updated {{ method.updatedAt | date:'short' }}</div>
     </div>
   </div>
 
-  <div style="margin-bottom: 16px">
+  <div class="ww-support-section">
     <div class="ww-label">Recent account activity</div>
-    <div *ngIf="!userAudits?.length" style="font-size: 0.8rem">No account activity recorded.</div>
-    <div *ngFor="let audit of userAudits" style="margin: 8px 0; border: 1px solid #ccc; padding: 8px; border-radius: 6px">
-      <div><strong>{{ audit.eventType }}</strong> ({{ audit.outcome }})</div>
-      <div style="font-size: 0.8rem">{{ audit.message }}</div>
-      <div style="font-size: 0.75rem">{{ audit.createdAt | date:'short' }}</div>
+    <div *ngIf="!userAudits?.length" class="ww-support-empty">No account activity recorded.</div>
+    <div *ngFor="let audit of userAudits" class="ww-card ww-support-card">
+      <div class="ww-support-row">
+        <div>
+          <div class="ww-support-title">{{ auditLabel(audit) }}</div>
+          <div class="ww-support-subtle">{{ auditDetail(audit) }}</div>
+        </div>
+        <div [class]="outcomeClass(audit.outcome)">{{ audit.outcome || 'unknown' }}</div>
+      </div>
+      <div class="ww-support-meta">{{ audit.createdAt | date:'short' }}</div>
     </div>
   </div>
 
-  <div *ngIf="organizationAudits?.length" style="margin-bottom: 16px">
+  <div *ngIf="canAccessSupport" class="ww-support-section">
     <div class="ww-label">Organization audit feed</div>
-    <div class="ww-flex-row" style="gap: 6px; margin: 8px 0">
-      <button type="button" (click)="onAuditFilterChange('all')">All</button>
-      <button type="button" (click)="onAuditFilterChange('success')">Success</button>
-      <button type="button" (click)="onAuditFilterChange('pending')">Pending</button>
-      <button type="button" (click)="onAuditFilterChange('blocked')">Blocked</button>
+    <div class="ww-support-metric-grid">
+      <div class="ww-card ww-support-card">
+        <div class="ww-support-metric-label">Loaded events</div>
+        <div class="ww-support-metric">{{ supportSnapshot.totalEvents }}</div>
+      </div>
+      <div class="ww-card ww-support-card">
+        <div class="ww-support-metric-label">Success</div>
+        <div class="ww-support-metric">{{ supportSnapshot.successCount }}</div>
+      </div>
+      <div class="ww-card ww-support-card">
+        <div class="ww-support-metric-label">Non-success</div>
+        <div class="ww-support-metric">{{ supportSnapshot.nonSuccessCount }}</div>
+      </div>
     </div>
-    <div *ngFor="let audit of organizationAudits" style="margin: 8px 0; border: 1px solid #ccc; padding: 8px; border-radius: 6px">
-      <div><strong>{{ audit.eventType }}</strong> ({{ audit.outcome }})</div>
-      <div style="font-size: 0.8rem">{{ audit.message }}</div>
-      <div style="font-size: 0.75rem">{{ audit.createdAt | date:'short' }}</div>
+    <div class="ww-flex-row ww-support-filter-row">
+      <button
+        type="button"
+        [class.ww-button-secondary]="auditOutcomeFilter !== 'all'"
+        (click)="onAuditFilterChange('all')"
+      >
+        All
+      </button>
+      <button
+        type="button"
+        [class.ww-button-secondary]="auditOutcomeFilter !== 'success'"
+        (click)="onAuditFilterChange('success')"
+      >
+        Success
+      </button>
+      <button
+        type="button"
+        [class.ww-button-secondary]="auditOutcomeFilter !== 'pending'"
+        (click)="onAuditFilterChange('pending')"
+      >
+        Pending
+      </button>
+      <button
+        type="button"
+        [class.ww-button-secondary]="auditOutcomeFilter !== 'blocked'"
+        (click)="onAuditFilterChange('blocked')"
+      >
+        Blocked
+      </button>
+    </div>
+    <div *ngIf="!organizationAudits?.length" class="ww-support-empty">
+      No organization activity for this filter.
+    </div>
+    <div *ngFor="let audit of organizationAudits" class="ww-card ww-support-card">
+      <div class="ww-support-row">
+        <div>
+          <div class="ww-support-title">{{ auditLabel(audit) }}</div>
+          <div class="ww-support-subtle">{{ auditDetail(audit) }}</div>
+        </div>
+        <div [class]="outcomeClass(audit.outcome)">{{ audit.outcome || 'unknown' }}</div>
+      </div>
+      <div class="ww-support-meta">{{ audit.createdAt | date:'short' }}</div>
     </div>
   </div>
 

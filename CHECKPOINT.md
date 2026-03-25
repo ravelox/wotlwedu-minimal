@@ -2,7 +2,7 @@
 
 Last updated: 2026-03-24
 Repo: `wotlwedu-minimal`
-Current version: `0.1.11`
+Current version: `0.1.12`
 
 ## Current Focus
 
@@ -17,6 +17,7 @@ This repo now exposes the user-facing and support-facing parts of the new auth h
   - unlink actions for removable social identities
   - recent account activity from `/user/:userId/authaudit`
   - organization audit activity when the user has access
+  - denser support/admin information presented as cards, outcome chips, and a quick audit summary
 - Runtime config template already includes `googleClientId`.
 
 ## Key Files For This Baseline
@@ -44,4 +45,4 @@ npm run build
 ## Likely Next Actions
 
 1. Keep parity with backend auth/invite/audit behavior.
-2. Optionally refine the mobile presentation of audit data if the current profile layout feels too dense.
+2. Add deeper support operations only if the mobile client needs more than the current profile-based audit view.

@@ -1,7 +1,7 @@
 {
     "apiUrl": "${WOTLWEDU_API_URL}",
     "googleClientId": "${WOTLWEDU_GOOGLE_CLIENT_ID}",
-    "appVersion": "0.1.10",
+    "appVersion": "0.1.12",
     "defaultStartPage": "/home",
     "errorCountdown": 30
 }

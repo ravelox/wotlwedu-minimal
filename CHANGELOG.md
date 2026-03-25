@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.12 - 2026-03-24
+- Refine the profile audit presentation with support-style cards, outcome chips, and clearer sign-in method rows.
+- Add a lightweight organization audit summary to make admin activity easier to scan on smaller screens.
+- Sync the runtime config template app version to `0.1.12` during the verified build.
+
 ## 0.1.9 - 2026-03-24
 - Add Google sign-in to the Angular auth flow.
 - Add invite-aware onboarding against `GET /login/invite/:token` and `POST /login/google`.

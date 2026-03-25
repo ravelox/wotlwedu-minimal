@@ -34,6 +34,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   userAudits: any[] = [];
   organizationAudits: any[] = [];
   auditOutcomeFilter: string = "all";
+  canAccessSupport: boolean = false;
   private _pendingEnable2FA: boolean = false;
   private _pendingEnable2FAValue: boolean = false;
   private _pendingLogout: boolean = false;
@@ -53,6 +54,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       next: (authData) => {
         if (authData && authData.id) {
           this.authUserId = authData.id;
+          this.canAccessSupport =
+            authData.isOrganizationAdmin === true || authData.isSystemAdmin === true;
           this.getAuthUserData();
           this.loadSupportData();
         }
@@ -157,6 +160,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     });
     this.authDataService.isLoggedIn.pipe(take(1)).subscribe({
       next: (state) => {
+        this.canAccessSupport =
+          state?.isOrganizationAdmin === true || state?.isSystemAdmin === true;
         if (state?.organizationId && (state?.isOrganizationAdmin || state?.isSystemAdmin)) {
           this.userDataService
             .getOrganizationAudit(state.organizationId, this.auditOutcomeFilter)
@@ -184,6 +189,56 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   onAuditFilterChange(outcome: string) {
     this.auditOutcomeFilter = outcome;
     this.loadSupportData();
+  }
+
+  get supportSnapshot() {
+    const totalEvents = this.organizationAudits.length;
+    const successCount = this.organizationAudits.filter(
+      (audit) => audit?.outcome === 'success'
+    ).length;
+
+    return {
+      totalEvents,
+      successCount,
+      nonSuccessCount: totalEvents - successCount,
+    };
+  }
+
+  methodLabel(method: any) {
+    if (!method) return 'Unknown provider';
+    return `${method.provider || 'provider'}${method.email ? ' (' + method.email + ')' : ''}`;
+  }
+
+  auditLabel(audit: any) {
+    if (!audit) return 'Activity';
+    return audit.eventType || audit.message || 'Activity';
+  }
+
+  auditDetail(audit: any) {
+    if (!audit) return '';
+    return audit.message || [audit.provider, audit.email].filter(Boolean).join(' • ');
+  }
+
+  auditMeta(audit: any) {
+    if (!audit) return '';
+    return [audit.createdAt, audit.provider, audit.email]
+      .filter(Boolean)
+      .join(' • ');
+  }
+
+  outcomeClass(outcome: string) {
+    switch ((outcome || '').toLowerCase()) {
+      case 'success':
+        return 'ww-chip ww-chip-success';
+      case 'pending':
+        return 'ww-chip ww-chip-pending';
+      case 'blocked':
+      case 'error':
+      case 'failed':
+        return 'ww-chip ww-chip-blocked';
+      default:
+        return 'ww-chip';
+    }
   }
 
   toggleImageSelector() {

@@ -1,0 +1,90 @@
+.ww-profile-stack {
+  gap: 16px;
+}
+
+.ww-support-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ww-support-card {
+  width: 100%;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.ww-support-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ww-support-title {
+  font-weight: 600;
+}
+
+.ww-support-subtle,
+.ww-support-meta,
+.ww-support-empty,
+.ww-support-metric-label {
+  font-size: 0.8rem;
+  color: #4d4d4d;
+}
+
+.ww-support-meta {
+  border-top: 1px solid #d9d9d9;
+  padding-top: 6px;
+}
+
+.ww-support-empty {
+  border: 1px dashed #b8b8b8;
+  padding: 10px;
+  background: #f6f6f6;
+}
+
+.ww-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  border: 1px solid black;
+  background: white;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.ww-chip-success {
+  background: #d9f5e6;
+}
+
+.ww-chip-pending {
+  background: #fff0c2;
+}
+
+.ww-chip-blocked {
+  background: #ffd9d9;
+}
+
+.ww-support-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ww-support-metric {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.ww-support-filter-row {
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ww-button-secondary {
+  background: white;
+  color: black;
+  border: 1px solid black;
+}
