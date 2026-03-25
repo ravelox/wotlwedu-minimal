@@ -2,7 +2,7 @@
 
 Last updated: 2026-03-24
 Repo: `wotlwedu-minimal`
-Current version: `0.1.10`
+Current version: `0.1.11`
 
 ## Current Focus
 
@@ -19,7 +19,7 @@ This repo now exposes the user-facing and support-facing parts of the new auth h
   - organization audit activity when the user has access
 - Runtime config template already includes `googleClientId`.
 
-## Main Files Changed In This Uncommitted Slice
+## Key Files For This Baseline
 
 - [src/app/auth/auth.component.ts](/Users/dkelly/Projects/wotlwedu/wotlwedu-minimal/src/app/auth/auth.component.ts)
 - [src/app/service/userdata.service.ts](/Users/dkelly/Projects/wotlwedu/wotlwedu-minimal/src/app/service/userdata.service.ts)
@@ -43,5 +43,5 @@ npm run build
 
 ## Likely Next Actions
 
-1. Stage, commit, tag, and push this uncommitted slice if accepted.
+1. Keep parity with backend auth/invite/audit behavior.
 2. Optionally refine the mobile presentation of audit data if the current profile layout feels too dense.
