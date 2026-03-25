@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.13 - 2026-03-24
+- Mark the repo as archived and obsolete in the checkpoint state.
+- Record that new operational admin/support work should move to `wotlwedu-admin`.
+
 ## 0.1.12 - 2026-03-24
 - Refine the profile audit presentation with support-style cards, outcome chips, and clearer sign-in method rows.
 - Add a lightweight organization audit summary to make admin activity easier to scan on smaller screens.
