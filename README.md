@@ -19,7 +19,7 @@ You can attach images to items/elections, and share images/items/lists with frie
 - Node.js + npm
 - Runtime API config loaded from `src/assets/wotlwedu-config.json`
 - Optional Docker deployment with NGINX (HTTP + HTTPS)
-- Current frontend package version: `0.1.9` (`package.json`)
+- Current frontend package version: `0.1.13` (`package.json`)
 - Runtime config `appVersion` is auto-synced from `package.json` before local builds/starts/tests.
 
 ## Tenant/admin concepts
