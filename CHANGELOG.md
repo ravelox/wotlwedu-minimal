@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.14 - 2026-03-25
+- Remove `CHECKPOINT.md` as part of the cross-repo cleanup.
+
 ## 0.1.13 - 2026-03-24
 - Mark the repo as archived and obsolete in the checkpoint state.
 - Record that new operational admin/support work should move to `wotlwedu-admin`.
